@@ -1,0 +1,1778 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SBCODE vLLM Client</title>
+
+    <!-- Markdown + HTML sanitization -->
+    <script src="marked.min.js"></script>
+    <script src="purify.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #121212;
+            color: #e8e8e8;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* =========================
+     SIDEBAR
+     ========================= */
+
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            height: 100vh;
+            background: #181818;
+            border-right: 1px solid #2b2b2b;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #2b2b2b;
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #333;
+            border-radius: 7px;
+            background: #242424;
+            color: #e8e8e8;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .new-chat-btn:hover {
+            background: #2d2d2d;
+        }
+
+        .conversation-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 8px 10px 8px;
+        }
+
+        .conversation-item {
+            position: relative;
+            padding: 11px 34px 11px 12px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            color: #cfcfcf;
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-item:hover {
+            background: #252525;
+        }
+
+        .conversation-item.active {
+            background: #2b2b2b;
+            color: #fff;
+        }
+
+        .delete-conversation-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 0;
+            border-radius: 4px;
+            background: transparent;
+            color: #888;
+            cursor: pointer;
+            font-size: 15px;
+            line-height: 20px;
+            opacity: 0;
+        }
+
+        .conversation-item:hover .delete-conversation-btn {
+            opacity: 1;
+        }
+
+        .delete-conversation-btn:hover {
+            background: #3a3a3a;
+            color: #fff;
+        }
+
+        /* =========================
+     MAIN
+     ========================= */
+
+        .main {
+            flex: 1;
+            height: 100vh;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: #121212;
+        }
+
+        .topbar {
+            height: 52px;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            background: #151515;
+            border-bottom: 1px solid #2b2b2b;
+        }
+
+        .topbar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ddd;
+        }
+
+        .settings-toggle {
+            padding: 7px 11px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #252525;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .settings-toggle:hover {
+            background: #303030;
+        }
+
+        /* =========================
+     SETTINGS
+     ========================= */
+
+        .settings {
+            display: none;
+            padding: 18px;
+            border-bottom: 1px solid #2b2b2b;
+            background: #191919;
+        }
+
+        .settings.visible {
+            display: block;
+        }
+
+        .settings-grid {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .setting-group {
+            margin-bottom: 14px;
+        }
+
+        .setting-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .setting-group input {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            outline: none;
+            background: #111;
+            color: #eee;
+            font-size: 13px;
+        }
+
+        .setting-group input:focus {
+            border-color: #555;
+        }
+
+        .setting-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .setting-button {
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #252525;
+            color: #ddd;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .setting-button:hover {
+            background: #303030;
+        }
+
+        .setting-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .settings-status {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .privacy-settings-row {
+            display: flex;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #2b2b2b;
+        }
+
+        /* =========================
+     CHAT
+     ========================= */
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px 20px;
+        }
+
+        .chat-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-top: 15vh;
+            color: #777;
+        }
+
+        .welcome-title {
+            font-size: 20px;
+            color: #bbb;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            font-size: 13px;
+        }
+
+        .message {
+            max-width: 820px;
+            margin: 0 auto 26px auto;
+        }
+
+        .message-role {
+            font-size: 12px;
+            font-weight: 600;
+            color: #888;
+            letter-spacing: 0.5px;
+            margin-bottom: 7px;
+        }
+
+        .message-content {
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* =========================
+     YOU
+     ========================= */
+
+        .message.user {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .message.user .message-role {
+            width: 75%;
+            text-align: right;
+            margin-bottom: 5px;
+        }
+
+        .message.user .message-content {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: #292929;
+            color: #f0f0f0;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+
+        /* =========================
+     ASSISTANT
+     ========================= */
+
+        .message.assistant {
+            display: block;
+        }
+
+        .message.assistant .message-role {
+            margin-bottom: 8px;
+        }
+
+        .message.assistant .message-content {
+            display: block;
+            max-width: 100%;
+            color: #d3d3d3;
+            line-height: 1.7;
+        }
+
+        /* =========================
+     WAITING INDICATOR
+     ========================= */
+
+        .thinking-indicator {
+            display: inline-flex;
+            align-items: center;
+            height: 24px;
+            color: #888;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .thinking-indicator span {
+            display: inline-block;
+            opacity: 0.25;
+            animation: thinkingDot 1.2s infinite;
+        }
+
+        .thinking-indicator span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .thinking-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .thinking-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes thinkingDot {
+            0% {
+                opacity: 0.25;
+            }
+
+            25% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.25;
+            }
+
+            100% {
+                opacity: 0.25;
+            }
+        }
+
+        /* =========================
+     MARKDOWN
+     ========================= */
+
+        .message.assistant .message-content p {
+            margin: 0 0 16px 0;
+        }
+
+        .message.assistant .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message.assistant .message-content h1,
+        .message.assistant .message-content h2,
+        .message.assistant .message-content h3,
+        .message.assistant .message-content h4,
+        .message.assistant .message-content h5,
+        .message.assistant .message-content h6 {
+            color: #f0f0f0;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+
+        .message.assistant .message-content h1 {
+            font-size: 28px;
+            margin: 0 0 16px 0;
+        }
+
+        .message.assistant .message-content h2 {
+            font-size: 22px;
+            margin: 26px 0 13px 0;
+        }
+
+        .message.assistant .message-content h3 {
+            font-size: 18px;
+            margin: 22px 0 11px 0;
+        }
+
+        .message.assistant .message-content h4 {
+            font-size: 16px;
+            margin: 18px 0 9px 0;
+        }
+
+        .message.assistant .message-content h5,
+        .message.assistant .message-content h6 {
+            font-size: 14px;
+            margin: 16px 0 8px 0;
+        }
+
+        .message.assistant .message-content ul,
+        .message.assistant .message-content ol {
+            margin: 0 0 16px 0;
+            padding-left: 28px;
+        }
+
+        .message.assistant .message-content li {
+            margin-bottom: 6px;
+        }
+
+        .message.assistant .message-content li>p {
+            margin-bottom: 6px;
+        }
+
+        .message.assistant .message-content code {
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #252525;
+            color: #e6e6e6;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .message.assistant .message-content pre {
+            margin: 16px 0;
+            padding: 14px;
+            overflow-x: auto;
+            border-radius: 8px;
+            background: #1a1a1a;
+            border: 1px solid #2b2b2b;
+            line-height: 1.5;
+        }
+
+        .message.assistant .message-content pre code {
+            display: block;
+            padding: 0;
+            background: transparent;
+            color: #ddd;
+            font-size: 13px;
+            white-space: pre;
+        }
+
+        .message.assistant .message-content blockquote {
+            margin: 16px 0;
+            padding: 8px 16px;
+            border-left: 3px solid #555;
+            color: #aaa;
+        }
+
+        .message.assistant .message-content blockquote p {
+            margin-bottom: 8px;
+        }
+
+        .message.assistant .message-content hr {
+            border: 0;
+            border-top: 1px solid #333;
+            margin: 24px 0;
+        }
+
+        .message.assistant .message-content a {
+            color: #aaa;
+            text-decoration: underline;
+        }
+
+        .message.assistant .message-content a:hover {
+            color: #ddd;
+        }
+
+        .message.assistant .message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .message.assistant .message-content th,
+        .message.assistant .message-content td {
+            padding: 8px 10px;
+            border: 1px solid #333;
+            text-align: left;
+        }
+
+        .message.assistant .message-content th {
+            background: #202020;
+            color: #eee;
+        }
+
+        .message.assistant .message-content td {
+            background: #171717;
+        }
+
+        /* =========================
+     INPUT
+     ========================= */
+
+        .input-area {
+            padding: 14px 20px 18px 20px;
+            background: #121212;
+            border-top: 1px solid #2b2b2b;
+        }
+
+        .input-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        #promptInput {
+            flex: 1;
+            min-height: 48px;
+            max-height: 180px;
+            resize: vertical;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            outline: none;
+            background: #181818;
+            color: #eee;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        #promptInput:focus {
+            border-color: #555;
+        }
+
+        #sendBtn {
+            height: 48px;
+            padding: 0 18px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #292929;
+            color: #eee;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #sendBtn:hover {
+            background: #333;
+        }
+
+        #sendBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* =========================
+     MODALS
+     ========================= */
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 440px;
+            padding: 22px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: #1b1b1b;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h2 {
+            margin: 0 0 12px 0;
+            font-size: 17px;
+            color: #eee;
+        }
+
+        .modal p {
+            margin: 0 0 18px 0;
+            color: #aaa;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .modal-button {
+            padding: 8px 13px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #252525;
+            color: #ddd;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .modal-button:hover {
+            background: #303030;
+        }
+
+        .modal-button.danger {
+            background: #2b2020;
+        }
+
+        .modal-button.danger:hover {
+            background: #3a2525;
+        }
+
+        /* =========================
+     PRIVACY MODAL
+     ========================= */
+
+        .privacy-modal {
+            max-width: 620px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .privacy-content {
+            color: #aaa;
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .privacy-content h3 {
+            margin: 18px 0 7px 0;
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        .privacy-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .privacy-content p {
+            margin-bottom: 10px;
+        }
+
+        .privacy-warning {
+            padding: 11px 13px;
+            margin: 16px 0;
+            border: 1px solid #3a3430;
+            border-radius: 7px;
+            background: #211e1b;
+            color: #bbb;
+        }
+
+        .privacy-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin: 18px 0;
+            color: #ccc;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .privacy-check input {
+            margin-top: 2px;
+        }
+
+        #privacyContinueBtn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* =========================
+     MOBILE
+     ========================= */
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 210px;
+                min-width: 210px;
+            }
+
+            .chat-area {
+                padding: 22px 12px;
+            }
+
+            .input-area {
+                padding: 10px 12px 12px 12px;
+            }
+
+            .message.user .message-role,
+            .message.user .message-content {
+                max-width: 88%;
+                width: 88%;
+            }
+
+            .message.assistant .message-content h1 {
+                font-size: 24px;
+            }
+
+            .message.assistant .message-content h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- =========================
+     SIDEBAR
+     ========================= -->
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <button class="new-chat-btn" id="newChatBtn">+ New Chat</button>
+        </div>
+
+        <div class="conversation-list" id="conversationList"></div>
+    </aside>
+
+    <!-- =========================
+     MAIN
+     ========================= -->
+
+    <main class="main">
+        <div class="topbar">
+            <div class="topbar-title">SBCODE vLLM Client</div>
+
+            <button class="settings-toggle" id="settingsToggle">Settings</button>
+        </div>
+
+        <!-- SETTINGS -->
+
+        <section class="settings" id="settingsPanel">
+            <div class="settings-grid">
+                <div class="setting-group">
+                    <label for="endpointInput"> vLLM Endpoint </label>
+
+                    <input type="text" id="endpointInput"
+                        placeholder="https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/v1/chat/completions" />
+                </div>
+
+                <div class="setting-group">
+                    <label for="apiKeyInput"> Bearer API Key </label>
+
+                    <input type="password" id="apiKeyInput" placeholder="Enter your RunPod API key" />
+                </div>
+
+                <div class="setting-group">
+                    <label for="modelInput"> Model </label>
+
+                    <input type="text" id="modelInput" placeholder="Model name" />
+                </div>
+
+                <div class="setting-actions">
+                    <button class="setting-button" id="detectModelBtn">Detect Model</button>
+
+                    <span class="settings-status" id="settingsStatus"></span>
+
+                </div>
+
+                <div class="privacy-settings-row">
+                    <button class="setting-button" id="privacyBtn">Privacy &amp; Data</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAT -->
+
+        <section class="chat-area" id="chatArea">
+            <div class="chat-inner" id="chatInner"></div>
+        </section>
+
+        <!-- INPUT -->
+
+        <div class="input-area">
+            <div class="input-inner">
+                <textarea id="promptInput" placeholder="Message your model..." rows="1"></textarea>
+
+                <button id="sendBtn">Send</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- =========================
+     DELETE MODAL
+     ========================= -->
+
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <h2>Delete conversation?</h2>
+
+            <p>This conversation will be removed from this browser. This cannot be undone.</p>
+
+            <div class="modal-actions">
+                <button class="modal-button" id="cancelDeleteBtn">Cancel</button>
+
+                <button class="modal-button danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================
+     PRIVACY MODAL
+     ========================= -->
+
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal privacy-modal">
+            <h2>Privacy &amp; Data</h2>
+
+            <div class="privacy-content">
+                <h3>This client runs in your browser</h3>
+
+                <p>SBCODE vLLM Client is a client-side web application. Your browser communicates directly with the vLLM
+                    endpoint that you configure.</p>
+
+                <h3>Information stored locally</h3>
+
+                <p>The endpoint address, API key, selected model, and saved conversations are stored locally in your
+                    browser using localStorage.</p>
+
+                <h3>SBCODE does not receive your chat data</h3>
+
+                <p>
+                    During normal operation, this client does not send your API key, saved conversations, prompts, or
+                    vLLM responses to the SBCODE web
+                    server. After the page has loaded, chat requests are sent directly from your browser to the
+                    vLLM/RunPod endpoint you configure.
+                </p>
+
+                <h3>RunPod / vLLM</h3>
+
+                <p>
+                    Chat requests are processed by the vLLM service and infrastructure associated with the endpoint you
+                    configure. The infrastructure
+                    provider may process, monitor, or retain information according to its own policies, configuration,
+                    logging, and operational
+                    requirements.
+                </p>
+
+                <div class="privacy-warning">
+                    Do not enter sensitive, confidential, personal, or otherwise private information into a model
+                    endpoint unless you understand and accept
+                    how that endpoint and its infrastructure handle submitted data.
+                </div>
+
+                <h3>Website and Cloudflare</h3>
+
+                <p>
+                    If this client is hosted on a public website, normal website requests may involve your hosting
+                    provider and services such as Cloudflare.
+                    These services may process standard website and network information such as IP addresses, request
+                    metadata, security information, and
+                    logs.
+                </p>
+
+                <h3>Clearing your local data</h3>
+
+                <p>
+                    Clearing this site's browser data will remove locally stored settings and conversations. It does not
+                    delete information that has already
+                    been sent to your configured vLLM/RunPod endpoint.
+                </p>
+            </div>
+
+            <label class="privacy-check">
+                <input type="checkbox" id="privacyCheckbox" />
+
+                <span>
+                    I understand that my settings and conversations are stored locally in my browser, and that chat
+                    requests are sent directly to the
+                    vLLM/RunPod endpoint I configure.
+                </span>
+            </label>
+
+            <div class="modal-actions">
+                <button class="modal-button" id="privacyContinueBtn" disabled>Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================
+ STORAGE KEYS
+ ========================= */
+
+        const CONVERSATIONS_KEY = 'vllm_conversations'
+
+        const ENDPOINT_KEY = 'vllm_endpoint'
+
+        const API_KEY_KEY = 'vllm_api_key'
+
+        const MODEL_KEY = 'vllm_model'
+
+        const PRIVACY_ACK_KEY = 'vllm_privacy_acknowledged'
+
+        /* =========================
+ STATE
+ ========================= */
+
+        let conversations = []
+
+        let currentConversationId = null
+
+        let conversationToDelete = null
+
+        let isSending = false
+
+        /* =========================
+ ELEMENTS
+ ========================= */
+
+        const conversationList = document.getElementById('conversationList')
+
+        const chatInner = document.getElementById('chatInner')
+
+        const chatArea = document.getElementById('chatArea')
+
+        const promptInput = document.getElementById('promptInput')
+
+        const sendBtn = document.getElementById('sendBtn')
+
+        const newChatBtn = document.getElementById('newChatBtn')
+
+        const settingsToggle = document.getElementById('settingsToggle')
+
+        const settingsPanel = document.getElementById('settingsPanel')
+
+        const endpointInput = document.getElementById('endpointInput')
+
+        const apiKeyInput = document.getElementById('apiKeyInput')
+
+        const modelInput = document.getElementById('modelInput')
+
+        const detectModelBtn = document.getElementById('detectModelBtn')
+
+        const settingsStatus = document.getElementById('settingsStatus')
+
+        const privacyBtn = document.getElementById('privacyBtn')
+
+        const deleteModal = document.getElementById('deleteModal')
+
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn')
+
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn')
+
+        const privacyModal = document.getElementById('privacyModal')
+
+        const privacyCheckbox = document.getElementById('privacyCheckbox')
+
+        const privacyContinueBtn = document.getElementById('privacyContinueBtn')
+
+        /* =========================
+ MARKDOWN
+ ========================= */
+
+        marked.setOptions({
+            gfm: true,
+            breaks: true
+        })
+
+        function renderMarkdown(text) {
+            if (!text) {
+                return ''
+            }
+
+            const rawHtml = marked.parse(text)
+
+            return DOMPurify.sanitize(rawHtml, {
+                USE_PROFILES: {
+                    html: true
+                }
+            })
+        }
+
+        /* =========================
+ STORAGE
+ ========================= */
+
+        function saveConversations() {
+            localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations))
+        }
+
+        function loadConversations() {
+            const stored = localStorage.getItem(CONVERSATIONS_KEY)
+
+            if (!stored) {
+                conversations = []
+
+                return
+            }
+
+            try {
+                const parsed = JSON.parse(stored)
+
+                if (Array.isArray(parsed)) {
+                    conversations = parsed
+                } else {
+                    conversations = []
+                }
+            } catch (error) {
+                console.error('Could not load conversations:', error)
+
+                conversations = []
+            }
+        }
+
+        function saveSettings() {
+            localStorage.setItem(ENDPOINT_KEY, endpointInput.value.trim())
+
+            localStorage.setItem(API_KEY_KEY, apiKeyInput.value.trim())
+
+            localStorage.setItem(MODEL_KEY, modelInput.value.trim())
+        }
+
+        function loadSettings() {
+            endpointInput.value = localStorage.getItem(ENDPOINT_KEY) || ''
+
+            apiKeyInput.value = localStorage.getItem(API_KEY_KEY) || ''
+
+            modelInput.value = localStorage.getItem(MODEL_KEY) || ''
+        }
+
+        /* =========================
+ PRIVACY
+ ========================= */
+
+        function hasAcknowledgedPrivacy() {
+            return localStorage.getItem(PRIVACY_ACK_KEY) === 'true'
+        }
+
+        function openPrivacyModal(requireAcknowledgement = false) {
+            privacyCheckbox.checked = false
+
+            privacyContinueBtn.disabled = true
+
+            privacyModal.classList.add('visible')
+
+            privacyModal.dataset.required = requireAcknowledgement ? 'true' : 'false'
+
+            setTimeout(() => {
+                privacyCheckbox.focus()
+            }, 50)
+        }
+
+        function closePrivacyModal() {
+            if (privacyModal.dataset.required === 'true' && !hasAcknowledgedPrivacy()) {
+                return
+            }
+
+            privacyModal.classList.remove('visible')
+        }
+
+        function acknowledgePrivacy() {
+            if (!privacyCheckbox.checked) {
+                return
+            }
+
+            localStorage.setItem(PRIVACY_ACK_KEY, 'true')
+
+            privacyModal.classList.remove('visible')
+
+            promptInput.focus()
+        }
+
+        privacyCheckbox.addEventListener('change', () => {
+            privacyContinueBtn.disabled = !privacyCheckbox.checked
+        })
+
+        privacyContinueBtn.addEventListener('click', acknowledgePrivacy)
+
+        privacyBtn.addEventListener('click', () => {
+            openPrivacyModal(false)
+        })
+
+        /* =========================
+ CONVERSATIONS
+ ========================= */
+
+        function createConversation() {
+            const conversation = {
+                id: Date.now().toString() + Math.random().toString(36).slice(2),
+
+                title: 'New Chat',
+
+                created: new Date().toISOString(),
+
+                messages: []
+            }
+
+            conversations.unshift(conversation)
+
+            currentConversationId = conversation.id
+
+            saveConversations()
+
+            renderSidebar()
+
+            renderCurrentConversation()
+
+            promptInput.focus()
+        }
+
+        function getCurrentConversation() {
+            return conversations.find((conversation) => conversation.id === currentConversationId)
+        }
+
+        function renderSidebar() {
+            conversationList.innerHTML = ''
+
+            conversations.forEach((conversation) => {
+                const item = document.createElement('div')
+
+                item.className = 'conversation-item' + (conversation.id === currentConversationId ? ' active' : '')
+
+                item.title = conversation.title
+
+                const titleSpan = document.createElement('span')
+
+                titleSpan.textContent = conversation.title
+
+                const deleteButton = document.createElement('button')
+
+                deleteButton.className = 'delete-conversation-btn'
+
+                deleteButton.textContent = '×'
+
+                deleteButton.title = 'Delete conversation'
+
+                deleteButton.addEventListener('click', (event) => {
+                    event.stopPropagation()
+
+                    openDeleteModal(conversation.id)
+                })
+
+                item.addEventListener('click', () => {
+                    currentConversationId = conversation.id
+
+                    renderSidebar()
+
+                    renderCurrentConversation()
+
+                    promptInput.focus()
+                })
+
+                item.appendChild(titleSpan)
+
+                item.appendChild(deleteButton)
+
+                conversationList.appendChild(item)
+            })
+        }
+
+        /* =========================
+ DELETE
+ ========================= */
+
+        function openDeleteModal(id) {
+            conversationToDelete = id
+
+            deleteModal.classList.add('visible')
+
+            cancelDeleteBtn.focus()
+        }
+
+        function closeDeleteModal() {
+            conversationToDelete = null
+
+            deleteModal.classList.remove('visible')
+        }
+
+        function confirmDelete() {
+            if (!conversationToDelete) {
+                return
+            }
+
+            const id = conversationToDelete
+
+            conversations = conversations.filter((conversation) => conversation.id !== id)
+
+            saveConversations()
+
+            if (currentConversationId === id) {
+                if (conversations.length > 0) {
+                    currentConversationId = conversations[0].id
+                } else {
+                    currentConversationId = null
+                }
+            }
+
+            closeDeleteModal()
+
+            renderSidebar()
+
+            renderCurrentConversation()
+
+            promptInput.focus()
+        }
+
+        cancelDeleteBtn.addEventListener('click', closeDeleteModal)
+
+        confirmDeleteBtn.addEventListener('click', confirmDelete)
+
+        /* =========================
+ CHAT RENDERING
+ ========================= */
+
+        function renderCurrentConversation() {
+            chatInner.innerHTML = ''
+
+            const conversation = getCurrentConversation()
+
+            if (!conversation || conversation.messages.length === 0) {
+                const welcome = document.createElement('div')
+
+                welcome.className = 'welcome'
+
+                welcome.innerHTML = `
+        <div class="welcome-title">
+          SBCODE vLLM Client
+        </div>
+
+        <div class="welcome-subtitle">
+          Enter your endpoint and API key in Settings,
+          then start chatting.
+        </div>
+      `
+
+                chatInner.appendChild(welcome)
+
+                return
+            }
+
+            conversation.messages.forEach((message) => {
+                appendMessageToDOM(message.role, message.content)
+            })
+
+            scrollChatToBottom()
+        }
+
+        function appendMessageToDOM(role, content) {
+            const message = document.createElement('div')
+
+            message.className = 'message ' + (role === 'user' ? 'user' : 'assistant')
+
+            const roleElement = document.createElement('div')
+
+            roleElement.className = 'message-role'
+
+            roleElement.textContent = role === 'user' ? 'YOU' : 'ASSISTANT'
+
+            const contentElement = document.createElement('div')
+
+            contentElement.className = 'message-content'
+
+            if (role === 'assistant') {
+                contentElement.innerHTML = renderMarkdown(content)
+            } else {
+                contentElement.textContent = content
+            }
+
+            message.appendChild(roleElement)
+
+            message.appendChild(contentElement)
+
+            chatInner.appendChild(message)
+
+            return contentElement
+        }
+
+        /* =========================
+ THINKING INDICATOR
+ ========================= */
+
+        function createThinkingIndicator() {
+            const indicator = document.createElement('div')
+
+            indicator.className = 'thinking-indicator'
+
+            indicator.setAttribute('aria-label', 'Waiting for response')
+
+            indicator.innerHTML = `
+      <span>.</span>
+      <span>.</span>
+      <span>.</span>
+    `
+
+            return indicator
+        }
+
+        function showThinkingIndicator(contentElement) {
+            contentElement.innerHTML = ''
+
+            contentElement.appendChild(createThinkingIndicator())
+        }
+
+        function removeThinkingIndicator(contentElement) {
+            const indicator = contentElement.querySelector('.thinking-indicator')
+
+            if (indicator) {
+                indicator.remove()
+            }
+        }
+
+        function scrollChatToBottom() {
+            requestAnimationFrame(() => {
+                chatArea.scrollTop = chatArea.scrollHeight
+            })
+        }
+
+        /* =========================
+ NEW CHAT
+ ========================= */
+
+        newChatBtn.addEventListener('click', createConversation)
+
+        /* =========================
+ SETTINGS
+ ========================= */
+
+        settingsToggle.addEventListener('click', () => {
+            settingsPanel.classList.toggle('visible')
+        })
+
+        /* =========================
+ MODEL DETECTION
+ ========================= */
+
+        async function detectModel() {
+            const endpoint = endpointInput.value.trim()
+
+            const apiKey = apiKeyInput.value.trim()
+
+            if (!endpoint) {
+                settingsStatus.textContent = 'Enter your vLLM endpoint first.'
+
+                return
+            }
+
+            if (!apiKey) {
+                settingsStatus.textContent = 'Enter your API key first.'
+
+                return
+            }
+
+            if (!endpoint.endsWith('/v1/chat/completions')) {
+                settingsStatus.textContent = 'Endpoint must end with /v1/chat/completions'
+
+                return
+            }
+
+            const modelsEndpoint = endpoint.replace('/v1/chat/completions', '/v1/models')
+
+            detectModelBtn.disabled = true
+
+            settingsStatus.textContent = 'Detecting model...'
+
+            try {
+                const response = await fetch(modelsEndpoint, {
+                    method: 'GET',
+
+                    headers: {
+                        Authorization: 'Bearer ' + apiKey
+                    }
+                })
+
+                if (!response.ok) {
+                    const errorText = await response.text()
+
+                    throw new Error('HTTP ' + response.status + (errorText ? ': ' + errorText : ''))
+                }
+
+                const data = await response.json()
+
+                if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
+                    throw new Error('No models were returned.')
+                }
+
+                const detectedModel = data.data[0].id
+
+                modelInput.value = detectedModel
+
+                localStorage.setItem(MODEL_KEY, detectedModel)
+
+                settingsStatus.textContent = 'Detected: ' + detectedModel
+            } catch (error) {
+                console.error('Model detection error:', error)
+
+                settingsStatus.textContent = 'Model detection failed: ' + error.message
+            } finally {
+                detectModelBtn.disabled = false
+            }
+        }
+
+        detectModelBtn.addEventListener('click', detectModel)
+
+        /* =========================
+ SEND MESSAGE
+ ========================= */
+
+        async function sendMessage() {
+            if (isSending) {
+                return
+            }
+
+            const endpoint = endpointInput.value.trim()
+
+            const apiKey = apiKeyInput.value.trim()
+
+            const model = modelInput.value.trim()
+
+            const prompt = promptInput.value.trim()
+
+            if (!endpoint) {
+                settingsPanel.classList.add('visible')
+
+                settingsStatus.textContent = 'Enter your vLLM endpoint.'
+
+                return
+            }
+
+            if (!apiKey) {
+                settingsPanel.classList.add('visible')
+
+                settingsStatus.textContent = 'Enter your API key.'
+
+                return
+            }
+
+            if (!model) {
+                settingsPanel.classList.add('visible')
+
+                settingsStatus.textContent = 'Enter or detect a model.'
+
+                return
+            }
+
+            if (!prompt) {
+                return
+            }
+
+            saveSettings()
+
+            /* Create a conversation automatically
+   if none currently exists. */
+
+            if (!currentConversationId) {
+                const conversation = {
+                    id: Date.now().toString() + Math.random().toString(36).slice(2),
+
+                    title: 'New Chat',
+
+                    created: new Date().toISOString(),
+
+                    messages: []
+                }
+
+                conversations.unshift(conversation)
+
+                currentConversationId = conversation.id
+            }
+
+            const conversation = getCurrentConversation()
+
+            if (!conversation) {
+                return
+            }
+
+            /* First prompt becomes title */
+
+            if (conversation.messages.length === 0) {
+                conversation.title = prompt.length > 45 ? prompt.slice(0, 45) + '...' : prompt
+            }
+
+            conversation.messages.push({
+                role: 'user',
+
+                content: prompt
+            })
+
+            saveConversations()
+
+            renderSidebar()
+
+            /* Clear input */
+
+            promptInput.value = ''
+
+            /* Render user message */
+
+            appendMessageToDOM('user', prompt)
+
+            /* Create assistant message */
+
+            const assistantContent = appendMessageToDOM('assistant', '')
+
+            /*
+  Show the animated waiting indicator
+  immediately. This remains visible while
+  RunPod/vLLM is waking up or preparing
+  the first response.
+*/
+
+            showThinkingIndicator(assistantContent)
+
+            scrollChatToBottom()
+
+            isSending = true
+
+            sendBtn.disabled = true
+
+            promptInput.disabled = true
+
+            let assistantText = ''
+
+            let hasReceivedContent = false
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type': 'application/json',
+
+                        Authorization: 'Bearer ' + apiKey
+                    },
+
+                    body: JSON.stringify({
+                        model: model,
+
+                        messages: conversation.messages,
+
+                        temperature: 0.7,
+
+                        max_tokens: 1000,
+
+                        stream: true
+                    })
+                })
+
+                if (!response.ok) {
+                    const errorText = await response.text()
+
+                    throw new Error('HTTP ' + response.status + (errorText ? ': ' + errorText : ''))
+                }
+
+                if (!response.body) {
+                    throw new Error('Streaming is not supported by this response.')
+                }
+
+                const reader = response.body.getReader()
+
+                const decoder = new TextDecoder('utf-8')
+
+                let buffer = ''
+
+                while (true) {
+                    const { value, done } = await reader.read()
+
+                    if (done) {
+                        break
+                    }
+
+                    buffer += decoder.decode(value, {
+                        stream: true
+                    })
+
+                    const lines = buffer.split('\n')
+
+                    buffer = lines.pop() || ''
+
+                    for (let line of lines) {
+                        line = line.trim()
+
+                        if (!line) {
+                            continue
+                        }
+
+                        if (!line.startsWith('data:')) {
+                            continue
+                        }
+
+                        const data = line.slice(5).trim()
+
+                        if (data === '[DONE]') {
+                            continue
+                        }
+
+                        try {
+                            const json = JSON.parse(data)
+
+                            const delta = json?.choices?.[0]?.delta?.content
+
+                            if (typeof delta === 'string') {
+                                assistantText += delta
+
+                                /*
+            First actual content has
+            arrived, so remove the
+            waiting indicator.
+          */
+
+                                if (!hasReceivedContent) {
+                                    hasReceivedContent = true
+
+                                    removeThinkingIndicator(assistantContent)
+                                }
+
+                                /*
+            Render Markdown during
+            streaming.
+          */
+
+                                assistantContent.innerHTML = renderMarkdown(assistantText)
+
+                                scrollChatToBottom()
+                            }
+                        } catch (parseError) {
+                            console.warn('Could not parse stream chunk:', parseError)
+                        }
+                    }
+                }
+
+                /*
+    Save completed assistant
+    response in its original
+    Markdown form.
+  */
+
+                conversation.messages.push({
+                    role: 'assistant',
+
+                    content: assistantText
+                })
+
+                saveConversations()
+            } catch (error) {
+                console.error('Chat error:', error)
+
+                const errorMessage = 'Error: ' + error.message
+
+                assistantText = errorMessage
+
+                removeThinkingIndicator(assistantContent)
+
+                assistantContent.innerHTML = renderMarkdown(errorMessage)
+
+                conversation.messages.push({
+                    role: 'assistant',
+
+                    content: errorMessage
+                })
+
+                saveConversations()
+            } finally {
+                isSending = false
+
+                sendBtn.disabled = false
+
+                promptInput.disabled = false
+
+                promptInput.focus()
+
+                scrollChatToBottom()
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage)
+
+        /* =========================
+ KEYBOARD SHORTCUT
+ ========================= */
+
+        promptInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault()
+
+                sendMessage()
+            }
+        })
+
+        /* =========================
+ MODAL KEYBOARD HANDLING
+ ========================= */
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') {
+                return
+            }
+
+            if (deleteModal.classList.contains('visible')) {
+                closeDeleteModal()
+
+                return
+            }
+
+            if (privacyModal.classList.contains('visible')) {
+                /*
+      First-use privacy popup cannot
+      be dismissed until acknowledged.
+    */
+
+                if (privacyModal.dataset.required === 'true' && !hasAcknowledgedPrivacy()) {
+                    return
+                }
+
+                closePrivacyModal()
+            }
+        })
+
+        /* =========================
+ INITIALIZE
+ ========================= */
+
+        loadConversations()
+
+        loadSettings()
+
+        renderSidebar()
+
+        renderCurrentConversation()
+
+        if (!hasAcknowledgedPrivacy()) {
+            openPrivacyModal(true)
+        } else {
+            promptInput.focus()
+        }
+    </script>
+</body>
+
+</html>
