@@ -78,6 +78,6 @@ This option is a good compromise when you are not going to be using your serverl
 
 This is option is more expensive, since you will keep your worker in the running state permanently.
 
-Set Active Workers from `0` to `1`. If you find your endpoint is under heaver load, then you can increase the `Active Workers` value even higher. This will cost more.
+Set Active Workers from `0` to `1`. If you find your endpoint is under heaver load, then you can increase the `Active Workers` value even higher. Be aware that this will cost more since you are now permanently using a GPU to store your model.
 
-You also have the option to increase the `Max workers` and `GPU count`, but expect the costs to be higher if all workers and GPUs are being used.
+You also have the option to increase the `Max workers` and `GPU count`, but expect the costs to be even higher when all workers and GPUs are being utilized.
