@@ -183,6 +183,88 @@
             margin: 0 auto;
         }
 
+        .saved-configurations {
+            margin-bottom: 18px;
+        }
+
+        .saved-configurations-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #888;
+            margin-bottom: 8px;
+            letter-spacing: 0.4px;
+        }
+
+        .saved-config-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .saved-config {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            max-width: 100%;
+            padding: 7px 9px 7px 11px;
+            border: 1px solid #333;
+            border-radius: 7px;
+            background: #202020;
+            color: #cfcfcf;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        .saved-config:hover {
+            background: #292929;
+            border-color: #444;
+        }
+
+        .saved-config.active {
+            border-color: #666;
+            background: #2b2b2b;
+            color: #fff;
+        }
+
+        .saved-config-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .delete-config-btn {
+            display: none;
+            width: 16px;
+            height: 16px;
+            padding: 0;
+            border: 0;
+            border-radius: 4px;
+            background: transparent;
+            color: #888;
+            font-size: 15px;
+            line-height: 14px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .saved-config:hover .delete-config-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-config-btn:hover {
+            background: #383838;
+            color: #fff;
+        }
+
+        .no-saved-configs {
+            color: #666;
+            font-size: 12px;
+        }
+
         .setting-group {
             margin-bottom: 14px;
         }
@@ -780,6 +862,11 @@
 
         <section class="settings" id="settingsPanel">
             <div class="settings-grid">
+                <div class="saved-configurations">
+                    <div class="saved-configurations-title">Saved Configurations</div>
+                    <div class="saved-config-list" id="savedConfigList"></div>
+                </div>
+
                 <div class="setting-group">
                     <label for="endpointInput"> vLLM Endpoint </label>
 
