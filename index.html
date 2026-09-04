@@ -851,6 +851,17 @@
      PRIVACY MODAL
      ========================= -->
 
+    <div class="modal-overlay" id="deleteConfigModal">
+        <div class="modal">
+            <div class="modal-title">Delete Saved Configuration?</div>
+            <div class="modal-message" id="deleteConfigMessage"></div>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" id="cancelDeleteConfigBtn">Cancel</button>
+                <button class="modal-btn danger" id="confirmDeleteConfigBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="privacyModal">
         <div class="modal privacy-modal">
             <h2>Privacy &amp; Data</h2>
@@ -938,6 +949,7 @@
         const API_KEY_KEY = 'vllm_api_key'
 
         const MODEL_KEY = 'vllm_model'
+        const CONFIGURATIONS_KEY = 'vllm_configurations'
 
         const PRIVACY_ACK_KEY = 'vllm_privacy_acknowledged'
 
@@ -950,6 +962,8 @@
         let currentConversationId = null
 
         let conversationToDelete = null
+        let savedConfigurations = []
+        let configurationToDelete = null
 
         let isSending = false
 
@@ -982,6 +996,7 @@
         const detectModelBtn = document.getElementById('detectModelBtn')
 
         const settingsStatus = document.getElementById('settingsStatus')
+        const savedConfigList = document.getElementById('savedConfigList')
 
         const privacyBtn = document.getElementById('privacyBtn')
 
@@ -992,6 +1007,10 @@
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn')
 
         const privacyModal = document.getElementById('privacyModal')
+        const deleteConfigModal = document.getElementById('deleteConfigModal')
+        const deleteConfigMessage = document.getElementById('deleteConfigMessage')
+        const cancelDeleteConfigBtn = document.getElementById('cancelDeleteConfigBtn')
+        const confirmDeleteConfigBtn = document.getElementById('confirmDeleteConfigBtn')
 
         const privacyCheckbox = document.getElementById('privacyCheckbox')
 
@@ -1066,6 +1085,136 @@
             apiKeyInput.value = localStorage.getItem(API_KEY_KEY) || ''
 
             modelInput.value = localStorage.getItem(MODEL_KEY) || ''
+        }
+
+        /* =========================
+ SAVED CONFIGURATIONS
+ ========================= */
+
+        function saveConfigurations() {
+            localStorage.setItem(CONFIGURATIONS_KEY, JSON.stringify(savedConfigurations))
+        }
+
+        function loadConfigurations() {
+            const stored = localStorage.getItem(CONFIGURATIONS_KEY)
+            if (!stored) { savedConfigurations = []; return }
+            try {
+                const parsed = JSON.parse(stored)
+                savedConfigurations = Array.isArray(parsed) ? parsed.filter((config) =>
+                    config && typeof config.endpoint === 'string' && typeof config.apiKey === 'string' && typeof config.model === 'string'
+                ) : []
+            } catch (error) {
+                console.error('Could not load saved configurations:', error)
+                savedConfigurations = []
+            }
+        }
+
+        function getCurrentConfigurationValues() {
+            return { endpoint: endpointInput.value.trim(), apiKey: apiKeyInput.value.trim(), model: modelInput.value.trim() }
+        }
+
+        function configurationsMatch(a, b) {
+            return a.endpoint === b.endpoint && a.apiKey === b.apiKey && a.model === b.model
+        }
+
+        function getConfigurationDisplayName(config) {
+            const model = config.model || 'Unnamed configuration'
+            const duplicates = savedConfigurations.filter((item) => item.model === model)
+            if (duplicates.length <= 1) return model
+            const index = duplicates.findIndex((item) => item.id === config.id)
+            return model + ' (Endpoint ' + (index + 1) + ')'
+        }
+
+        function getActiveConfigurationId() {
+            const current = getCurrentConfigurationValues()
+            const match = savedConfigurations.find((config) => configurationsMatch(config, current))
+            return match ? match.id : null
+        }
+
+        function renderSavedConfigurations() {
+            savedConfigList.innerHTML = ''
+            if (savedConfigurations.length === 0) {
+                const empty = document.createElement('div')
+                empty.className = 'no-saved-configs'
+                empty.textContent = 'Configurations are saved after a chat is sent.'
+                savedConfigList.appendChild(empty)
+                return
+            }
+            const activeId = getActiveConfigurationId()
+            savedConfigurations.forEach((config) => {
+                const item = document.createElement('div')
+                item.className = 'saved-config' + (config.id === activeId ? ' active' : '')
+                item.title = config.endpoint
+
+                const name = document.createElement('span')
+                name.className = 'saved-config-name'
+                name.textContent = getConfigurationDisplayName(config)
+
+                const deleteButton = document.createElement('button')
+                deleteButton.className = 'delete-config-btn'
+                deleteButton.type = 'button'
+                deleteButton.textContent = '×'
+                deleteButton.title = 'Delete saved configuration'
+                deleteButton.addEventListener('click', (event) => {
+                    event.stopPropagation()
+                    openDeleteConfigurationModal(config.id)
+                })
+
+                item.addEventListener('click', () => loadSavedConfiguration(config.id))
+                item.appendChild(name)
+                item.appendChild(deleteButton)
+                savedConfigList.appendChild(item)
+            })
+        }
+
+        function loadSavedConfiguration(id) {
+            const config = savedConfigurations.find((item) => item.id === id)
+            if (!config) return
+            endpointInput.value = config.endpoint
+            apiKeyInput.value = config.apiKey
+            modelInput.value = config.model
+            localStorage.setItem(ENDPOINT_KEY, config.endpoint)
+            localStorage.setItem(API_KEY_KEY, config.apiKey)
+            localStorage.setItem(MODEL_KEY, config.model)
+            settingsStatus.textContent = 'Loaded: ' + getConfigurationDisplayName(config)
+            renderSavedConfigurations()
+        }
+
+        function saveCurrentConfiguration() {
+            const current = getCurrentConfigurationValues()
+            if (!current.endpoint || !current.apiKey || !current.model) return
+            const existing = savedConfigurations.find((config) => configurationsMatch(config, current))
+            if (existing) return
+            savedConfigurations.push({
+                id: Date.now().toString() + Math.random().toString(36).slice(2),
+                endpoint: current.endpoint,
+                apiKey: current.apiKey,
+                model: current.model
+            })
+            saveConfigurations()
+            renderSavedConfigurations()
+        }
+
+        function openDeleteConfigurationModal(id) {
+            configurationToDelete = id
+            const config = savedConfigurations.find((item) => item.id === id)
+            if (!config) return
+            deleteConfigMessage.textContent = 'Delete the saved configuration "' + getConfigurationDisplayName(config) + '"?'
+            deleteConfigModal.classList.add('visible')
+            cancelDeleteConfigBtn.focus()
+        }
+
+        function closeDeleteConfigurationModal() {
+            configurationToDelete = null
+            deleteConfigModal.classList.remove('visible')
+        }
+
+        function confirmDeleteConfiguration() {
+            if (!configurationToDelete) return
+            savedConfigurations = savedConfigurations.filter((config) => config.id !== configurationToDelete)
+            saveConfigurations()
+            closeDeleteConfigurationModal()
+            renderSavedConfigurations()
         }
 
         /* =========================
@@ -1248,6 +1397,9 @@
 
         confirmDeleteBtn.addEventListener('click', confirmDelete)
 
+        cancelDeleteConfigBtn.addEventListener('click', closeDeleteConfigurationModal)
+        confirmDeleteConfigBtn.addEventListener('click', confirmDeleteConfiguration)
+
         /* =========================
  CHAT RENDERING
  ========================= */
@@ -1367,6 +1519,7 @@
 
         settingsToggle.addEventListener('click', () => {
             settingsPanel.classList.toggle('visible')
+            renderSavedConfigurations()
         })
 
         /* =========================
@@ -1681,6 +1834,7 @@
                 })
 
                 saveConversations()
+                saveCurrentConfiguration()
             } catch (error) {
                 console.error('Chat error:', error)
 
@@ -1735,6 +1889,11 @@
                 return
             }
 
+            if (deleteConfigModal.classList.contains('visible')) {
+                closeDeleteConfigurationModal()
+                return
+            }
+
             if (deleteModal.classList.contains('visible')) {
                 closeDeleteModal()
 
@@ -1762,7 +1921,9 @@
         loadConversations()
 
         loadSettings()
+        loadConfigurations()
 
+        renderSavedConfigurations()
         renderSidebar()
 
         renderCurrentConversation()
