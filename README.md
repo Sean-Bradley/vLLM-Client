@@ -2,29 +2,31 @@
 
 ## How to Use
 
-1. Website : [vllm-client.sbcode.net](https://vllm-client.sbcode.net)
+Via the website directly : [vllm-client.sbcode.net](https://vllm-client.sbcode.net)
 
-2. Git Clone and run locally
+or,
 
-   a. Navigate to a folder on your computer where you'd like to download this tool.
+Git clone and run locally,
 
-   b. Open a command/terminal prompt and execute,
+1. Navigate to a folder on your computer where you'd like to download the SBCODE vLLM client.
+
+2. Open a command/terminal prompt and execute,
 
    ```bash
    git clone https://github.com/Sean-Bradley/vLLM-Client.git
    ```
 
-   c. Then go in to the new folder.
+3. Then go in to the new folder.
 
    ```bash
    cd vLLM-Client
    ```
 
-   d. Open the `index.html` directly into your browser.
+d. Open the `index.html` directly into your browser.
 
 ## Configure Settings
 
-1. Register at [Runpod](https://get.runpod.io/q0btky2wuu29) (New users earn a small bonus credit ($5 typical, up to $500 possible) after depositing $10.)
+1. Register at [Runpod](https://get.runpod.io/q0btky2wuu29) _(New users earn a small bonus credit ($5 typical, up to $500 possible) after depositing $10.)_
 
 2. Go to **Serverless** tab and choose **vLLM** by **runpod-workers**.
 
