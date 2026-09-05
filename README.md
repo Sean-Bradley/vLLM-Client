@@ -26,7 +26,7 @@ d. Open the `index.html` directly into your browser.
 
 ## Video Tutorial
 
-[![Build Your Own AI Assistant with RunPod & vLLM](docs/ai-chat-thumb.jpg)](https://youtu.be/NtcheEus-Fc)
+[![Build Your Own AI Assistant with RunPod & vLLM](docs/ai-chat-thumb2.jpg)](https://youtu.be/NtcheEus-Fc)
 [https://youtu.be/NtcheEus-Fc](https://youtu.be/NtcheEus-Fc)
 
 ## Configure Settings
