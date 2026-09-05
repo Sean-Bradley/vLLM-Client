@@ -2,7 +2,7 @@
 
 ## How to Use
 
-Via the website directly : [vllm-client.sbcode.net](https://vllm-client.sbcode.net)
+Via the website directly : [https://vllm-client.sbcode.net](https://vllm-client.sbcode.net)
 
 or,
 
@@ -24,6 +24,11 @@ Git clone and run locally,
 
 d. Open the `index.html` directly into your browser.
 
+## Video Tutorial
+
+[![Build Your Own AI Assistant with RunPod & vLLM](docs/ai-chat-thumb.jpg)](https://youtu.be/NtcheEus-Fc)
+[https://youtu.be/NtcheEus-Fc](https://youtu.be/NtcheEus-Fc)
+
 ## Configure Settings
 
 1. Register at [Runpod](https://get.runpod.io/q0btky2wuu29) _(New users earn a small bonus credit ($5 typical, up to $500 possible) after depositing $10.)_
@@ -40,6 +45,7 @@ d. Open the `index.html` directly into your browser.
    - Qwen/Qwen2.5-Coder-32B-Instruct
    - Qwen/Qwen3.8-27B
    - OBLITERATUS/Qwen3.8-27B-OBLITERATED
+   - openai/gpt-oss-20b
 
 5. Use **Endpoint** deployment type, accept the default **GPU Configuration** and press **Create Endpoint** (Usage is billed per millisecond, but only when workers are in `running` state)
 
