@@ -880,17 +880,9 @@
                     <input type="password" id="apiKeyInput" placeholder="Enter your RunPod API key" />
                 </div>
 
-                <div class="setting-group">
-                    <label for="modelInput"> Model </label>
-
-                    <input type="text" id="modelInput" placeholder="Model name" />
-                </div>
-
                 <div class="setting-actions">
-                    <button class="setting-button" id="detectModelBtn">Detect Model</button>
-
-                    <span class="settings-status" id="settingsStatus"></span>
-
+                    <span class="settings-status" id="settingsStatus">Model is detected automatically when you start a
+                        chat.</span>
                 </div>
 
                 <div class="privacy-settings-row">
@@ -961,7 +953,8 @@
 
                 <h3>Information stored locally</h3>
 
-                <p>The endpoint address, API key, selected model, and saved conversations are stored locally in your
+                <p>The endpoint address, API key, automatically detected model information, saved configurations, and
+                    saved conversations are stored locally in your
                     browser using localStorage.</p>
 
                 <h3>SBCODE does not receive your chat data</h3>
@@ -1035,7 +1028,6 @@
 
         const API_KEY_KEY = 'vllm_api_key'
 
-        const MODEL_KEY = 'vllm_model'
         const CONFIGURATIONS_KEY = 'vllm_configurations'
 
         const PRIVACY_ACK_KEY = 'vllm_privacy_acknowledged'
@@ -1051,6 +1043,9 @@
         let conversationToDelete = null
         let savedConfigurations = []
         let configurationToDelete = null
+        let currentModel = ''
+        let currentModelEndpoint = ''
+        let currentModelApiKey = ''
 
         let isSending = false
 
@@ -1078,9 +1073,6 @@
 
         const apiKeyInput = document.getElementById('apiKeyInput')
 
-        const modelInput = document.getElementById('modelInput')
-
-        const detectModelBtn = document.getElementById('detectModelBtn')
 
         const settingsStatus = document.getElementById('settingsStatus')
         const savedConfigList = document.getElementById('savedConfigList')
@@ -1162,8 +1154,6 @@
             localStorage.setItem(ENDPOINT_KEY, endpointInput.value.trim())
 
             localStorage.setItem(API_KEY_KEY, apiKeyInput.value.trim())
-
-            localStorage.setItem(MODEL_KEY, modelInput.value.trim())
         }
 
         function loadSettings() {
@@ -1171,7 +1161,9 @@
 
             apiKeyInput.value = localStorage.getItem(API_KEY_KEY) || ''
 
-            modelInput.value = localStorage.getItem(MODEL_KEY) || ''
+            currentModel = ''
+            currentModelEndpoint = ''
+            currentModelApiKey = ''
         }
 
         /* =========================
@@ -1197,7 +1189,11 @@
         }
 
         function getCurrentConfigurationValues() {
-            return { endpoint: endpointInput.value.trim(), apiKey: apiKeyInput.value.trim(), model: modelInput.value.trim() }
+            return {
+                endpoint: endpointInput.value.trim(),
+                apiKey: apiKeyInput.value.trim(),
+                model: currentModel
+            }
         }
 
         function configurationsMatch(a, b) {
@@ -1213,8 +1209,15 @@
         }
 
         function getActiveConfigurationId() {
-            const current = getCurrentConfigurationValues()
-            const match = savedConfigurations.find((config) => configurationsMatch(config, current))
+            const endpoint = endpointInput.value.trim()
+            const apiKey = apiKeyInput.value.trim()
+
+            const match = savedConfigurations.find((config) =>
+                config.endpoint === endpoint &&
+                config.apiKey === apiKey &&
+                config.model === currentModel
+            )
+
             return match ? match.id : null
         }
 
@@ -1259,10 +1262,11 @@
             if (!config) return
             endpointInput.value = config.endpoint
             apiKeyInput.value = config.apiKey
-            modelInput.value = config.model
+            currentModel = config.model
+            currentModelEndpoint = config.endpoint
+            currentModelApiKey = config.apiKey
             localStorage.setItem(ENDPOINT_KEY, config.endpoint)
             localStorage.setItem(API_KEY_KEY, config.apiKey)
-            localStorage.setItem(MODEL_KEY, config.model)
             settingsStatus.textContent = 'Loaded: ' + getConfigurationDisplayName(config)
             renderSavedConfigurations()
         }
@@ -1609,77 +1613,93 @@
             renderSavedConfigurations()
         })
 
-        /* =========================
- MODEL DETECTION
- ========================= */
-
-        async function detectModel() {
-            const endpoint = endpointInput.value.trim()
-
+        function handleConnectionSettingChange() {
+            const endpoint = endpointInput.value.trim().replace(/\/+$/, '')
             const apiKey = apiKeyInput.value.trim()
 
-            if (!endpoint) {
-                settingsStatus.textContent = 'Enter your vLLM endpoint first.'
-
-                return
+            if (endpoint !== currentModelEndpoint || apiKey !== currentModelApiKey) {
+                const remembered = getRememberedModel(endpoint, apiKey)
+                if (remembered) {
+                    currentModel = remembered
+                    currentModelEndpoint = endpoint
+                    currentModelApiKey = apiKey
+                    settingsStatus.textContent = 'Saved model: ' + remembered
+                } else {
+                    currentModel = ''
+                    currentModelEndpoint = ''
+                    currentModelApiKey = ''
+                    settingsStatus.textContent = 'Model is detected automatically when you start a chat.'
+                }
             }
 
-            if (!apiKey) {
-                settingsStatus.textContent = 'Enter your API key first.'
+            renderSavedConfigurations()
+        }
 
-                return
+        endpointInput.addEventListener('input', handleConnectionSettingChange)
+        apiKeyInput.addEventListener('input', handleConnectionSettingChange)
+
+        /* =========================
+ MODEL DISCOVERY
+ ========================= */
+
+        function getModelsEndpoint(endpoint) {
+            const normalizedEndpoint = endpoint.replace(/\/+$/, '')
+
+            if (!normalizedEndpoint.endsWith('/v1/chat/completions')) {
+                return null
             }
 
-            if (!endpoint.endsWith('/v1/chat/completions')) {
-                settingsStatus.textContent = 'Endpoint must end with /v1/chat/completions'
+            return normalizedEndpoint.replace('/v1/chat/completions', '/v1/models')
+        }
 
-                return
+        function getRememberedModel(endpoint, apiKey) {
+            const config = savedConfigurations.find((item) =>
+                item.endpoint === endpoint && item.apiKey === apiKey
+            )
+
+            return config ? config.model : ''
+        }
+
+        async function discoverModel(endpoint, apiKey) {
+            const modelsEndpoint = getModelsEndpoint(endpoint)
+
+            if (!modelsEndpoint) {
+                throw new Error('Endpoint must end with /v1/chat/completions')
             }
-
-            const modelsEndpoint = endpoint.replace('/v1/chat/completions', '/v1/models')
-
-            detectModelBtn.disabled = true
 
             settingsStatus.textContent = 'Detecting model...'
 
-            try {
-                const response = await fetch(modelsEndpoint, {
-                    method: 'GET',
-
-                    headers: {
-                        Authorization: 'Bearer ' + apiKey
-                    }
-                })
-
-                if (!response.ok) {
-                    const errorText = await response.text()
-
-                    throw new Error('HTTP ' + response.status + (errorText ? ': ' + errorText : ''))
+            const response = await fetch(modelsEndpoint, {
+                method: 'GET',
+                headers: {
+                    Authorization: 'Bearer ' + apiKey
                 }
+            })
 
-                const data = await response.json()
-
-                if (!data.data || !Array.isArray(data.data) || data.data.length === 0) {
-                    throw new Error('No models were returned.')
-                }
-
-                const detectedModel = data.data[0].id
-
-                modelInput.value = detectedModel
-
-                localStorage.setItem(MODEL_KEY, detectedModel)
-
-                settingsStatus.textContent = 'Detected: ' + detectedModel
-            } catch (error) {
-                console.error('Model detection error:', error)
-
-                settingsStatus.textContent = 'Model detection failed: ' + error.message
-            } finally {
-                detectModelBtn.disabled = false
+            if (!response.ok) {
+                const errorText = await response.text()
+                throw new Error('HTTP ' + response.status + (errorText ? ': ' + errorText : ''))
             }
-        }
 
-        detectModelBtn.addEventListener('click', detectModel)
+            const data = await response.json()
+
+            if (!data.data || !Array.isArray(data.data) || data.data.length === 0 || !data.data[0]?.id) {
+                throw new Error('No models were returned.')
+            }
+
+            const detectedModel = data.data[0].id
+
+            currentModel = detectedModel
+            currentModelEndpoint = endpoint
+            currentModelApiKey = apiKey
+
+
+            saveCurrentConfiguration()
+
+            settingsStatus.textContent = 'Model detected: ' + detectedModel
+
+            return detectedModel
+        }
 
         /* =========================
  SEND MESSAGE
@@ -1690,35 +1710,25 @@
                 return
             }
 
-            const endpoint = endpointInput.value.trim()
-
+            let endpoint = endpointInput.value.trim().replace(/\/+$/, '')
             const apiKey = apiKeyInput.value.trim()
-
-            const model = modelInput.value.trim()
-
             const prompt = promptInput.value.trim()
 
             if (!endpoint) {
                 settingsPanel.classList.add('visible')
-
                 settingsStatus.textContent = 'Enter your vLLM endpoint.'
-
                 return
             }
 
             if (!apiKey) {
                 settingsPanel.classList.add('visible')
-
                 settingsStatus.textContent = 'Enter your API key.'
-
                 return
             }
 
-            if (!model) {
+            if (!getModelsEndpoint(endpoint)) {
                 settingsPanel.classList.add('visible')
-
-                settingsStatus.textContent = 'Enter or detect a model.'
-
+                settingsStatus.textContent = 'Endpoint must end with /v1/chat/completions'
                 return
             }
 
@@ -1726,24 +1736,20 @@
                 return
             }
 
+            endpointInput.value = endpoint
             saveSettings()
 
-            /* Create a conversation automatically
-   if none currently exists. */
+            /* Create a conversation automatically if none currently exists. */
 
             if (!currentConversationId) {
                 const conversation = {
                     id: Date.now().toString() + Math.random().toString(36).slice(2),
-
                     title: 'New Chat',
-
                     created: new Date().toISOString(),
-
                     messages: []
                 }
 
                 conversations.unshift(conversation)
-
                 currentConversationId = conversation.id
             }
 
@@ -1753,7 +1759,7 @@
                 return
             }
 
-            /* First prompt becomes title */
+            /* First prompt becomes title. */
 
             if (conversation.messages.length === 0) {
                 conversation.title = prompt.length > 45 ? prompt.slice(0, 45) + '...' : prompt
@@ -1761,73 +1767,67 @@
 
             conversation.messages.push({
                 role: 'user',
-
                 content: prompt
             })
 
             saveConversations()
-
             renderSidebar()
 
-            /* Clear input */
+            /* Clear input. */
 
             promptInput.value = ''
 
-            /* Render user message */
+            /* Render user message and waiting indicator immediately. */
 
             appendMessageToDOM('user', prompt)
 
-            /* Create assistant message */
-
             const assistantContent = appendMessageToDOM('assistant', '')
-
-            /*
-  Show the animated waiting indicator
-  immediately. This remains visible while
-  RunPod/vLLM is waking up or preparing
-  the first response.
-*/
-
             showThinkingIndicator(assistantContent)
-
             scrollChatToBottom()
 
             isSending = true
-
             sendBtn.disabled = true
-
             promptInput.disabled = true
 
             let assistantText = ''
-
             let hasReceivedContent = false
+            let model = getRememberedModel(endpoint, apiKey)
 
             try {
+                /*
+                 * If this exact endpoint + API key has no remembered model,
+                 * discover it now. This may also trigger a RunPod cold start.
+                 */
+
+                if (model) {
+                    currentModel = model
+                    currentModelEndpoint = endpoint
+                    currentModelApiKey = apiKey
+                    settingsStatus.textContent = 'Using saved model: ' + model
+                } else if (currentModel && currentModelEndpoint === endpoint && currentModelApiKey === apiKey) {
+                    model = currentModel
+                    settingsStatus.textContent = 'Using model: ' + model
+                } else {
+                    model = await discoverModel(endpoint, apiKey)
+                }
+
                 const response = await fetch(endpoint, {
                     method: 'POST',
-
                     headers: {
                         'Content-Type': 'application/json',
-
                         Authorization: 'Bearer ' + apiKey
                     },
-
                     body: JSON.stringify({
                         model: model,
-
                         messages: conversation.messages,
-
                         temperature: 0.7,
-
                         max_tokens: 5000,
-
                         stream: true
                     })
                 })
 
                 if (!response.ok) {
                     const errorText = await response.text()
-
                     throw new Error('HTTP ' + response.status + (errorText ? ': ' + errorText : ''))
                 }
 
@@ -1836,9 +1836,7 @@
                 }
 
                 const reader = response.body.getReader()
-
                 const decoder = new TextDecoder('utf-8')
-
                 let buffer = ''
 
                 while (true) {
@@ -1853,17 +1851,12 @@
                     })
 
                     const lines = buffer.split('\n')
-
                     buffer = lines.pop() || ''
 
                     for (let line of lines) {
                         line = line.trim()
 
-                        if (!line) {
-                            continue
-                        }
-
-                        if (!line.startsWith('data:')) {
+                        if (!line || !line.startsWith('data:')) {
                             continue
                         }
 
@@ -1875,31 +1868,17 @@
 
                         try {
                             const json = JSON.parse(data)
-
                             const delta = json?.choices?.[0]?.delta?.content
 
                             if (typeof delta === 'string') {
                                 assistantText += delta
 
-                                /*
-            First actual content has
-            arrived, so remove the
-            waiting indicator.
-          */
-
                                 if (!hasReceivedContent) {
                                     hasReceivedContent = true
-
                                     removeThinkingIndicator(assistantContent)
                                 }
 
-                                /*
-            Render Markdown during
-            streaming.
-          */
-
                                 assistantContent.innerHTML = renderMarkdown(assistantText)
-
                                 scrollChatToBottom()
                             }
                         } catch (parseError) {
@@ -1908,15 +1887,10 @@
                     }
                 }
 
-                /*
-    Save completed assistant
-    response in its original
-    Markdown form.
-  */
+                /* Save completed assistant response in its original Markdown form. */
 
                 conversation.messages.push({
                     role: 'assistant',
-
                     content: assistantText
                 })
 
@@ -1926,29 +1900,23 @@
                 console.error('Chat error:', error)
 
                 const errorMessage = 'Error: ' + error.message
-
                 assistantText = errorMessage
 
                 removeThinkingIndicator(assistantContent)
-
                 assistantContent.innerHTML = renderMarkdown(errorMessage)
 
                 conversation.messages.push({
                     role: 'assistant',
-
                     content: errorMessage
                 })
 
                 saveConversations()
             } finally {
                 isSending = false
-
                 sendBtn.disabled = false
-
                 promptInput.disabled = false
-
                 promptInput.focus()
-
+                renderSavedConfigurations()
                 scrollChatToBottom()
             }
         }
