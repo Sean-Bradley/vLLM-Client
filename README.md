@@ -4,7 +4,7 @@ Website : [vllm-client.sbcode.net](https://vllm-client.sbcode.net)
 
 ## Configure Settings
 
-1. Register at [Runpod](https://get.runpod.io/q0btky2wuu29) (New users earn a small bonus credit ($5 typical, up to $500 possible) after spending $10.)
+1. Register at [Runpod](https://get.runpod.io/q0btky2wuu29) (New users earn a small bonus credit ($5 typical, up to $500 possible) after depositing $10.)
 
 2. Go to **Serverless** tab and choose **vLLM** by **runpod-workers**.
 
