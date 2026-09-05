@@ -49,16 +49,16 @@ d. Open the `index.html` directly into your browser.
 
 5. Use **Endpoint** deployment type, accept the default **GPU Configuration** and press **Create Endpoint** (Usage is billed per millisecond, but only when workers are in `running` state)
 
-6. After it is created, we want to get the vLLM Endpoint URL, but we will use the **OpenAI-compatible** `/v1/chat/completions` endpoint instead.
+6. After it is created, we want to get the vLLM Endpoint URL, but we will use the **OpenAI-compatible** `/openai/v1/chat/completions` endpoint instead.
    1. Open up the **Requests** tab for your serverless vLLM endpoint and copy the `run` url.
 
       E.g.,
-      `https://api.runpod.ai/v2/abcdefg123456/run`
+      `https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/run`
 
    2. remove the `run` and replace with `/openai/v1/chat/completions`
 
       E.g.,
-      `https://api.runpod.ai/v2/abcdefg123456/openai/v1/chat/completions`
+      `https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/openai/v1/chat/completions`
 
    3. Paste the new URL into the SBCODE vLLM Client `Settings/vLLM Endpoint` text field
 
