@@ -1,6 +1,26 @@
 # vLLM-Client
 
-Website : [vllm-client.sbcode.net](https://vllm-client.sbcode.net)
+## How to Use
+
+1. Website : [vllm-client.sbcode.net](https://vllm-client.sbcode.net)
+
+2. Git Clone and run locally
+
+   a. Navigate to a folder on your computer where you'd like to download this tool.
+
+   b. Open a command/terminal prompt and execute,
+
+   ```bash
+   git clone https://github.com/Sean-Bradley/vLLM-Client.git
+   ```
+
+   c. Then go in to the new folder.
+
+   ```bash
+   cd vLLM-Client
+   ```
+
+   d. Open the `index.html` directly into your browser.
 
 ## Configure Settings
 
@@ -45,35 +65,37 @@ Website : [vllm-client.sbcode.net](https://vllm-client.sbcode.net)
 
    ![Settings](./docs/settings.jpg)
 
-   > Note: These settings that you enter will saved into your browsers own local storage for the next time you open this webpage. These settings will not be saved on the https://vllm-client.sbcode.net servers. See the privacy statement when you first open the SBCODE vLLM Client webpage.
+   > Note: These settings that you enter will be saved into your browsers own local storage for the next time you open this webpage. These settings will not be saved on the https://vllm-client.sbcode.net servers. See the privacy statement when you first open the SBCODE vLLM Client webpage.
 
 9. Now you can start chatting.
 
    An example prompt can be, `write a short story about a robot`.
 
-   Expect to wait ~5 minutes for a response.
+   Expect to wait ~5 minutes for a response, depending on the size of the AI model you selected.
 
    > Note: The first time you chat with your Runpod vLLM endpoint, it will auto detect the model you've chosen at Runpod, and save your settings as a button in the SBCODE vLLM Client `Settings/Saved Configurations` section.
 
 ## Improving Runpod Serverless response times.
 
-When we setup this serverless endpoint, the default worker timeout (before it goes back to idle) is 5 seconds. If we don't write our next prompt withing 5 second countdown, our worker will go back into `idle` state and it will take ~5 minutes to wake it up again while it reloads the model into the GPU.
+When we setup this serverless endpoint, the default worker timeout (before it goes back to idle) is 5 seconds. If we don't write our next prompt within that 5 second countdown, our worker will go back into `idle` state and it will take ~5 minutes to wake it up again while it reloads the model into the GPU.
+
+We can speed this process up several ways.
 
 ### Option 1
 
-We could increase the `Idle timeout` option to maybe 300 seconds. This is 5 minutes. So, writing another prompt with that 5 minutes means that your worker will answer your chat almost instantly.
+We could increase the `Idle timeout` option to maybe 300 seconds. This is 5 minutes. So, writing another prompt with that 5 minute window means that your worker will answer your chat request almost instantly.
 
 Note that while your worker(s) is in the `running` state, you are paying for it.
 
-This option is a good compromise when you are not going to be using your serverless endpoint all the time throughout the day, week, etc, but on sporadic occasions.
+This option is a good compromise when you are only planning to use your serverless endpoint for a few times in a row, maybe several occasions a day. When the endpoint goes back into its `idle` state, it won't cost you any money.
 
 ### Option 2
 
 This is option is more expensive, since you will keep your worker(s) in the running state permanently.
 
-Set Active Workers from `0` to `1`. If you find your endpoint is under heaver load, then you can increase the `Active Workers` value even higher. Be aware that this will cost more since you are now permanently using a GPU to store your model.
+Set Active Workers from `0` to `1`. If you find your endpoint is under heavier load, then you can increase the `Active Workers` value even higher. Be aware that this will cost even more since you are now permanently using even more GPU resources to store your model.
 
-You also have the option to increase the `Max workers` and `GPU count`, but expect the costs to be even higher when all workers and GPUs are being utilized.
+You also have the option to increase the `Max workers` and `GPU count`, but expect the costs to be higher when all workers and GPUs are being utilized.
 
 ## SBCODE vLLM Client in Relation to Runpod Infrastructure
 
