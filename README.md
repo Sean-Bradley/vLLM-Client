@@ -52,7 +52,7 @@ Website : [vllm-client.sbcode.net](https://vllm-client.sbcode.net)
 
 9. Example Settings
 
-   ![](./docs/settings.jpg)
+   ![Settings](./docs/settings.jpg)
 
    > Note: These settings that you enter will saved into your browsers own local storage for the next time you open this webpage. These settings will not be saved on the https://vllm-client.sbcode.net servers. See the privacy statement when you first open the SBCODE vLLM Client webpage.
 
@@ -81,3 +81,7 @@ This is option is more expensive, since you will keep your worker in the running
 Set Active Workers from `0` to `1`. If you find your endpoint is under heaver load, then you can increase the `Active Workers` value even higher. Be aware that this will cost more since you are now permanently using a GPU to store your model.
 
 You also have the option to increase the `Max workers` and `GPU count`, but expect the costs to be even higher when all workers and GPUs are being utilized.
+
+## SBCODE vLLM Client in Relation to Runpod Infrastructure
+
+![SBCODE vLLM Client in Relation to Runpod Infrastructure](./docs/overview.jpg)
