@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SBCODE vLLM Client</title>
+    <title>SBCODE vLLM Client v3.0</title>
 
     <!-- Markdown + HTML sanitization -->
     <script src="libs/marked.min.js"></script>
@@ -143,10 +143,39 @@
             border-bottom: 1px solid #2b2b2b;
         }
 
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+        }
+
         .topbar-title {
             font-size: 14px;
             font-weight: 600;
             color: #ddd;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 34px;
+            height: 34px;
+            margin-right: 8px;
+            padding: 0;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #252525;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 19px;
+            line-height: 32px;
+        }
+
+        .mobile-menu-btn:hover {
+            background: #303030;
+        }
+
+        .mobile-sidebar-overlay {
+            display: none;
         }
 
         .settings-toggle {
@@ -804,9 +833,49 @@
      ========================= */
 
         @media (max-width: 700px) {
+            body {
+                position: relative;
+            }
+
             .sidebar {
-                width: 210px;
-                min-width: 210px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1000;
+                width: min(280px, 82vw);
+                min-width: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                transition: transform 0.2s ease;
+                box-shadow: 8px 0 24px rgba(0, 0, 0, 0.35);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .mobile-sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 999;
+                background: rgba(0, 0, 0, 0.55);
+                opacity: 0;
+                pointer-events: none;
+                display: block;
+                transition: opacity 0.2s ease;
+            }
+
+            .mobile-sidebar-overlay.visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 12px;
             }
 
             .chat-area {
@@ -847,13 +916,18 @@
         <div class="conversation-list" id="conversationList"></div>
     </aside>
 
+    <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay"></div>
+
     <!-- =========================
      MAIN
      ========================= -->
 
     <main class="main">
         <div class="topbar">
-            <div class="topbar-title">SBCODE vLLM Client</div>
+            <div class="topbar-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open conversations" aria-expanded="false">☰</button>
+                <div class="topbar-title">SBCODE vLLM Client</div>
+            </div>
 
             <button class="settings-toggle" id="settingsToggle">Settings</button>
         </div>
@@ -871,7 +945,7 @@
                     <label for="endpointInput"> vLLM Endpoint </label>
 
                     <input type="text" id="endpointInput"
-                        placeholder="https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/openai/v1/chat/completions" />
+                        placeholder="https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/v1/chat/completions" />
                 </div>
 
                 <div class="setting-group">
@@ -881,8 +955,7 @@
                 </div>
 
                 <div class="setting-actions">
-                    <span class="settings-status" id="settingsStatus">Model is detected automatically when you start a
-                        chat.</span>
+                    <span class="settings-status" id="settingsStatus">Model is detected automatically when you start a chat.</span>
                 </div>
 
                 <div class="privacy-settings-row">
@@ -953,8 +1026,7 @@
 
                 <h3>Information stored locally</h3>
 
-                <p>The endpoint address, API key, automatically detected model information, saved configurations, and
-                    saved conversations are stored locally in your
+                <p>The endpoint address, API key, automatically detected model information, saved configurations, and saved conversations are stored locally in your
                     browser using localStorage.</p>
 
                 <h3>SBCODE does not receive your chat data</h3>
@@ -1066,6 +1138,10 @@
         const newChatBtn = document.getElementById('newChatBtn')
 
         const settingsToggle = document.getElementById('settingsToggle')
+
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn')
+
+        const mobileSidebarOverlay = document.getElementById('mobileSidebarOverlay')
 
         const settingsPanel = document.getElementById('settingsPanel')
 
@@ -1361,10 +1437,46 @@
         })
 
         /* =========================
+ MOBILE SIDEBAR DRAWER
+ ========================= */
+
+        function isMobileLayout() {
+            return window.matchMedia('(max-width: 700px)').matches
+        }
+
+        function openMobileSidebar() {
+            if (!isMobileLayout()) {
+                return
+            }
+
+            document.querySelector('.sidebar').classList.add('mobile-open')
+            mobileSidebarOverlay.classList.add('visible')
+            mobileMenuBtn.setAttribute('aria-expanded', 'true')
+        }
+
+        function closeMobileSidebar() {
+            document.querySelector('.sidebar').classList.remove('mobile-open')
+            mobileSidebarOverlay.classList.remove('visible')
+            mobileMenuBtn.setAttribute('aria-expanded', 'false')
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('.sidebar')
+
+            if (sidebar.classList.contains('mobile-open')) {
+                closeMobileSidebar()
+            } else {
+                openMobileSidebar()
+            }
+        }
+
+        /* =========================
  CONVERSATIONS
  ========================= */
 
         function createConversation() {
+            closeMobileSidebar()
+
             const conversation = {
                 id: Date.now().toString() + Math.random().toString(36).slice(2),
 
@@ -1422,6 +1534,8 @@
 
                 item.addEventListener('click', () => {
                     currentConversationId = conversation.id
+
+                    closeMobileSidebar()
 
                     renderSidebar()
 
@@ -1603,6 +1717,15 @@
  ========================= */
 
         newChatBtn.addEventListener('click', createConversation)
+
+        mobileMenuBtn.addEventListener('click', toggleMobileSidebar)
+        mobileSidebarOverlay.addEventListener('click', closeMobileSidebar)
+
+        window.addEventListener('resize', () => {
+            if (!isMobileLayout()) {
+                closeMobileSidebar()
+            }
+        })
 
         /* =========================
  SETTINGS
@@ -1941,6 +2064,12 @@
 
         document.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') {
+                return
+            }
+
+            const sidebar = document.querySelector('.sidebar')
+            if (sidebar.classList.contains('mobile-open')) {
+                closeMobileSidebar()
                 return
             }
 
