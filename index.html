@@ -1772,11 +1772,11 @@
         function getModelsEndpoint(endpoint) {
             const normalizedEndpoint = endpoint.replace(/\/+$/, '')
 
-            if (!normalizedEndpoint.endsWith('/v1/chat/completions')) {
+            if (!normalizedEndpoint.endsWith('/openai/v1/chat/completions')) {
                 return null
             }
 
-            return normalizedEndpoint.replace('/v1/chat/completions', '/v1/models')
+            return normalizedEndpoint.replace('/openai/v1/chat/completions', '/openai/v1/models')
         }
 
         function getRememberedModel(endpoint, apiKey) {
@@ -1791,7 +1791,7 @@
             const modelsEndpoint = getModelsEndpoint(endpoint)
 
             if (!modelsEndpoint) {
-                throw new Error('Endpoint must end with /v1/chat/completions')
+                throw new Error('Endpoint must end with /openai/v1/chat/completions')
             }
 
             settingsStatus.textContent = 'Detecting model...'
@@ -1855,7 +1855,7 @@
 
             if (!getModelsEndpoint(endpoint)) {
                 settingsPanel.classList.add('visible')
-                settingsStatus.textContent = 'Endpoint must end with /v1/chat/completions'
+                settingsStatus.textContent = 'Endpoint must end with /openai/v1/chat/completions'
                 return
             }
 
