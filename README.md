@@ -99,7 +99,7 @@ This option is a good compromise when you are only planning to use your serverle
 
 ### Option 2
 
-This is option is more expensive, since you will keep your worker(s) in the running state permanently.
+This option is more expensive, since you will keep your worker(s) in the running state permanently.
 
 Set Active Workers from `0` to `1`. If you find your endpoint is under heavier load, then you can increase the `Active Workers` value even higher. Be aware that this will cost even more since you are now permanently using even more GPU resources to store your model.
 
