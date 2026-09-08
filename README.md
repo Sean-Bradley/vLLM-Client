@@ -55,7 +55,7 @@ d. Open the `index.html` directly into your browser.
       E.g.,
       `https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/run`
 
-   2. remove the `run` and replace with `/openai/v1/chat/completions`
+   2. remove the `/run` and replace with `/openai/v1/chat/completions`
 
       E.g.,
       `https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/openai/v1/chat/completions`
@@ -81,7 +81,7 @@ d. Open the `index.html` directly into your browser.
 
    Expect to wait ~5 minutes for a response, depending on the size of the AI model you selected.
 
-   > Note: The first time you chat with your Runpod vLLM endpoint, it will auto detect the model you've chosen at Runpod, and save your settings as a button in the SBCODE vLLM Client `Settings/Saved Configurations` section.
+   > Note: The first time you chat with your Runpod vLLM endpoint, it will auto detect the model you've chosen at Runpod, and save your settings as a new button in the SBCODE vLLM Client `Settings/Saved Configurations` section.
 
 ## Improving Runpod Serverless response times.
 
