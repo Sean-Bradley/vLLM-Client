@@ -250,6 +250,22 @@ body {
     white-space: nowrap;
 }
 
+.saved-config-model {
+    max-width: min(280px, 60vw);
+    padding: 2px 22px 2px 4px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.saved-config-model option {
+    background: #202020;
+    color: #eee;
+}
+
 .delete-config-btn {
     display: none;
     width: 16px;
@@ -292,7 +308,8 @@ body {
     color: #aaa;
 }
 
-.setting-group input {
+.setting-group input,
+.setting-group textarea {
     width: 100%;
     padding: 9px 10px;
     border: 1px solid #333;
@@ -303,7 +320,13 @@ body {
     font-size: 13px;
 }
 
-.setting-group input:focus {
+.setting-group textarea {
+    min-height: 72px;
+    resize: vertical;
+}
+
+.setting-group input:focus,
+.setting-group textarea:focus {
     border-color: #555;
 }
 
@@ -312,6 +335,7 @@ body {
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
+    margin-bottom: 14px;
 }
 
 .setting-button {
@@ -421,6 +445,52 @@ body {
     white-space: pre-wrap;
 }
 
+.user-message-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.retry-message-button,
+.delete-message-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 24px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #202020;
+    color: #999;
+    font-size: 17px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.delete-message-button svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+}
+
+.retry-message-button:hover:not(:disabled),
+.delete-message-button:hover:not(:disabled) {
+    border-color: #555;
+    background: #292929;
+    color: #eee;
+}
+
+.retry-message-button:disabled,
+.delete-message-button:disabled {
+    opacity: 0.45;
+    cursor: wait;
+}
+
 /* =========================
  ASSISTANT
  ========================= */
@@ -433,11 +503,49 @@ body {
     margin-bottom: 8px;
 }
 
+.message-model {
+    display: block;
+    margin-top: 3px;
+    color: #777;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
 .message.assistant .message-content {
     display: block;
     max-width: 100%;
     color: #d3d3d3;
     line-height: 1.7;
+}
+
+.message-reasoning {
+    max-width: 100%;
+    margin-bottom: 12px;
+    border: 1px solid #303030;
+    border-radius: 7px;
+    background: #171717;
+    color: #999;
+    font-size: 12px;
+}
+
+.message-reasoning summary {
+    padding: 7px 10px;
+    color: #aaa;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.message-reasoning-content {
+    max-height: 160px;
+    padding: 8px 10px 10px;
+    overflow-y: auto;
+    border-top: 1px solid #2b2b2b;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 /* =========================

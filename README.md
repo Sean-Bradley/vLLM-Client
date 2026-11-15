@@ -75,7 +75,7 @@ d. Open the `index.html` directly into your browser.
  
     ![Settings](./docs/settings.jpg)
  
-    > Note: These settings that you enter will be saved into your browsers own local storage for the next time you open this webpage. These settings will not be saved on the https://vllm-client.sbcode.net servers. See the privacy statement when you first open the SBCODE vLLM Client webpage.
+    > Note: These settings, including an optional system prompt for each saved configuration, are stored in your browser's local storage for the next time you open this webpage. The system prompt is sent to your configured endpoint with each chat. These settings will not be saved on the https://vllm-client.sbcode.net servers. See the privacy statement when you first open the SBCODE vLLM Client webpage.
  
 9. Now you can start chatting.
  
@@ -83,7 +83,9 @@ d. Open the `index.html` directly into your browser.
  
     Expect to wait ~5 minutes for a response, depending on the size of the AI model you selected.
  
-    > Note: The first time you chat with your Runpod vLLM endpoint, it will auto detect the model you've chosen at Runpod, and save your settings as a new button in the SBCODE vLLM Client `Settings/Saved Configurations` section.
+    > Note: The first time you chat with your Runpod vLLM endpoint, it detects the available model names and saves the configuration in `Settings/Saved Configurations`. If the endpoint returns multiple models, choose one from that configuration's dropdown; the first returned model is selected by default.
+
+    Each assistant response also shows the model used beneath the `ASSISTANT` label. This model name is saved with the conversation and shown when you revisit it.
  
 ## Improving Runpod Serverless response times.
  

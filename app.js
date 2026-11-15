@@ -24,6 +24,8 @@
         let savedConfigurations = []
         let configurationToDelete = null
         let currentModel = ''
+        let currentModels = []
+        let currentSystemPrompt = ''
         let currentModelEndpoint = ''
         let currentModelApiKey = ''
 
@@ -59,6 +61,7 @@
 
 
         const settingsStatus = document.getElementById('settingsStatus')
+        const systemPromptInput = document.getElementById('systemPromptInput')
         const savedConfigList = document.getElementById('savedConfigList')
 
         const privacyBtn = document.getElementById('privacyBtn')
@@ -146,6 +149,8 @@
             apiKeyInput.value = localStorage.getItem(API_KEY_KEY) || ''
 
             currentModel = ''
+            currentModels = []
+            currentSystemPrompt = ''
             currentModelEndpoint = ''
             currentModelApiKey = ''
         }
@@ -165,7 +170,16 @@
                 const parsed = JSON.parse(stored)
                 savedConfigurations = Array.isArray(parsed) ? parsed.filter((config) =>
                     config && typeof config.endpoint === 'string' && typeof config.apiKey === 'string' && typeof config.model === 'string'
-                ) : []
+                ).map((config) => ({
+                    ...config,
+                    systemPrompt: typeof config.systemPrompt === 'string' ? config.systemPrompt : '',
+                    models: [...new Set([
+                        ...(Array.isArray(config.models)
+                            ? config.models.filter((model) => typeof model === 'string' && model)
+                            : []),
+                        config.model
+                    ])]
+                })) : []
             } catch (error) {
                 console.error('Could not load saved configurations:', error)
                 savedConfigurations = []
@@ -176,7 +190,8 @@
             return {
                 endpoint: endpointInput.value.trim(),
                 apiKey: apiKeyInput.value.trim(),
-                model: currentModel
+                model: currentModel,
+                systemPrompt: currentSystemPrompt
             }
         }
 
@@ -205,6 +220,12 @@
             return match ? match.id : null
         }
 
+        function getRememberedConfiguration(endpoint, apiKey) {
+            return savedConfigurations.find((config) =>
+                config.endpoint === endpoint && config.apiKey === apiKey
+            )
+        }
+
         function renderSavedConfigurations() {
             savedConfigList.innerHTML = ''
             if (savedConfigurations.length === 0) {
@@ -219,10 +240,31 @@
                 const item = document.createElement('div')
                 item.className = 'saved-config' + (config.id === activeId ? ' active' : '')
                 item.title = config.endpoint
+                item.dataset.configurationId = config.id
 
-                const name = document.createElement('span')
-                name.className = 'saved-config-name'
-                name.textContent = getConfigurationDisplayName(config)
+                if (config.models && config.models.length > 1) {
+                    const modelSelect = document.createElement('select')
+                    modelSelect.className = 'saved-config-model'
+                    modelSelect.setAttribute('aria-label', 'Select model for ' + config.endpoint)
+                    config.models.forEach((model) => {
+                        const option = document.createElement('option')
+                        option.value = model
+                        option.textContent = model
+                        option.selected = model === config.model
+                        modelSelect.appendChild(option)
+                    })
+                    modelSelect.addEventListener('click', (event) => {
+                        event.stopPropagation()
+                        selectConfigurationModel(config.id, modelSelect.value, false)
+                    })
+                    modelSelect.addEventListener('change', () => selectConfigurationModel(config.id, modelSelect.value))
+                    item.appendChild(modelSelect)
+                } else {
+                    const name = document.createElement('span')
+                    name.className = 'saved-config-name'
+                    name.textContent = getConfigurationDisplayName(config)
+                    item.appendChild(name)
+                }
 
                 const deleteButton = document.createElement('button')
                 deleteButton.className = 'delete-config-btn'
@@ -235,10 +277,35 @@
                 })
 
                 item.addEventListener('click', () => loadSavedConfiguration(config.id))
-                item.appendChild(name)
                 item.appendChild(deleteButton)
                 savedConfigList.appendChild(item)
             })
+        }
+
+        function selectConfigurationModel(id, model, rerender = true) {
+            const config = savedConfigurations.find((item) => item.id === id)
+            if (!config || !config.models.includes(model)) return
+
+            config.model = model
+            endpointInput.value = config.endpoint
+            apiKeyInput.value = config.apiKey
+            currentModel = model
+            currentModels = config.models
+            currentSystemPrompt = config.systemPrompt || ''
+            systemPromptInput.value = currentSystemPrompt
+            currentModelEndpoint = config.endpoint
+            currentModelApiKey = config.apiKey
+            localStorage.setItem(ENDPOINT_KEY, config.endpoint)
+            localStorage.setItem(API_KEY_KEY, config.apiKey)
+            saveConfigurations()
+            settingsStatus.textContent = 'Selected model: ' + model
+            if (rerender) {
+                renderSavedConfigurations()
+            } else {
+                savedConfigList.querySelectorAll('.saved-config').forEach((item) => {
+                    item.classList.toggle('active', item.dataset.configurationId === id)
+                })
+            }
         }
 
         function loadSavedConfiguration(id) {
@@ -247,6 +314,9 @@
             endpointInput.value = config.endpoint
             apiKeyInput.value = config.apiKey
             currentModel = config.model
+            currentModels = config.models || [config.model]
+            currentSystemPrompt = config.systemPrompt || ''
+            systemPromptInput.value = currentSystemPrompt
             currentModelEndpoint = config.endpoint
             currentModelApiKey = config.apiKey
             localStorage.setItem(ENDPOINT_KEY, config.endpoint)
@@ -259,12 +329,20 @@
             const current = getCurrentConfigurationValues()
             if (!current.endpoint || !current.apiKey || !current.model) return
             const existing = savedConfigurations.find((config) => configurationsMatch(config, current))
-            if (existing) return
+            if (existing) {
+                existing.models = [...new Set([...(existing.models || []), ...currentModels, current.model])]
+                existing.systemPrompt = current.systemPrompt
+                saveConfigurations()
+                renderSavedConfigurations()
+                return
+            }
             savedConfigurations.push({
                 id: Date.now().toString() + Math.random().toString(36).slice(2),
                 endpoint: current.endpoint,
                 apiKey: current.apiKey,
-                model: current.model
+                model: current.model,
+                systemPrompt: current.systemPrompt,
+                models: [...new Set([...currentModels, current.model])]
             })
             saveConfigurations()
             renderSavedConfigurations()
@@ -528,29 +606,41 @@
                 welcome.className = 'welcome'
 
                 welcome.innerHTML = `
-        <div class="welcome-title">
-          SBCODE vLLM Client
-        </div>
+                <div class="welcome-title">
+                  SBCODE vLLM Client
+                </div>
 
-        <div class="welcome-subtitle">
-          Enter your endpoint and API key in Settings,
-          then start chatting.
-        </div>
-      `
+                <div class="welcome-subtitle">
+                  Enter your endpoint and API key in Settings,
+                  then start chatting.
+                </div>
+              `
 
                 chatInner.appendChild(welcome)
 
                 return
             }
 
-            conversation.messages.forEach((message) => {
-                appendMessageToDOM(message.role, message.content)
+            let latestUserMessageIndex = -1
+            conversation.messages.forEach((message, index) => {
+                if (message.role === 'user') {
+                    latestUserMessageIndex = index
+                }
+            })
+
+            conversation.messages.forEach((message, index) => {
+                const contentElement = appendMessageToDOM(message.role, message.content, null, message.model)
+                const messageElement = contentElement.parentElement
+                messageElement.dataset.messageIndex = index
+                if (message.role === 'user' && index === latestUserMessageIndex) {
+                    appendUserMessageActions(messageElement, index)
+                }
             })
 
             scrollChatToBottom()
         }
 
-        function appendMessageToDOM(role, content) {
+        function appendMessageToDOM(role, content, retryMessageIndex = null, model = '') {
             const message = document.createElement('div')
 
             message.className = 'message ' + (role === 'user' ? 'user' : 'assistant')
@@ -560,6 +650,12 @@
             roleElement.className = 'message-role'
 
             roleElement.textContent = role === 'user' ? 'YOU' : 'ASSISTANT'
+            if (role === 'assistant' && model) {
+                const modelElement = document.createElement('span')
+                modelElement.className = 'message-model'
+                modelElement.textContent = model
+                roleElement.appendChild(modelElement)
+            }
 
             const contentElement = document.createElement('div')
 
@@ -575,9 +671,92 @@
 
             message.appendChild(contentElement)
 
+            if (role === 'user' && retryMessageIndex !== null) {
+                message.dataset.messageIndex = retryMessageIndex
+                appendUserMessageActions(message, retryMessageIndex)
+            }
+
             chatInner.appendChild(message)
 
             return contentElement
+        }
+
+        function setAssistantMessageModel(contentElement, model) {
+            if (!model) return
+
+            const roleElement = contentElement.parentElement.querySelector('.message-role')
+            let modelElement = roleElement.querySelector('.message-model')
+            if (!modelElement) {
+                modelElement = document.createElement('span')
+                modelElement.className = 'message-model'
+                roleElement.appendChild(modelElement)
+            }
+            modelElement.textContent = model
+        }
+
+        function appendUserMessageActions(messageElement, messageIndex) {
+            const actions = document.createElement('div')
+            actions.className = 'user-message-actions'
+
+            const retryButton = document.createElement('button')
+            retryButton.className = 'retry-message-button'
+            retryButton.type = 'button'
+            retryButton.textContent = '↻'
+            retryButton.title = 'Regenerate the response to this message'
+            retryButton.setAttribute('aria-label', 'Regenerate the response to this message')
+            retryButton.disabled = isSending
+            retryButton.addEventListener('click', () => sendMessage(Number(messageElement.dataset.messageIndex)))
+            actions.appendChild(retryButton)
+
+            const deleteButton = document.createElement('button')
+            deleteButton.className = 'delete-message-button'
+            deleteButton.type = 'button'
+            deleteButton.title = 'Delete this message from conversation history'
+            deleteButton.setAttribute('aria-label', 'Delete this message from conversation history')
+            deleteButton.disabled = isSending
+            deleteButton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v5m4-5v5"/></svg>'
+            deleteButton.addEventListener('click', () => deleteUserMessage(Number(messageElement.dataset.messageIndex)))
+            actions.appendChild(deleteButton)
+
+            messageElement.appendChild(actions)
+        }
+
+        function deleteUserMessage(messageIndex) {
+            const conversation = getCurrentConversation()
+            const message = conversation && conversation.messages[messageIndex]
+            if (!message || message.role !== 'user' || isSending) return
+
+            conversation.messages.splice(messageIndex, 1)
+            const messageElement = [...chatInner.querySelectorAll('.message')].find(
+                (element) => Number(element.dataset.messageIndex) === messageIndex
+            )
+            if (messageElement) {
+                messageElement.remove()
+            }
+
+            chatInner.querySelectorAll('.message').forEach((element) => {
+                const index = Number(element.dataset.messageIndex)
+                if (index > messageIndex) {
+                    element.dataset.messageIndex = index - 1
+                }
+            })
+
+            chatInner.querySelectorAll('.user-message-actions').forEach((actions) => actions.remove())
+            const latestUserMessageIndex = conversation.messages.reduce(
+                (latestIndex, item, index) => item.role === 'user' ? index : latestIndex,
+                -1
+            )
+            if (latestUserMessageIndex !== -1) {
+                const latestUserElement = [...chatInner.querySelectorAll('.message.user')].find(
+                    (element) => Number(element.dataset.messageIndex) === latestUserMessageIndex
+                )
+                if (latestUserElement) {
+                    appendUserMessageActions(latestUserElement, latestUserMessageIndex)
+                }
+            }
+
+            saveConversations()
+            renderSidebar()
         }
 
         /* =========================
@@ -592,10 +771,10 @@
             indicator.setAttribute('aria-label', 'Waiting for response')
 
             indicator.innerHTML = `
-      <span>.</span>
-      <span>.</span>
-      <span>.</span>
-    `
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            `
 
             return indicator
         }
@@ -649,18 +828,23 @@
             const apiKey = apiKeyInput.value.trim()
 
             if (endpoint !== currentModelEndpoint || apiKey !== currentModelApiKey) {
-                const remembered = getRememberedModel(endpoint, apiKey)
+                const remembered = getRememberedConfiguration(endpoint, apiKey)
                 if (remembered) {
-                    currentModel = remembered
+                    currentModel = remembered.model
+                    currentModels = remembered.models || [remembered.model]
+                    currentSystemPrompt = remembered.systemPrompt || ''
                     currentModelEndpoint = endpoint
                     currentModelApiKey = apiKey
-                    settingsStatus.textContent = 'Saved model: ' + remembered
+                    settingsStatus.textContent = 'Saved model: ' + remembered.model
                 } else {
                     currentModel = ''
+                    currentModels = []
+                    currentSystemPrompt = ''
                     currentModelEndpoint = ''
                     currentModelApiKey = ''
                     settingsStatus.textContent = 'Model is detected automatically when you start a chat.'
                 }
+                systemPromptInput.value = currentSystemPrompt
             }
 
             renderSavedConfigurations()
@@ -668,6 +852,10 @@
 
         endpointInput.addEventListener('input', handleConnectionSettingChange)
         apiKeyInput.addEventListener('input', handleConnectionSettingChange)
+        systemPromptInput.addEventListener('input', () => {
+            currentSystemPrompt = systemPromptInput.value
+            saveCurrentConfiguration()
+        })
 
         /* =========================
  MODEL DISCOVERY
@@ -681,14 +869,6 @@
             }
 
             return normalizedEndpoint.replace('/v1/chat/completions', '/v1/models')
-        }
-
-        function getRememberedModel(endpoint, apiKey) {
-            const config = savedConfigurations.find((item) =>
-                item.endpoint === endpoint && item.apiKey === apiKey
-            )
-
-            return config ? config.model : ''
         }
 
         async function discoverModel(endpoint, apiKey) {
@@ -714,13 +894,21 @@
 
             const data = await response.json()
 
-            if (!data.data || !Array.isArray(data.data) || data.data.length === 0 || !data.data[0]?.id) {
+            if (!Array.isArray(data.data) || data.data.length === 0) {
                 throw new Error('No models were returned.')
             }
 
-            const detectedModel = data.data[0].id
+            const models = [...new Set(data.data
+                .map((item) => item && typeof item.id === 'string' ? item.id : '')
+                .filter(Boolean))]
+            if (models.length === 0) {
+                throw new Error('No models were returned.')
+            }
+
+            const detectedModel = models[0]
 
             currentModel = detectedModel
+            currentModels = models
             currentModelEndpoint = endpoint
             currentModelApiKey = apiKey
 
@@ -736,14 +924,14 @@
  SEND MESSAGE
  ========================= */
 
-        async function sendMessage() {
+        async function sendMessage(retryMessageIndex = null) {
             if (isSending) {
                 return
             }
 
             let endpoint = endpointInput.value.trim().replace(/\/+$/, '')
             const apiKey = apiKeyInput.value.trim()
-            const prompt = promptInput.value.trim()
+            let prompt = promptInput.value.trim()
 
             if (!endpoint) {
                 settingsPanel.classList.add('visible')
@@ -763,16 +951,16 @@
                 return
             }
 
-            if (!prompt) {
+            if (retryMessageIndex === null && !prompt) {
                 return
             }
 
             endpointInput.value = endpoint
             saveSettings()
 
-            /* Create a conversation automatically if none currently exists. */
+            /* Create a conversation automatically for a new message. */
 
-            if (!currentConversationId) {
+            if (retryMessageIndex === null && !currentConversationId) {
                 const conversation = {
                     id: Date.now().toString() + Math.random().toString(36).slice(2),
                     title: 'New Chat',
@@ -790,39 +978,58 @@
                 return
             }
 
-            /* First prompt becomes title. */
+            if (retryMessageIndex !== null) {
+                const userMessage = conversation.messages[retryMessageIndex]
+                if (!userMessage || userMessage.role !== 'user') {
+                    return
+                }
+                const latestUserMessageIndex = conversation.messages.reduce(
+                    (latestIndex, message, index) => message.role === 'user' ? index : latestIndex,
+                    -1
+                )
+                if (retryMessageIndex !== latestUserMessageIndex) {
+                    return
+                }
+                prompt = userMessage.content
+                conversation.messages.splice(retryMessageIndex + 1)
+            } else {
+                /* First prompt becomes title. */
 
-            if (conversation.messages.length === 0) {
-                conversation.title = prompt.length > 45 ? prompt.slice(0, 45) + '...' : prompt
+                if (conversation.messages.length === 0) {
+                    conversation.title = prompt.length > 45 ? prompt.slice(0, 45) + '...' : prompt
+                }
+
+                conversation.messages.push({
+                    role: 'user',
+                    content: prompt
+                })
+                promptInput.value = ''
             }
-
-            conversation.messages.push({
-                role: 'user',
-                content: prompt
-            })
 
             saveConversations()
             renderSidebar()
-
-            /* Clear input. */
-
-            promptInput.value = ''
-
-            /* Render user message and waiting indicator immediately. */
-
-            appendMessageToDOM('user', prompt)
-
-            const assistantContent = appendMessageToDOM('assistant', '')
-            showThinkingIndicator(assistantContent)
-            scrollChatToBottom()
 
             isSending = true
             sendBtn.disabled = true
             promptInput.disabled = true
 
+            if (retryMessageIndex !== null) {
+                renderCurrentConversation()
+            } else {
+                chatInner.querySelectorAll('.user-message-actions').forEach((actions) => actions.remove())
+                appendMessageToDOM('user', prompt, conversation.messages.length - 1)
+            }
+
+            const assistantContent = appendMessageToDOM('assistant', '')
+            showThinkingIndicator(assistantContent)
+            scrollChatToBottom()
+
             let assistantText = ''
+            let reasoningText = ''
+            let reasoningContent = null
             let hasReceivedContent = false
-            let model = getRememberedModel(endpoint, apiKey)
+            const rememberedConfiguration = getRememberedConfiguration(endpoint, apiKey)
+            let model = rememberedConfiguration ? rememberedConfiguration.model : ''
 
             try {
                 /*
@@ -832,6 +1039,9 @@
 
                 if (model) {
                     currentModel = model
+                    currentModels = rememberedConfiguration.models || [model]
+                    currentSystemPrompt = rememberedConfiguration.systemPrompt || ''
+                    systemPromptInput.value = currentSystemPrompt
                     currentModelEndpoint = endpoint
                     currentModelApiKey = apiKey
                     settingsStatus.textContent = 'Using saved model: ' + model
@@ -842,6 +1052,8 @@
                     model = await discoverModel(endpoint, apiKey)
                 }
 
+                setAssistantMessageModel(assistantContent, model)
+
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
@@ -850,12 +1062,17 @@
                     },
                     body: JSON.stringify({
                         model: model,
-                        messages: conversation.messages,
-                        temperature: 0.7,
+                        messages: currentSystemPrompt
+                            ? [{ role: 'system', content: currentSystemPrompt }, ...conversation.messages]
+                            : conversation.messages,
+                        temperature: 1,
                         max_tokens: 5000,
                         stream: true
                     })
                 })
+
+                // console.log("status", response.status)
+                // console.log("content-type", response.headers.get("content-type"))
 
                 if (!response.ok) {
                     const errorText = await response.text()
@@ -872,6 +1089,7 @@
 
                 while (true) {
                     const { value, done } = await reader.read()
+                    // console.log("read done=", done, "bytes=", value?.byteLength)
 
                     if (done) {
                         break
@@ -899,16 +1117,53 @@
 
                         try {
                             const json = JSON.parse(data)
-                            const delta = json?.choices?.[0]?.delta?.content
 
-                            if (typeof delta === 'string') {
-                                assistantText += delta
+                            // chat.completions streaming style
+                            const delta = json?.choices?.[0]?.delta
+                            const reasoningChunk = typeof delta?.reasoning_content === 'string'
+                                ? delta.reasoning_content
+                                : (typeof delta?.reasoning === 'string' ? delta.reasoning : '')
+
+                            if (reasoningChunk) {
+                                reasoningText += reasoningChunk
+                                if (!reasoningContent) {
+                                    const reasoningPanel = document.createElement('details')
+                                    reasoningPanel.className = 'message-reasoning'
+                                    reasoningPanel.open = true
+
+                                    const reasoningTitle = document.createElement('summary')
+                                    reasoningTitle.textContent = 'Thinking / reasoning (not the final answer)'
+
+                                    reasoningContent = document.createElement('div')
+                                    reasoningContent.className = 'message-reasoning-content'
+
+                                    reasoningPanel.appendChild(reasoningTitle)
+                                    reasoningPanel.appendChild(reasoningContent)
+                                    assistantContent.parentElement.insertBefore(reasoningPanel, assistantContent)
+                                }
 
                                 if (!hasReceivedContent) {
                                     hasReceivedContent = true
                                     removeThinkingIndicator(assistantContent)
                                 }
 
+                                reasoningContent.textContent = reasoningText
+                                reasoningContent.scrollTop = reasoningContent.scrollHeight
+                                scrollChatToBottom()
+                            }
+
+                            // some providers stream "text" instead
+                            const text = json?.choices?.[0]?.text
+
+                            const content = delta?.content
+                            const chunk = (typeof content === 'string' ? content : (typeof text === 'string' ? text : null))
+
+                            if (chunk) {
+                                assistantText += chunk
+                                if (!hasReceivedContent) {
+                                    hasReceivedContent = true
+                                    removeThinkingIndicator(assistantContent)
+                                }
                                 assistantContent.innerHTML = renderMarkdown(assistantText)
                                 scrollChatToBottom()
                             }
@@ -922,7 +1177,8 @@
 
                 conversation.messages.push({
                     role: 'assistant',
-                    content: assistantText
+                    content: assistantText,
+                    model: model
                 })
 
                 saveConversations()
@@ -938,7 +1194,8 @@
 
                 conversation.messages.push({
                     role: 'assistant',
-                    content: errorMessage
+                    content: errorMessage,
+                    ...(model ? { model: model } : {})
                 })
 
                 saveConversations()
@@ -946,13 +1203,16 @@
                 isSending = false
                 sendBtn.disabled = false
                 promptInput.disabled = false
+                chatInner.querySelectorAll('.retry-message-button, .delete-message-button').forEach((button) => {
+                    button.disabled = false
+                })
                 promptInput.focus()
                 renderSavedConfigurations()
                 scrollChatToBottom()
             }
         }
 
-        sendBtn.addEventListener('click', sendMessage)
+        sendBtn.addEventListener('click', () => sendMessage())
 
         /* =========================
  KEYBOARD SHORTCUT
@@ -994,9 +1254,9 @@
 
             if (privacyModal.classList.contains('visible')) {
                 /*
-      First-use privacy popup cannot
-      be dismissed until acknowledged.
-    */
+        First-use privacy popup cannot
+        be dismissed until acknowledged.
+        */
 
                 if (privacyModal.dataset.required === 'true' && !hasAcknowledgedPrivacy()) {
                     return
