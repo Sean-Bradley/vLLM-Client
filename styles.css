@@ -870,7 +870,7 @@ body {
  ========================= */
 
 .privacy-modal {
-    max-width: 620px;
+    max-width: 720px;
     max-height: 85vh;
     overflow-y: auto;
 }

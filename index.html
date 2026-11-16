@@ -141,70 +141,50 @@
             <h2>Privacy &amp; Data</h2>
 
             <div class="privacy-content">
-                <h3>This client runs in your browser</h3>
+                <h3>Client-side web application</h3>
+                <p>SBCODE vLLM Client operates within your browser, communicating directly with the configured vLLM
+                    endpoint.</p>
 
-                <p>SBCODE vLLM Client is a client-side web application. Your browser communicates directly with the vLLM
-                    endpoint that you configure.</p>
+                <h3>Locally stored data</h3>
+                <p>Your browser stores endpoint address, API key, model information, saved configurations, prompts, and
+                    conversations using localStorage.</p>
 
-                <h3>Information stored locally</h3>
+                <h3>No chat data transfer to SBCODE servers</h3>
+                <p>During regular operation, we don't receive your API key, saved conversations, or vLLM responses.</p>
 
-                <p>The endpoint address, API key, automatically detected model information, saved configurations,
-                    system prompts, and saved conversations are stored locally in your
-                    browser using localStorage.</p>
-
-                <h3>SBCODE does not receive your chat data</h3>
-
-                <p>
-                    During normal operation, this client does not send your API key, saved conversations, prompts, or
-                    vLLM responses to the SBCODE web
-                    server. After the page has loaded, chat requests are sent directly from your browser to the
-                    vLLM/RunPod endpoint you configure.
-                </p>
-
-                <h3>RunPod / vLLM</h3>
-
-                <p>
-                    Chat requests are processed by the vLLM service and infrastructure associated with the endpoint you
-                    configure. The infrastructure
-                    provider may process, monitor, or retain information according to its own policies, configuration,
-                    logging, and operational
-                    requirements.
-                </p>
-
-                <div class="privacy-warning">
-                    Do not enter sensitive, confidential, personal, or otherwise private information into a model
-                    endpoint unless you understand and accept
-                    how that endpoint and its infrastructure handle submitted data.
-                </div>
+                <h3>vLLM/RunPod</h3>
+                <p>Chat requests are handled by the configured service, which may process and retain data according to
+                    their policies. Be cautious about submitting sensitive information.</p>
 
                 <h3>Website and Cloudflare</h3>
-
-                <p>
-                    If this client is hosted on a public website, normal website requests may involve your hosting
-                    provider and services such as Cloudflare.
-                    These services may process standard website and network information such as IP addresses, request
-                    metadata, security information, and
-                    logs.
+                <p>Your first request to this website is proxied through Cloudflare, potentially
+                    logging standard information like IP addresses for security purposes and performance optimization.
+                </p>
+                <p>Subsequent chat requests you make to your configured vLLM/RunPod endpoint are
+                    not proxied by Cloudflare, ensuring that only your browser communicates directly with the endpoint.
                 </p>
 
-                <h3>Clearing your local data</h3>
+                <h3>Data clearance</h3>
+                <p>Clearing browser data removes settings and conversations but does not delete data sent to the
+                    configured vLLM/RunPod endpoint.</p>
 
-                <p>
-                    Clearing this site's browser data will remove locally stored settings and conversations. It does not
-                    delete information that has already
-                    been sent to your configured vLLM/RunPod endpoint.
-                </p>
+                <h3>Browser extensions warning</h3>
+                <p>Using this service with broad permission browser extensions that can read local storage from visited
+                    websites could pose privacy risks and compromise API keys. Disable or delete your browser
+                    extensions.</p>
+
+                <h3>Acknowledgement</h3>
+                <label class="privacy-check">
+                    <input type="checkbox" id="privacyCheckbox" />
+                    <span>I acknowledge that my settings and conversations are
+                        stored locally in my browser, any installed browser extensions are a security risk and may be
+                        able to read and modify my
+                        localStorage
+                        and I am cautious
+                        about using sensitive data with the vLLM/RunPod endpoint I configure.
+                    </span>
+                </label>
             </div>
-
-            <label class="privacy-check">
-                <input type="checkbox" id="privacyCheckbox" />
-
-                <span>
-                    I understand that my settings and conversations are stored locally in my browser, and that chat
-                    requests are sent directly to the
-                    vLLM/RunPod endpoint I configure.
-                </span>
-            </label>
 
             <div class="modal-actions">
                 <button class="modal-button" id="privacyContinueBtn" disabled>Continue</button>

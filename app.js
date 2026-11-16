@@ -1066,7 +1066,7 @@
                             ? [{ role: 'system', content: currentSystemPrompt }, ...conversation.messages]
                             : conversation.messages,
                         temperature: 1,
-                        max_tokens: 5000,
+                        max_tokens: 100000,
                         stream: true
                     })
                 })
