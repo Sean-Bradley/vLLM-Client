@@ -995,3 +995,9 @@ body {
         font-size: 20px;
     }
 }
+
+.runpod-link {
+    color: rgb(146, 81, 252) !important;
+    text-decoration: none !important;
+}
+
