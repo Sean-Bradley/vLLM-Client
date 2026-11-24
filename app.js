@@ -12,6 +12,8 @@
 
         const PRIVACY_ACK_KEY = 'vllm_privacy_acknowledged'
 
+        const DEFAULT_MAX_TOKENS = 32768
+
         /* =========================
  STATE
  ========================= */
@@ -26,10 +28,12 @@
         let currentModel = ''
         let currentModels = []
         let currentSystemPrompt = ''
+        let currentMaxTokens = DEFAULT_MAX_TOKENS
         let currentModelEndpoint = ''
         let currentModelApiKey = ''
 
         let isSending = false
+        let activeChatController = null
 
         /* =========================
  ELEMENTS
@@ -57,11 +61,14 @@
 
         const endpointInput = document.getElementById('endpointInput')
 
+        const detectModelsBtn = document.getElementById('detectModelsBtn')
+
         const apiKeyInput = document.getElementById('apiKeyInput')
 
 
         const settingsStatus = document.getElementById('settingsStatus')
         const systemPromptInput = document.getElementById('systemPromptInput')
+        const maxTokensInput = document.getElementById('maxTokensInput')
         const savedConfigList = document.getElementById('savedConfigList')
 
         const privacyBtn = document.getElementById('privacyBtn')
@@ -151,6 +158,8 @@
             currentModel = ''
             currentModels = []
             currentSystemPrompt = ''
+            currentMaxTokens = DEFAULT_MAX_TOKENS
+            maxTokensInput.value = String(DEFAULT_MAX_TOKENS)
             currentModelEndpoint = ''
             currentModelApiKey = ''
         }
@@ -173,6 +182,9 @@
                 ).map((config) => ({
                     ...config,
                     systemPrompt: typeof config.systemPrompt === 'string' ? config.systemPrompt : '',
+                    maxTokens: Number.isSafeInteger(config.maxTokens) && config.maxTokens > 0
+                        ? config.maxTokens
+                        : DEFAULT_MAX_TOKENS,
                     models: [...new Set([
                         ...(Array.isArray(config.models)
                             ? config.models.filter((model) => typeof model === 'string' && model)
@@ -191,8 +203,14 @@
                 endpoint: endpointInput.value.trim(),
                 apiKey: apiKeyInput.value.trim(),
                 model: currentModel,
-                systemPrompt: currentSystemPrompt
+                systemPrompt: currentSystemPrompt,
+                maxTokens: currentMaxTokens
             }
+        }
+
+        function getMaxTokensInputValue() {
+            const value = maxTokensInput.valueAsNumber
+            return Number.isSafeInteger(value) && value > 0 ? value : null
         }
 
         function configurationsMatch(a, b) {
@@ -292,7 +310,9 @@
             currentModel = model
             currentModels = config.models
             currentSystemPrompt = config.systemPrompt || ''
+            currentMaxTokens = config.maxTokens
             systemPromptInput.value = currentSystemPrompt
+            maxTokensInput.value = String(currentMaxTokens)
             currentModelEndpoint = config.endpoint
             currentModelApiKey = config.apiKey
             localStorage.setItem(ENDPOINT_KEY, config.endpoint)
@@ -316,7 +336,9 @@
             currentModel = config.model
             currentModels = config.models || [config.model]
             currentSystemPrompt = config.systemPrompt || ''
+            currentMaxTokens = config.maxTokens
             systemPromptInput.value = currentSystemPrompt
+            maxTokensInput.value = String(currentMaxTokens)
             currentModelEndpoint = config.endpoint
             currentModelApiKey = config.apiKey
             localStorage.setItem(ENDPOINT_KEY, config.endpoint)
@@ -332,6 +354,7 @@
             if (existing) {
                 existing.models = [...new Set([...(existing.models || []), ...currentModels, current.model])]
                 existing.systemPrompt = current.systemPrompt
+                existing.maxTokens = current.maxTokens
                 saveConfigurations()
                 renderSavedConfigurations()
                 return
@@ -342,6 +365,7 @@
                 apiKey: current.apiKey,
                 model: current.model,
                 systemPrompt: current.systemPrompt,
+                maxTokens: current.maxTokens,
                 models: [...new Set([...currentModels, current.model])]
             })
             saveConfigurations()
@@ -708,6 +732,16 @@
             retryButton.addEventListener('click', () => sendMessage(Number(messageElement.dataset.messageIndex)))
             actions.appendChild(retryButton)
 
+            const editButton = document.createElement('button')
+            editButton.className = 'edit-message-button'
+            editButton.type = 'button'
+            editButton.title = 'Edit this message'
+            editButton.setAttribute('aria-label', 'Edit this message')
+            editButton.disabled = isSending
+            editButton.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>'
+            editButton.addEventListener('click', () => editUserMessage(messageElement, Number(messageElement.dataset.messageIndex)))
+            actions.appendChild(editButton)
+
             const deleteButton = document.createElement('button')
             deleteButton.className = 'delete-message-button'
             deleteButton.type = 'button'
@@ -719,6 +753,59 @@
             actions.appendChild(deleteButton)
 
             messageElement.appendChild(actions)
+        }
+
+        function editUserMessage(messageElement, messageIndex) {
+            const conversation = getCurrentConversation()
+            const message = conversation && conversation.messages[messageIndex]
+            const contentElement = messageElement.querySelector('.message-content')
+            if (!message || message.role !== 'user' || !contentElement || isSending) return
+
+            const editInput = document.createElement('textarea')
+            editInput.className = 'edit-message-input'
+            editInput.setAttribute('aria-label', 'Edit your message')
+            editInput.value = message.content
+            editInput.rows = Math.min(Math.max(message.content.split('\n').length, 2), 8)
+            contentElement.replaceChildren(editInput)
+            messageElement.classList.add('is-editing')
+            messageElement.querySelector('.user-message-actions').remove()
+
+            const actions = document.createElement('div')
+            actions.className = 'user-message-edit-actions'
+
+            const cancelButton = document.createElement('button')
+            cancelButton.className = 'cancel-edit-message-button'
+            cancelButton.type = 'button'
+            cancelButton.textContent = 'Cancel'
+            cancelButton.addEventListener('click', renderCurrentConversation)
+
+            const submitButton = document.createElement('button')
+            submitButton.className = 'submit-edit-message-button'
+            submitButton.type = 'button'
+            submitButton.textContent = 'Send (Ctrl + Enter)'
+
+            const submitEdit = () => {
+                if (isSending || !editInput.value.trim()) {
+                    editInput.focus()
+                    return
+                }
+
+                sendMessage(messageIndex, editInput.value.trim())
+            }
+
+            submitButton.addEventListener('click', submitEdit)
+            editInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+                    event.preventDefault()
+                    submitEdit()
+                }
+            })
+
+            actions.appendChild(cancelButton)
+            actions.appendChild(submitButton)
+            messageElement.appendChild(actions)
+            editInput.focus()
+            editInput.setSelectionRange(editInput.value.length, editInput.value.length)
         }
 
         function deleteUserMessage(messageIndex) {
@@ -833,6 +920,7 @@
                     currentModel = remembered.model
                     currentModels = remembered.models || [remembered.model]
                     currentSystemPrompt = remembered.systemPrompt || ''
+                    currentMaxTokens = remembered.maxTokens
                     currentModelEndpoint = endpoint
                     currentModelApiKey = apiKey
                     settingsStatus.textContent = 'Saved model: ' + remembered.model
@@ -840,11 +928,13 @@
                     currentModel = ''
                     currentModels = []
                     currentSystemPrompt = ''
+                    currentMaxTokens = DEFAULT_MAX_TOKENS
                     currentModelEndpoint = ''
                     currentModelApiKey = ''
                     settingsStatus.textContent = 'Model is detected automatically when you start a chat.'
                 }
                 systemPromptInput.value = currentSystemPrompt
+                maxTokensInput.value = String(currentMaxTokens)
             }
 
             renderSavedConfigurations()
@@ -854,6 +944,16 @@
         apiKeyInput.addEventListener('input', handleConnectionSettingChange)
         systemPromptInput.addEventListener('input', () => {
             currentSystemPrompt = systemPromptInput.value
+            saveCurrentConfiguration()
+        })
+        maxTokensInput.addEventListener('input', () => {
+            const maxTokens = getMaxTokensInputValue()
+            if (maxTokens === null) {
+                settingsStatus.textContent = 'Maximum tokens must be a positive whole number.'
+                return
+            }
+
+            currentMaxTokens = maxTokens
             saveCurrentConfiguration()
         })
 
@@ -871,7 +971,7 @@
             return normalizedEndpoint.replace('/v1/chat/completions', '/v1/models')
         }
 
-        async function discoverModel(endpoint, apiKey) {
+        async function discoverModel(endpoint, apiKey, signal) {
             const modelsEndpoint = getModelsEndpoint(endpoint)
 
             if (!modelsEndpoint) {
@@ -884,7 +984,8 @@
                 method: 'GET',
                 headers: {
                     Authorization: 'Bearer ' + apiKey
-                }
+                },
+                ...(signal ? { signal: signal } : {})
             })
 
             if (!response.ok) {
@@ -920,11 +1021,44 @@
             return detectedModel
         }
 
+        detectModelsBtn.addEventListener('click', async () => {
+            const endpoint = endpointInput.value.trim().replace(/\/+$/, '')
+            const apiKey = apiKeyInput.value.trim()
+
+            if (!endpoint) {
+                settingsStatus.textContent = 'Enter your vLLM endpoint.'
+                return
+            }
+
+            if (!apiKey) {
+                settingsStatus.textContent = 'Enter your API key.'
+                return
+            }
+
+            if (!getModelsEndpoint(endpoint)) {
+                settingsStatus.textContent = 'Endpoint must end with /v1/chat/completions'
+                return
+            }
+
+            endpointInput.value = endpoint
+            saveSettings()
+            detectModelsBtn.disabled = true
+
+            try {
+                await discoverModel(endpoint, apiKey)
+            } catch (error) {
+                console.error('Model detection error:', error)
+                settingsStatus.textContent = 'Model detection failed: ' + error.message
+            } finally {
+                detectModelsBtn.disabled = false
+            }
+        })
+
         /* =========================
  SEND MESSAGE
  ========================= */
 
-        async function sendMessage(retryMessageIndex = null) {
+        async function sendMessage(retryMessageIndex = null, promptOverride = null) {
             if (isSending) {
                 return
             }
@@ -944,6 +1078,14 @@
                 settingsStatus.textContent = 'Enter your API key.'
                 return
             }
+
+            const maxTokens = getMaxTokensInputValue()
+            if (maxTokens === null) {
+                settingsPanel.classList.add('visible')
+                settingsStatus.textContent = 'Maximum tokens must be a positive whole number.'
+                return
+            }
+            currentMaxTokens = maxTokens
 
             if (!getModelsEndpoint(endpoint)) {
                 settingsPanel.classList.add('visible')
@@ -990,7 +1132,14 @@
                 if (retryMessageIndex !== latestUserMessageIndex) {
                     return
                 }
-                prompt = userMessage.content
+                prompt = promptOverride === null ? userMessage.content : promptOverride.trim()
+                if (!prompt) {
+                    return
+                }
+                userMessage.content = prompt
+                if (retryMessageIndex === conversation.messages.findIndex((message) => message.role === 'user')) {
+                    conversation.title = prompt.length > 45 ? prompt.slice(0, 45) + '...' : prompt
+                }
                 conversation.messages.splice(retryMessageIndex + 1)
             } else {
                 /* First prompt becomes title. */
@@ -1009,8 +1158,13 @@
             saveConversations()
             renderSidebar()
 
+            const chatController = new AbortController()
+            activeChatController = chatController
             isSending = true
-            sendBtn.disabled = true
+            sendBtn.textContent = '■'
+            sendBtn.classList.add('stop-button')
+            sendBtn.setAttribute('aria-label', 'Stop generation')
+            sendBtn.title = 'Stop generation'
             promptInput.disabled = true
 
             if (retryMessageIndex !== null) {
@@ -1041,7 +1195,9 @@
                     currentModel = model
                     currentModels = rememberedConfiguration.models || [model]
                     currentSystemPrompt = rememberedConfiguration.systemPrompt || ''
+                    currentMaxTokens = rememberedConfiguration.maxTokens
                     systemPromptInput.value = currentSystemPrompt
+                    maxTokensInput.value = String(currentMaxTokens)
                     currentModelEndpoint = endpoint
                     currentModelApiKey = apiKey
                     settingsStatus.textContent = 'Using saved model: ' + model
@@ -1049,7 +1205,7 @@
                     model = currentModel
                     settingsStatus.textContent = 'Using model: ' + model
                 } else {
-                    model = await discoverModel(endpoint, apiKey)
+                    model = await discoverModel(endpoint, apiKey, chatController.signal)
                 }
 
                 setAssistantMessageModel(assistantContent, model)
@@ -1060,13 +1216,14 @@
                         'Content-Type': 'application/json',
                         Authorization: 'Bearer ' + apiKey
                     },
+                    signal: chatController.signal,
                     body: JSON.stringify({
                         model: model,
                         messages: currentSystemPrompt
                             ? [{ role: 'system', content: currentSystemPrompt }, ...conversation.messages]
                             : conversation.messages,
                         temperature: 1,
-                        max_tokens: 100000,
+                        max_tokens: currentMaxTokens,
                         stream: true
                     })
                 })
@@ -1115,60 +1272,72 @@
                             continue
                         }
 
+                        let json
                         try {
-                            const json = JSON.parse(data)
-
-                            // chat.completions streaming style
-                            const delta = json?.choices?.[0]?.delta
-                            const reasoningChunk = typeof delta?.reasoning_content === 'string'
-                                ? delta.reasoning_content
-                                : (typeof delta?.reasoning === 'string' ? delta.reasoning : '')
-
-                            if (reasoningChunk) {
-                                reasoningText += reasoningChunk
-                                if (!reasoningContent) {
-                                    const reasoningPanel = document.createElement('details')
-                                    reasoningPanel.className = 'message-reasoning'
-                                    reasoningPanel.open = true
-
-                                    const reasoningTitle = document.createElement('summary')
-                                    reasoningTitle.textContent = 'Thinking / reasoning (not the final answer)'
-
-                                    reasoningContent = document.createElement('div')
-                                    reasoningContent.className = 'message-reasoning-content'
-
-                                    reasoningPanel.appendChild(reasoningTitle)
-                                    reasoningPanel.appendChild(reasoningContent)
-                                    assistantContent.parentElement.insertBefore(reasoningPanel, assistantContent)
-                                }
-
-                                if (!hasReceivedContent) {
-                                    hasReceivedContent = true
-                                    removeThinkingIndicator(assistantContent)
-                                }
-
-                                reasoningContent.textContent = reasoningText
-                                reasoningContent.scrollTop = reasoningContent.scrollHeight
-                                scrollChatToBottom()
-                            }
-
-                            // some providers stream "text" instead
-                            const text = json?.choices?.[0]?.text
-
-                            const content = delta?.content
-                            const chunk = (typeof content === 'string' ? content : (typeof text === 'string' ? text : null))
-
-                            if (chunk) {
-                                assistantText += chunk
-                                if (!hasReceivedContent) {
-                                    hasReceivedContent = true
-                                    removeThinkingIndicator(assistantContent)
-                                }
-                                assistantContent.innerHTML = renderMarkdown(assistantText)
-                                scrollChatToBottom()
-                            }
+                            json = JSON.parse(data)
                         } catch (parseError) {
                             console.warn('Could not parse stream chunk:', parseError)
+                            continue
+                        }
+
+                        if (json?.error) {
+                            const streamError = json.error
+                            const errorMessage = typeof streamError === 'string'
+                                ? streamError
+                                : (typeof streamError.message === 'string'
+                                    ? streamError.message
+                                    : JSON.stringify(streamError))
+                            throw new Error(errorMessage || 'The server returned an error.')
+                        }
+
+                        // chat.completions streaming style
+                        const delta = json?.choices?.[0]?.delta
+                        const reasoningChunk = typeof delta?.reasoning_content === 'string'
+                            ? delta.reasoning_content
+                            : (typeof delta?.reasoning === 'string' ? delta.reasoning : '')
+
+                        if (reasoningChunk) {
+                            reasoningText += reasoningChunk
+                            if (!reasoningContent) {
+                                const reasoningPanel = document.createElement('details')
+                                reasoningPanel.className = 'message-reasoning'
+                                reasoningPanel.open = true
+
+                                const reasoningTitle = document.createElement('summary')
+                                reasoningTitle.textContent = 'Thinking / reasoning (not the final answer)'
+
+                                reasoningContent = document.createElement('div')
+                                reasoningContent.className = 'message-reasoning-content'
+
+                                reasoningPanel.appendChild(reasoningTitle)
+                                reasoningPanel.appendChild(reasoningContent)
+                                assistantContent.parentElement.insertBefore(reasoningPanel, assistantContent)
+                            }
+
+                            if (!hasReceivedContent) {
+                                hasReceivedContent = true
+                                removeThinkingIndicator(assistantContent)
+                            }
+
+                            reasoningContent.textContent = reasoningText
+                            reasoningContent.scrollTop = reasoningContent.scrollHeight
+                            scrollChatToBottom()
+                        }
+
+                        // some providers stream "text" instead
+                        const text = json?.choices?.[0]?.text
+
+                        const content = delta?.content
+                        const chunk = (typeof content === 'string' ? content : (typeof text === 'string' ? text : null))
+
+                        if (chunk) {
+                            assistantText += chunk
+                            if (!hasReceivedContent) {
+                                hasReceivedContent = true
+                                removeThinkingIndicator(assistantContent)
+                            }
+                            assistantContent.innerHTML = renderMarkdown(assistantText)
+                            scrollChatToBottom()
                         }
                     }
                 }
@@ -1184,6 +1353,21 @@
                 saveConversations()
                 saveCurrentConfiguration()
             } catch (error) {
+                if (chatController.signal.aborted) {
+                    const stoppedMessage = assistantText
+                        ? assistantText + '\n\n*Generation stopped.*'
+                        : '*Generation stopped.*'
+                    removeThinkingIndicator(assistantContent)
+                    assistantContent.innerHTML = renderMarkdown(stoppedMessage)
+                    conversation.messages.push({
+                        role: 'assistant',
+                        content: stoppedMessage,
+                        ...(model ? { model: model } : {})
+                    })
+                    saveConversations()
+                    return
+                }
+
                 console.error('Chat error:', error)
 
                 const errorMessage = 'Error: ' + error.message
@@ -1201,9 +1385,15 @@
                 saveConversations()
             } finally {
                 isSending = false
-                sendBtn.disabled = false
+                if (activeChatController === chatController) {
+                    activeChatController = null
+                }
+                sendBtn.textContent = 'Send'
+                sendBtn.classList.remove('stop-button')
+                sendBtn.setAttribute('aria-label', 'Send message')
+                sendBtn.removeAttribute('title')
                 promptInput.disabled = false
-                chatInner.querySelectorAll('.retry-message-button, .delete-message-button').forEach((button) => {
+                chatInner.querySelectorAll('.retry-message-button, .edit-message-button, .delete-message-button').forEach((button) => {
                     button.disabled = false
                 })
                 promptInput.focus()
@@ -1212,7 +1402,14 @@
             }
         }
 
-        sendBtn.addEventListener('click', () => sendMessage())
+        sendBtn.addEventListener('click', () => {
+            if (isSending) {
+                activeChatController?.abort()
+                return
+            }
+
+            sendMessage()
+        })
 
         /* =========================
  KEYBOARD SHORTCUT
@@ -1275,7 +1472,7 @@
         loadSettings()
         loadConfigurations()
 
-        renderSavedConfigurations()
+        handleConnectionSettingChange()
         renderSidebar()
 
         renderCurrentConversation()
