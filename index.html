@@ -1628,7 +1628,7 @@ STORAGE KEYS
             if (!embeddingPipelinePromise) {
                 embeddingPipelinePromise = (async () => {
                     const transformers = await import('./libs/transformers.js')
-                    transformers.env.allowRemoteModels = true
+                    transformers.env.allowRemoteModels = false
                     transformers.env.useBrowserCache = true
                     transformers.env.backends.onnx.wasm.wasmPaths = new URL('libs/', document.baseURI).href
                     transformers.env.backends.onnx.wasm.numThreads = 1

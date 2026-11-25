@@ -51,7 +51,7 @@ var jP = class {
             for (let n = 0;
                 n < r.length;
                 ++n) {
-                    let o = r[n];
+                let o = r[n];
                 s = s[o] ??= Object.create(null)
             } s.end = r
         } return e
@@ -59,7 +59,7 @@ var jP = class {
         let e = [], r = t.length, s = 0, n = 0;
         for (;
             n < r;) {
-                let o = this.trie, a = null, i = n;
+            let o = this.trie, a = null, i = n;
             for (;
                 i < r && (o = o[t[i]]);)o.end && (a = o.end), ++i;
             a ? (n > s && e.push(t.slice(s, n)), e.push(a), n += a.length, s = n) : ++n
@@ -126,7 +126,7 @@ var jP = class {
         for (let s = 0;
             s < 26;
             ++s) {
-                let n = String.fromCharCode(65 + s), o = String.fromCharCode(97 + s), a = e.test(n), i = e.test(o);
+            let n = String.fromCharCode(65 + s), o = String.fromCharCode(97 + s), a = e.test(n), i = e.test(o);
             a !== i && (r += a ? o : n)
         } return r
     }, ZA = (t, e, r, s = !0, n = 1) => {
@@ -136,7 +136,7 @@ var jP = class {
         let i = o, l = [$A()], c = l[0], u = !1;
         for (;
             o < t.length;) {
-                let f = Pc(t, o);
+            let f = Pc(t, o);
             if (f === "\\") {
                 o = aN(t, o, c);
                 continue
@@ -187,7 +187,7 @@ var jP = class {
         let e = "", r = -1, s = !1, n = !1, o = [], a = i => { r = e.length, e += i, s = !1 };
         for (let i = 0;
             i < t.length;) {
-                let l = Pc(t, i);
+            let l = Pc(t, i);
             if (l === "\\") {
                 let c = XA.exec(t.slice(i));
                 if (c) {
@@ -263,10 +263,10 @@ var jP = class {
         let s = [], n = 0;
         for (;
             n < t.length;) {
-                if (s.push(t[n]), (e.get(t[n]) ?? r) !== r) {
-                    ++n;
-                    continue
-                } for (;
+            if (s.push(t[n]), (e.get(t[n]) ?? r) !== r) {
+                ++n;
+                continue
+            } for (;
                 ++n < t.length && (e.get(t[n]) ?? r) === r;)e.get(s.at(-1)) !== r && (s[s.length - 1] += t[n])
         } return s
     }, pN = t => t >= 19968 && t <= 40959 || t >= 13312 && t <= 19903 || t >= 131072 && t <= 173791 || t >= 173824 && t <= 177983 || t >= 177984 && t <= 178207 || t >= 178208 && t <= 183983 || t >= 63744 && t <= 64255 || t >= 194560 && t <= 195103, fN = t => Number.isInteger(t) || typeof t == "bigint", dN = t => {
@@ -294,7 +294,7 @@ var jP = class {
             for (let r = 0;
                 r < t.length;
                 ++r) {
-                    let s = t[r], n = s.charCodeAt(0);
+                let s = t[r], n = s.charCodeAt(0);
                 pN(n) ? (e.push(" "), e.push(s), e.push(" ")) : e.push(s)
             } return e.join("")
         } strip_accents(t) { return t.normalize("NFD").replace(/\p{Mn}/gu, "") } is_control(t) {
@@ -390,10 +390,10 @@ function hL(t) {
             } let n = !1, o = 0, a = [];
             for (;
                 o < s.length;) {
-                    let i = s.length, l = null;
+                let i = s.length, l = null;
                 for (;
                     o < i;) {
-                        let c = s.slice(o, i).join("");
+                    let c = s.slice(o, i).join("");
                     if (o > 0 && (c = this.config.continuing_subword_prefix + c), this.tokens_to_ids.has(c)) {
                         l = c;
                         break
@@ -419,7 +419,7 @@ function hL(t) {
         for (let n = e;
             n < t.length;
             ++n) {
-                let o = t[n];
+            let o = t[n];
             if (s += o, r = r.children.get(o), r === void 0) return;
             r.is_leaf && (yield s)
         }
@@ -441,7 +441,7 @@ function hL(t) {
         let t = this.len, e = 0;
         for (;
             e <= t;) {
-                if (this.begin_nodes[e].length == 0) return [];
+            if (this.begin_nodes[e].length == 0) return [];
             for (let a of this.begin_nodes[e]) {
                 a.prev = null;
                 let i = 0, l = null;
@@ -479,7 +479,7 @@ function kL(t) {
         let e = t.chars, r = 1, s = 0;
         for (;
             s < e.length;) {
-                let n = !1, o = this.trie.common_prefix_search(e, s);
+            let n = !1, o = this.trie.common_prefix_search(e, s);
             for (let a of o) {
                 let i = this.tokens_to_ids.get(a), l = this.scores[i], c = dN(a);
                 t.insert(s, c, l, i), !n && c === r && (n = !0)
@@ -518,7 +518,7 @@ function kL(t) {
         let t = 0;
         for (;
             this._left(t) < this.size && this._greater(this._left(t), t) || this._right(t) < this.size && this._greater(this._right(t), t);) {
-                let e = this._right(t) < this.size && this._greater(this._right(t), this._left(t)) ? this._right(t) : this._left(t);
+            let e = this._right(t) < this.size && this._greater(this._right(t), this._left(t)) ? this._right(t) : this._left(t);
             this._swap(t, e), t = e
         }
     } _smallest() { return 2 ** Math.floor(Math.log2(this.size)) - 1 }
@@ -546,11 +546,11 @@ function kL(t) {
             for (let i = 1;
                 i < r.length;
                 ++i) {
-                    let l = { bias: i / r.length, token: r[i], prev: a, next: null };
+                let l = { bias: i / r.length, token: r[i], prev: a, next: null };
                 a.next = l, this.add_node(n, a), a = l
             } for (;
                 !n.is_empty();) {
-                    let i = n.pop();
+                let i = n.pop();
                 if (i.deleted || !i.next || i.next.deleted) continue;
                 if (i.deleted = !0, i.next.deleted = !0, i.prev) {
                     let c = { ...i.prev };
@@ -663,7 +663,7 @@ function WL(t) {
         for (let r = 0;
             r < t.length;
             ++r) {
-                let s = t[r].replaceAll(this.replacement, " ");
+            let s = t[r].replaceAll(this.replacement, " ");
             r == 0 && s.startsWith(" ") && (s = s.substring(1)), e.push(s)
         } return e
     }
@@ -689,13 +689,13 @@ function WL(t) {
             for (let n = 0;
                 n < this.start && e[n] === this.content;
                 ++n) {
-                    r = n + 1;
+                r = n + 1;
                 continue
             } let s = e.length;
             for (let n = 0;
                 n < this.stop;
                 ++n) {
-                    let o = e.length - n - 1;
+                let o = e.length - n - 1;
                 if (e[o] === this.content) {
                     s = o;
                     continue
@@ -797,7 +797,7 @@ function dz(t) {
         for (let r = 0;
             r < this.model.vocab.length;
             ++r) {
-                let s = this.model.vocab[r];
+            let s = this.model.vocab[r];
             (t || !this.added_tokens_map.has(s)) && e.set(s, r)
         } return e
     }
@@ -813,13 +813,13 @@ function yz(t, e = {}) {
         let u = "";
         for (;
             c(s[n]);) {
-                if (s[n] === "\\") {
-                    if (++n, n >= s.length) throw new SyntaxError("Unexpected end of input");
-                    let f = s[n++], m = xz.get(f);
-                    if (m === void 0) throw new SyntaxError(`Unexpected escaped character: ${f}`);
-                    u += m;
-                    continue
-                } if (u += s[n++], n >= s.length) throw new SyntaxError("Unexpected end of input")
+            if (s[n] === "\\") {
+                if (++n, n >= s.length) throw new SyntaxError("Unexpected end of input");
+                let f = s[n++], m = xz.get(f);
+                if (m === void 0) throw new SyntaxError(`Unexpected escaped character: ${f}`);
+                u += m;
+                continue
+            } if (u += s[n++], n >= s.length) throw new SyntaxError("Unexpected end of input")
         } return u
     }, i = () => {
         let c = r.at(-1);
@@ -830,7 +830,7 @@ function yz(t, e = {}) {
     };
     e: for (;
         n < s.length;) {
-            let c = r.at(-1)?.type;
+        let c = r.at(-1)?.type;
         if (c === void 0 || c === D.CloseStatement || c === D.CloseExpression || c === D.Comment) {
             let f = "";
             for (;
@@ -846,7 +846,7 @@ function yz(t, e = {}) {
             let m = "";
             for (;
                 s[n] !== "#" || s[n + 1] !== "}";) {
-                    if (n + 2 >= s.length) throw new SyntaxError("Missing end of comment tag");
+                if (n + 2 >= s.length) throw new SyntaxError("Missing end of comment tag");
                 m += s[n++]
             } let _ = m.endsWith("-");
             _ && (m = m.slice(0, -1)), f && i(), r.push(new qt(m, D.Comment)), n += 2, _ && l();
@@ -1033,7 +1033,7 @@ function qz(t) {
         let L = S();
         for (;
             l("or");) {
-                let z = t[r];
+            let z = t[r];
             ++r;
             let G = S();
             L = new En(z, L, G)
@@ -1042,7 +1042,7 @@ function qz(t) {
         let L = O();
         for (;
             l("and");) {
-                let z = t[r];
+            let z = t[r];
             ++r;
             let G = O();
             L = new En(z, L, G)
@@ -1051,7 +1051,7 @@ function qz(t) {
         let L;
         for (;
             l("not");) {
-                let z = t[r];
+            let z = t[r];
             ++r;
             let G = O();
             L = new m2(z, G)
@@ -1060,7 +1060,7 @@ function qz(t) {
         let L = v();
         for (;
             ;) {
-                let z;
+            let z;
             if (l("not", "in")) z = new qt("not in", D.Identifier), r += 2;
             else if (l("in")) z = t[r++];
             else if (a(D.ComparisonBinaryOperator)) z = t[r++];
@@ -1072,7 +1072,7 @@ function qz(t) {
         let L = B();
         for (;
             a(D.AdditiveBinaryOperator);) {
-                let z = t[r];
+            let z = t[r];
             ++r;
             let G = B();
             L = new En(z, L, G)
@@ -1091,7 +1091,7 @@ function qz(t) {
         let z = [], G = new Set, ge = !1, ie = !1;
         for (;
             !a(D.CloseParen);) {
-                let ot = a(D.ExponentiationBinaryOperator), Fe = a(D.MultiplicativeBinaryOperator) && t[r].value === "*";
+            let ot = a(D.ExponentiationBinaryOperator), Fe = a(D.MultiplicativeBinaryOperator) && t[r].value === "*";
             if (L === "parameters" && (ot || Fe)) throw new SyntaxError("Argument unpacking is not allowed in parameter declarations");
             if (ot) {
                 if (++r, z.push(new Fz(A())), a(D.Comma) && ++r, !a(D.CloseParen)) throw new SyntaxError("Expected closing parenthesis: `**` must be applied to the final argument");
@@ -1131,7 +1131,7 @@ function qz(t) {
     } function Q(L) {
         for (;
             a(D.Dot) || a(D.OpenSquareBracket);) {
-                let z = t[r];
+            let z = t[r];
             ++r;
             let G, ge = z.type === D.OpenSquareBracket;
             if (ge) G = Y(), s(D.CloseSquareBracket, "Expected closing square bracket");
@@ -1142,21 +1142,21 @@ function qz(t) {
         let L = I();
         for (;
             a(D.MultiplicativeBinaryOperator);) {
-                let z = t[r++], G = I();
+            let z = t[r++], G = I();
             L = new En(z, L, G)
         } return L
     } function I() {
         let L = oe();
         for (;
             a(D.ExponentiationBinaryOperator);) {
-                let z = t[r++], G = oe();
+            let z = t[r++], G = oe();
             L = new En(z, L, G)
         } return L
     } function oe() {
         let L = J();
         for (;
             l("is");) {
-                ++r;
+            ++r;
             let z = l("not");
             z && ++r;
             let G = me();
@@ -1167,7 +1167,7 @@ function qz(t) {
         let L = Z();
         for (;
             a(D.Pipe);) {
-                ++r;
+            ++r;
             let z = me();
             if (!(z instanceof Br)) throw new SyntaxError("Expected identifier for the filter");
             a(D.OpenParen) && (z = j(z)), L = new zz(L, z)
@@ -1202,7 +1202,7 @@ function qz(t) {
                 let z = new Map;
                 for (;
                     !a(D.CloseCurlyBracket);) {
-                        let G = A();
+                    let G = A();
                     s(D.Colon, "Expected colon between key and value in object literal");
                     let ge = A();
                     z.set(G, ge), a(D.Comma) && ++r
@@ -1818,7 +1818,7 @@ function e$(t) { t.set("false", !1), t.set("true", !0), t.set("none", null), t.s
             for (let o = 0;
                 o < s.value.length;
                 ++o) {
-                    let a = s.value[o];
+                let a = s.value[o];
                 if (a.type !== "Identifier") throw new Error(`Cannot unpack to non-identifier in set: ${a.type}`);
                 e.setVariable(a.value, n[o])
             }
@@ -1844,7 +1844,7 @@ function e$(t) { t.set("false", !1), t.set("true", !0), t.set("none", null), t.s
         for (let c = 0;
             c < n.value.length;
             ++c) {
-                let u = new Dr(r), f = n.value[c], m;
+            let u = new Dr(r), f = n.value[c], m;
             if (t.loopvar.type === "Identifier") m = _ => _.setVariable(t.loopvar.value, f);
             else if (t.loopvar.type === "TupleLiteral") {
                 let _ = t.loopvar;
@@ -1855,7 +1855,7 @@ function e$(t) { t.set("false", !1), t.set("true", !0), t.set("none", null), t.s
                     for (let b = 0;
                         b < _.value.length;
                         ++b) {
-                            if (_.value[b].type !== "Identifier") throw new Error(`Cannot unpack non-identifier type: ${_.value[b].type}`);
+                        if (_.value[b].type !== "Identifier") throw new Error(`Cannot unpack non-identifier type: ${_.value[b].type}`);
                         x.setVariable(_.value[b].value, w.value[b])
                     }
                 }
@@ -1865,7 +1865,7 @@ function e$(t) { t.set("false", !1), t.set("true", !0), t.set("none", null), t.s
         for (let c = 0;
             c < o.length;
             ++c) {
-                let u = new Map([["index", new de(c + 1)], ["index0", new de(c)], ["revindex", new de(o.length - c)], ["revindex0", new de(o.length - c - 1)], ["first", new fe(c === 0)], ["last", new fe(c === o.length - 1)], ["length", new de(o.length)], ["previtem", c > 0 ? o[c - 1] : new Xe], ["nextitem", c < o.length - 1 ? o[c + 1] : new Xe]]);
+            let u = new Map([["index", new de(c + 1)], ["index0", new de(c)], ["revindex", new de(o.length - c)], ["revindex0", new de(o.length - c - 1)], ["first", new fe(c === 0)], ["last", new fe(c === o.length - 1)], ["length", new de(o.length)], ["previtem", c > 0 ? o[c - 1] : new Xe], ["nextitem", c < o.length - 1 ? o[c + 1] : new Xe]]);
             r.setVariable("loop", new At(u)), a[c](r);
             try {
                 let f = this.evaluateBlock(t.body, r);
@@ -1886,7 +1886,7 @@ function e$(t) { t.set("false", !1), t.set("true", !0), t.set("none", null), t.s
         for (let l = 0;
             l < e.length;
             ++l) {
-                let { name: c, defaultValue: u } = yd(e[l]), f = o[l];
+            let { name: c, defaultValue: u } = yd(e[l]), f = o[l];
             f === void 0 && a.has(c) && (f = a.get(c), a.delete(c)), f === void 0 && u !== void 0 && i.push([c, u]), n.setVariable(c, f ?? new Xe)
         } if (r.has("kwargs")) n.setVariable("kwargs", new At(a));
         else if (a.size > 0) throw new Error(`macro ${t} takes no keyword argument '${a.keys().next().value}'`);
@@ -2138,7 +2138,7 @@ var Gr = class {
             for (let s = 0;
                 s < 624;
                 ++s) {
-                    let n = e[s] & 2147483648 | e[(s + 1) % 624] & 2147483647;
+                let n = e[s] & 2147483648 | e[(s + 1) % 624] & 2147483647;
                 e[s] = (e[(s + 397) % 624] ^ n >>> 1 ^ (n & 1 ? 2567483615 : 0)) >>> 0
             } this._idx = 0
         } let r = e[this._idx++];
@@ -2153,7 +2153,7 @@ var Gr = class {
         for (let r = e.length - 1;
             r > 0;
             --r) {
-                let s = 32 - Math.clz32(r + 1), n = this._int32() >>> 32 - s;
+            let s = 32 - Math.clz32(r + 1), n = this._int32() >>> 32 - s;
             for (;
                 n > r;)n = this._int32() >>> 32 - s;
             let o = e[r];
@@ -2184,7 +2184,7 @@ var d$ = new Gr, Tn = class {
             let f = xt.createWriteStream(i), m = r.body.getReader();
             for (;
                 ;) {
-                    let { done: _, value: w } = await m.read();
+                let { done: _, value: w } = await m.read();
                 if (_) break;
                 await new Promise((b, A) => {
                     f.write(w, k => {
@@ -2443,13 +2443,13 @@ async function zo(t, e, r = !0, s = {}, n = !1) {
         ++_)for (let w = 0;
             w < o;
             ++w) {
-                let x = _ * o + w, b = (w + .5) / l - .5, A = (_ + .5) / c - .5, k = Math.floor(b), M = Math.floor(A), S = Math.min(k + 1, s - 1), O = Math.min(M + 1, r - 1);
+            let x = _ * o + w, b = (w + .5) / l - .5, A = (_ + .5) / c - .5, k = Math.floor(b), M = Math.floor(A), S = Math.min(k + 1, s - 1), O = Math.min(M + 1, r - 1);
             k = Math.max(k, 0), M = Math.max(M, 0);
             let C = b - k, v = A - M, U = (1 - C) * (1 - v), j = C * (1 - v), F = (1 - C) * v, K = C * v, Y = M * s, Q = O * s, B = Y + k, I = Y + S, oe = Q + k, J = Q + S;
             for (let Z = 0;
                 Z < e;
                 ++Z) {
-                    let me = Z * f;
+                let me = Z * f;
                 u[Z * m + x] = U * t[me + B] + j * t[me + I] + F * t[me + oe] + K * t[me + J]
             }
         } return u
@@ -2462,7 +2462,7 @@ async function zo(t, e, r = !0, s = {}, n = !1) {
     for (let i = 0;
         i < t.length;
         ++i) {
-            let l = 0;
+        let l = 0;
         for (let c = e.length - 1, u = i;
             c >= 0;
             --c)l += u % e[c] * o[c], u = Math.floor(u / e[c]);
@@ -2508,7 +2508,7 @@ async function zo(t, e, r = !0, s = {}, n = !1) {
         for (let s = 0;
             s < this.table.length;
             s += 2) {
-                let n = Math.PI * s / this.size;
+            let n = Math.PI * s / this.size;
             this.table[s] = Math.cos(n), this.table[s + 1] = -Math.sin(n)
         } let r = 0;
         for (let s = 1;
@@ -2518,11 +2518,11 @@ async function zo(t, e, r = !0, s = {}, n = !1) {
         for (let s = 0;
             s < this._bitrev.length;
             ++s) {
-                this._bitrev[s] = 0;
+            this._bitrev[s] = 0;
             for (let n = 0;
                 n < this._width;
                 n += 2) {
-                    let o = this._width - n - 2;
+                let o = this._width - n - 2;
                 this._bitrev[s] |= (s >>> n & 3) << o
             }
         }
@@ -2555,27 +2555,27 @@ async function zo(t, e, r = !0, s = {}, n = !1) {
         if (i === 4) for (l = 0, c = 0;
             l < n;
             l += i, ++c) {
-                let m = u[c];
+            let m = u[c];
             this._singleTransform2(r, e, l, m, a)
         } else for (l = 0, c = 0;
             l < n;
             l += i, ++c) {
-                let m = u[c];
+            let m = u[c];
             this._singleTransform4(r, e, l, m, a, s)
         } let f = this.table;
         for (a >>= 2;
             a >= 2;
             a >>= 2) {
-                i = n / a << 1;
+            i = n / a << 1;
             let m = i >>> 2;
             for (l = 0;
                 l < n;
                 l += i) {
-                    let _ = l + m - 1;
+                let _ = l + m - 1;
                 for (let w = l, x = 0;
                     w < _;
                     w += 2, x += a) {
-                        let b = w, A = b + m, k = A + m, M = k + m, S = e[b], O = e[b + 1], C = e[A], v = e[A + 1], U = e[k], j = e[k + 1], F = e[M], K = e[M + 1], Y = f[x], Q = s * f[x + 1], B = C * Y - v * Q, I = C * Q + v * Y, oe = f[2 * x], J = s * f[2 * x + 1], Z = U * oe - j * J, me = U * J + j * oe, L = f[3 * x], z = s * f[3 * x + 1], G = F * L - K * z, ge = F * z + K * L, ie = S + Z, ot = O + me, Fe = S - Z, Re = O - me, et = B + G, qe = I + ge, Ce = s * (B - G), at = s * (I - ge);
+                    let b = w, A = b + m, k = A + m, M = k + m, S = e[b], O = e[b + 1], C = e[A], v = e[A + 1], U = e[k], j = e[k + 1], F = e[M], K = e[M + 1], Y = f[x], Q = s * f[x + 1], B = C * Y - v * Q, I = C * Q + v * Y, oe = f[2 * x], J = s * f[2 * x + 1], Z = U * oe - j * J, me = U * J + j * oe, L = f[3 * x], z = s * f[3 * x + 1], G = F * L - K * z, ge = F * z + K * L, ie = S + Z, ot = O + me, Fe = S - Z, Re = O - me, et = B + G, qe = I + ge, Ce = s * (B - G), at = s * (I - ge);
                     e[b] = ie + et, e[b + 1] = ot + qe, e[A] = Fe + at, e[A + 1] = Re - Ce, e[k] = ie - et, e[k + 1] = ot - qe, e[M] = Fe - at, e[M + 1] = Re + Ce
                 }
             }
@@ -2591,25 +2591,25 @@ async function zo(t, e, r = !0, s = {}, n = !1) {
         if (i === 4) for (l = 0, c = 0;
             l < n;
             l += i, ++c) {
-                let _ = u[c];
+            let _ = u[c];
             this._singleRealTransform2(r, e, l, _ >>> 1, a >>> 1)
         } else for (l = 0, c = 0;
             l < n;
             l += i, ++c) {
-                let _ = u[c];
+            let _ = u[c];
             this._singleRealTransform4(r, e, l, _ >>> 1, a >>> 1, s)
         } let f = this.table;
         for (a >>= 2;
             a >= 2;
             a >>= 2) {
-                i = n / a << 1;
+            i = n / a << 1;
             let _ = i >>> 1, w = _ >>> 1, x = w >>> 1;
             for (l = 0;
                 l < n;
                 l += i)for (let b = 0, A = 0;
                     b <= x;
                     b += 2, A += a) {
-                        let k = l + b, M = k + w, S = M + w, O = S + w, C = e[k], v = e[k + 1], U = e[M], j = e[M + 1], F = e[S], K = e[S + 1], Y = e[O], Q = e[O + 1], B = C, I = v, oe = f[A], J = s * f[A + 1], Z = U * oe - j * J, me = U * J + j * oe, L = f[2 * A], z = s * f[2 * A + 1], G = F * L - K * z, ge = F * z + K * L, ie = f[3 * A], ot = s * f[3 * A + 1], Fe = Y * ie - Q * ot, Re = Y * ot + Q * ie, et = B + G, qe = I + ge, Ce = B - G, at = I - ge, lr = Z + Fe, Pe = me + Re, Ge = s * (Z - Fe), dn = s * (me - Re);
+                    let k = l + b, M = k + w, S = M + w, O = S + w, C = e[k], v = e[k + 1], U = e[M], j = e[M + 1], F = e[S], K = e[S + 1], Y = e[O], Q = e[O + 1], B = C, I = v, oe = f[A], J = s * f[A + 1], Z = U * oe - j * J, me = U * J + j * oe, L = f[2 * A], z = s * f[2 * A + 1], G = F * L - K * z, ge = F * z + K * L, ie = f[3 * A], ot = s * f[3 * A + 1], Fe = Y * ie - Q * ot, Re = Y * ot + Q * ie, et = B + G, qe = I + ge, Ce = B - G, at = I - ge, lr = Z + Fe, Pe = me + Re, Ge = s * (Z - Fe), dn = s * (me - Re);
                     if (e[k] = et + lr, e[k + 1] = qe + Pe, e[M] = Ce + dn, e[M + 1] = at - Ge, b === 0) {
                         e[S] = et - lr, e[S + 1] = qe - Pe;
                         continue
@@ -2638,7 +2638,7 @@ async function zo(t, e, r = !0, s = {}, n = !1) {
         for (let u = 0;
             u < s >> 1;
             ++u) {
-                let f = (u + 1 - e) ** 2 / 2, m = Math.sqrt(l ** 2 + c ** 2) ** f, _ = f * Math.atan2(c, l), w = 2 * u;
+            let f = (u + 1 - e) ** 2 / 2, m = Math.sqrt(l ** 2 + c ** 2) ** f, _ = f * Math.atan2(c, l), w = 2 * u;
             o[w] = m * Math.cos(_), o[w + 1] = m * Math.sin(_), a[w] = o[w], a[w + 1] = -o[w + 1]
         } this._slicedChirpBuffer = o.subarray(r, s), this._f = new Hc(n >> 1), this._f.transform(this._chirpBuffer, a)
     } _transform(e, r, s) {
@@ -2646,24 +2646,24 @@ async function zo(t, e, r = !0, s = {}, n = !1) {
         if (s) for (let f = 0;
             f < c.length;
             f += 2) {
-                let m = f + 1, _ = f >> 1, w = r[_];
+            let m = f + 1, _ = f >> 1, w = r[_];
             n[f] = w * c[f], n[m] = w * c[m]
         } else for (let f = 0;
             f < c.length;
             f += 2) {
-                let m = f + 1;
+            let m = f + 1;
             n[f] = r[f] * c[f] - r[m] * c[m], n[m] = r[f] * c[m] + r[m] * c[f]
         } this._f.transform(a, n);
         for (let f = 0;
             f < l.length;
             f += 2) {
-                let m = f + 1;
+            let m = f + 1;
             o[f] = a[f] * l[f] - a[m] * l[m], o[m] = a[f] * l[m] + a[m] * l[f]
         } this._f.inverseTransform(i, o);
         for (let f = 0;
             f < i.length;
             f += 2) {
-                let m = i[f + u], _ = i[f + u + 1], w = c[f], x = c[f + 1];
+            let m = i[f + u], _ = i[f + u + 1], w = c[f], x = c[f + 1];
             e[f] = m * w - _ * x, e[f + 1] = m * x + _ * w
         }
     } transform(e, r) { this._transform(e, r, !1) } realTransform(e, r) { this._transform(e, r, !0) }
@@ -2674,11 +2674,11 @@ function F2(t, e) {
     for (let o = 0;
         o < t.length;
         ++o) {
-            let a = 0;
+        let a = 0;
         for (let i = -n;
             i <= n;
             ++i) {
-                let l = o + i;
+            let l = o + i;
             l < 0 ? l = Math.abs(l) : l >= t.length && (l = 2 * (t.length - 1) - l), s[a++] = t[l]
         } s.sort(), r[o] = s[n]
     } return r
@@ -2697,7 +2697,7 @@ function F2(t, e) {
         ++u)for (let f = 1;
             f < s[0];
             ++f) {
-                let m = n[f - 1][u - 1], _ = n[f - 1][u], w = n[f][u - 1], x, b;
+            let m = n[f - 1][u - 1], _ = n[f - 1][u], w = n[f][u - 1], x, b;
             m < _ && m < w ? (x = m, b = 0) : _ < m && _ < w ? (x = _, b = 1) : (x = w, b = 2), n[f][u] = t[f - 1][u - 1] + x, o[f][u] = b
         } for (let u = 0;
         u < s[1];
@@ -2725,7 +2725,7 @@ function F2(t, e) {
             for (let l = 0;
                 l < t.length;
                 ++l) {
-                    let c = 0, u = (l & 32768) << 16, f = (l & 31744) >> 10, m = l & 1023;
+                let c = 0, u = (l & 32768) << 16, f = (l & 31744) >> 10, m = l & 1023;
                 if (f === 31) c = u | 2139095040 | m << 13;
                 else if (f === 0) if (m === 0) c = u;
                 else {
@@ -2831,7 +2831,7 @@ var Zd = Object.defineProperty, v$ = Object.getOwnPropertyDescriptor, k$ = Objec
                 x++)for (let b = 0;
                     b < n;
                     b++) {
-                        let A = (t.data[f++] - c[0]) * l[0], k = (t.data[m++] - c[1]) * l[1], M = (t.data[_++] - c[2]) * l[2], S = w === -1 ? 255 : (t.data[w++] - c[3]) * l[3];
+                    let A = (t.data[f++] - c[0]) * l[0], k = (t.data[m++] - c[1]) * l[1], M = (t.data[_++] - c[2]) * l[2], S = w === -1 ? 255 : (t.data[w++] - c[3]) * l[3];
                     s.fillStyle = "rgba(" + A + "," + k + "," + M + "," + S + ")", s.fillRect(b, x, 1, 1)
                 } if ("toDataURL" in r) return r.toDataURL();
             throw new Error("toDataURL is not supported")
@@ -2943,7 +2943,7 @@ var Zd = Object.defineProperty, v$ = Object.getOwnPropertyDescriptor, k$ = Objec
         for (let r = 0;
             r < t.length;
             r++) {
-                let s = t[r];
+            let s = t[r];
             if (typeof s != "number" || !Number.isSafeInteger(s)) throw new TypeError(`dims[${r}] must be an integer, got: ${s}`);
             if (s < 0) throw new RangeError(`dims[${r}] must be a non-negative integer, got: ${s}`);
             e *= s
@@ -3060,11 +3060,11 @@ var Zd = Object.defineProperty, v$ = Object.getOwnPropertyDescriptor, k$ = Objec
         for (let n = 0;
             n < r.length;
             n++) {
-                if (s && !r[n].includes("TRACE_FUNC")) {
-                    let o = `FUNC_${t}::${r[n].trim().split(" ")[1]}`;
-                    e && (o += `::${e}`), ru("CPU", o);
-                    return
-                } r[n].includes("TRACE_FUNC") && (s = !0)
+            if (s && !r[n].includes("TRACE_FUNC")) {
+                let o = `FUNC_${t}::${r[n].trim().split(" ")[1]}`;
+                e && (o += `::${e}`), ru("CPU", o);
+                return
+            } r[n].includes("TRACE_FUNC") && (s = !0)
         }
     }, Rs = t => { (typeof mt.trace > "u" ? !mt.wasm.trace : !mt.trace) || Id("BEGIN", t) }, Bs = t => { (typeof mt.trace > "u" ? !mt.wasm.trace : !mt.trace) || Id("END", t) }, Kr = t => { (typeof mt.trace > "u" ? !mt.wasm.trace : !mt.trace) || console.time(`ORT::${t}`) }, Yr = t => { (typeof mt.trace > "u" ? !mt.wasm.trace : !mt.trace) || console.timeEnd(`ORT::${t}`) }
 }), $T, L$ = Ae(() => {
@@ -3356,7 +3356,7 @@ async function H2(t = {}) {
         if (16 < (h = xk(p, d >>>= 0, h, g)) - d && p.buffer && wk) return wk.decode(p.buffer instanceof ArrayBuffer ? p.subarray(d, h) : p.slice(d, h));
         for (g = "";
             d < h;) {
-                var E = p[d++];
+            var E = p[d++];
             if (128 & E) {
                 var T = 63 & p[d++];
                 if ((224 & E) == 192) g += String.fromCharCode((31 & E) << 6 | T);
@@ -3371,7 +3371,7 @@ async function H2(t = {}) {
         p >>>= 0;
         for (var d = "";
             ;) {
-                var h = (v(), K)[p++ >>> 0];
+            var h = (v(), K)[p++ >>> 0];
             if (!h) return d;
             d += String.fromCharCode(h)
         }
@@ -3449,7 +3449,7 @@ async function H2(t = {}) {
             for (var T = 0;
                 T < p.length;
                 ++T) {
-                    var N = p.codePointAt(T);
+                var N = p.codePointAt(T);
                 if (127 >= N) {
                     if (d >= h) break;
                     g[d++ >>> 0] = N
@@ -3470,7 +3470,7 @@ async function H2(t = {}) {
         for (var d = 0, h = 0;
             h < p.length;
             ++h) {
-                var g = p.charCodeAt(h);
+            var g = p.charCodeAt(h);
             127 >= g ? d++ : 2047 >= g ? d += 2 : 55296 <= g && 57343 >= g ? (d += 4, ++h) : d += 3
         } return d
     };
@@ -3492,7 +3492,7 @@ async function H2(t = {}) {
         for (h = "";
             p < d;
             ++p) {
-                var g = (v(), Q)[p >>> 0];
+            var g = (v(), Q)[p >>> 0];
             h += String.fromCharCode(g)
         } return h
     }, FO = (p, d, h) => {
@@ -3502,7 +3502,7 @@ async function H2(t = {}) {
         for (var E = 0;
             E < h;
             ++E) {
-                var T = p.charCodeAt(E);
+            var T = p.charCodeAt(E);
             (v(), Y)[d >>> 1 >>> 0] = T, d += 2
         } return (v(), Y)[d >>> 1 >>> 0] = 0, d - g
     }, GO = p => 2 * p.length, jO = (p, d, h) => {
@@ -3511,7 +3511,7 @@ async function H2(t = {}) {
         for (var E = 0;
             !(E >= d / 4);
             E++) {
-                var T = (v(), I)[p + E >>> 0];
+            var T = (v(), I)[p + E >>> 0];
             if (!T && !h) break;
             g += String.fromCodePoint(T)
         } return g
@@ -3522,7 +3522,7 @@ async function H2(t = {}) {
         for (var E = 0;
             E < p.length;
             ++E) {
-                var T = p.codePointAt(E);
+            var T = p.codePointAt(E);
             if (65535 < T && E++, (v(), B)[d >>> 2 >>> 0] = T, (d += 4) + 4 > h) break
         } return (v(), B)[d >>> 2 >>> 0] = 0, d - g
     }, WO = p => {
@@ -3553,7 +3553,7 @@ async function H2(t = {}) {
     function QO(p, d, h, g, E) {
         for (d >>>= 0, E >>>= 0, Gf.length = 0, h = E >>> 3, g = E + g >>> 3;
             h < g;) {
-                var T;
+            var T;
             T = (v(), Z)[h++ >>> 0] ? (v(), Z)[h++ >>> 0] : (v(), J)[h++ >>> 0], Gf.push(T)
         } return (d ? id[d] : GC[p])(...Gf)
     } var JO = () => { Pe = 0 };
@@ -3605,7 +3605,7 @@ async function H2(t = {}) {
         for (var h = Array(p), g = 0;
             g < p;
             ++g) {
-                var E = g, T = (v(), I)[d + 4 * g >>> 2 >>> 0], N = Bf[T];
+            var E = g, T = (v(), I)[d + 4 * g >>> 2 >>> 0], N = Bf[T];
             if (N === void 0) throw p = `parameter ${g}`, T = pE(T), d = cr(T), Ft(T), new gn(`${p} has unknown type ${d}`);
             h[E] = N
         } return h
@@ -3645,7 +3645,7 @@ async function H2(t = {}) {
     } function wI(p) { return Kt(bc(p >>> 0)) } function xI() { return Kt({}) } function yI(p) {
         for (var d = Ut(p >>>= 0);
             d.length;) {
-                var h = d.pop();
+            var h = d.pop();
             d.pop()(h)
         } Df(p)
     } function bI(p, d, h) { d >>>= 0, h >>>= 0, p = Ut(p >>> 0), d = Ut(d), h = Ut(h), p[d] = h } function vI(p, d) { p = gt(p), d >>>= 0, p = new Date(1e3 * p), (v(), B)[d >>> 2 >>> 0] = p.getUTCSeconds(), (v(), B)[d + 4 >>> 2 >>> 0] = p.getUTCMinutes(), (v(), B)[d + 8 >>> 2 >>> 0] = p.getUTCHours(), (v(), B)[d + 12 >>> 2 >>> 0] = p.getUTCDate(), (v(), B)[d + 16 >>> 2 >>> 0] = p.getUTCMonth(), (v(), B)[d + 20 >>> 2 >>> 0] = p.getUTCFullYear() - 1900, (v(), B)[d + 24 >>> 2 >>> 0] = p.getUTCDay(), p = (p.getTime() - Date.UTC(p.getUTCFullYear(), 0, 1, 0, 0, 0, 0)) / 864e5 | 0, (v(), B)[d + 28 >>> 2 >>> 0] = p } var Gk = p => p % 4 == 0 && (p % 100 != 0 || p % 400 == 0), jk = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335], qk = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
@@ -3686,7 +3686,7 @@ async function H2(t = {}) {
         Vf.length = 0;
         for (var h;
             h = (v(), K)[p++ >>> 0];) {
-                var g = h != 105;
+            var g = h != 105;
             d += (g &= h != 112) && d % 8 ? 4 : 0, Vf.push(h == 112 ? (v(), I)[d >>> 2 >>> 0] : h == 106 ? (v(), Z)[d >>> 3 >>> 0] : h == 105 ? (v(), B)[d >>> 2 >>> 0] : (v(), J)[d >>> 3 >>> 0]), d += g ? 8 : 4
         } return Vf
     };
@@ -3719,7 +3719,7 @@ async function H2(t = {}) {
         for (var h = 1;
             4 >= h;
             h *= 2) {
-                var g = d * (1 + .2 / h);
+            var g = d * (1 + .2 / h);
             g = Math.min(g, p + 100663296);
             e: {
                 g = (Math.min(4294901760, 65536 * Math.ceil(Math.max(p, g) / 65536)) - zr.buffer.byteLength + 65535) / 65536 | 0;
@@ -3761,7 +3761,7 @@ async function H2(t = {}) {
                 for (var N = {}, P = 0;
                     P < E;
                     ++P) {
-                        var R = T + 24 * P;
+                    var R = T + 24 * P;
                     N[Jk(R + 4)] = (v(), J)[R + 16 >>> 3 >>> 0]
                 } E = N
             } else E = void 0;
@@ -3924,7 +3924,7 @@ async function H2(t = {}) {
             for (var T = 0;
                 T < d;
                 ++T) {
-                    var N = wn(p + 8 * T);
+                var N = wn(p + 8 * T);
                 if (!(N in Ec)) return N;
                 g[T] = Ec[N]
             } return g = await Promise.race(g), delete Ec[g], g
@@ -3959,12 +3959,12 @@ async function H2(t = {}) {
         for (var E = 0, T = 0;
             T < h;
             T++) {
-                var N = (v(), I)[d >>> 2 >>> 0], P = (v(), I)[d + 4 >>> 2 >>> 0];
+            var N = (v(), I)[d >>> 2 >>> 0], P = (v(), I)[d + 4 >>> 2 >>> 0];
             d += 8;
             for (var R = 0;
                 R < P;
                 R++) {
-                    var H = p, xe = (v(), K)[N + R >>> 0], ve = dC[H];
+                var H = p, xe = (v(), K)[N + R >>> 0], ve = dC[H];
                 xe === 0 || xe === 10 ? ((H === 1 ? M : S)(yk(ve)), ve.length = 0) : ve.push(xe)
             } E += P
         } return (v(), I)[g >>> 2 >>> 0] = E, 0
@@ -4682,7 +4682,7 @@ async function H2(t = {}) {
                 } let a = 0;
                 for (;
                     ;) {
-                        let { done: i, value: l } = await n.read();
+                    let { done: i, value: l } = await n.read();
                     if (i) break;
                     let c = l.byteLength;
                     new Uint8Array(o, a, c).set(l), a += c
@@ -4714,7 +4714,7 @@ async function H2(t = {}) {
                 for (let i = 0;
                     i < n;
                     i++) {
-                        let l = o[i];
+                    let l = o[i];
                     if (l > 2147483647n || l < -2147483648n) throw new Error("Can not convert int64 data to int32 - value out of range.");
                     a[i] = Number(l)
                 } return new Uint8Array(a.buffer)
@@ -4975,7 +4975,7 @@ var Uo, _T, eS, V$ = Ae(() => {
             for (let f = 0;
                 f < c;
                 f++) {
-                    let m = Number(r.getValue(n + 8 + f * o, "*"));
+                let m = Number(r.getValue(n + 8 + f * o, "*"));
                 u.push(m !== 0 ? r.UTF8ToString(m) : Number(r.getValue(n + 8 + (f + c) * o, "*")))
             } return [i, l, u]
         } finally { r.stackRestore(s), n !== 0 && r._OrtFree(n) }
@@ -5005,14 +5005,14 @@ var Uo, _T, eS, V$ = Ae(() => {
             for (let S = 0;
                 S < f;
                 S++) {
-                    let [O, C, v] = Wd(o, S);
+                let [O, C, v] = Wd(o, S);
                 O === 0 && ze("Can't get an input name."), c.push(O);
                 let U = n.UTF8ToString(O);
                 w.push(U), b.push(C === 0 ? { name: U, isTensor: !1 } : { name: U, isTensor: !0, type: eu(C), shape: v })
             } for (let S = 0;
                 S < m;
                 S++) {
-                    let [O, C, v] = Wd(o, S + f);
+                let [O, C, v] = Wd(o, S + f);
                 O === 0 && ze("Can't get an output name."), u.push(O);
                 let U = n.UTF8ToString(O);
                 x.push(U), A.push(C === 0 ? { name: U, isTensor: !1 } : { name: U, isTensor: !0, type: eu(C), shape: v });
@@ -5064,7 +5064,7 @@ var Uo, _T, eS, V$ = Ae(() => {
                 for (let k = 0;
                     k < A.length;
                     k++) {
-                        if (typeof A[k] != "string") throw new TypeError(`tensor data at index ${k} is not a string`);
+                    if (typeof A[k] != "string") throw new TypeError(`tensor data at index ${k} is not a string`);
                     i.setValue(_ + k * l, zt(A[k], r), "*")
                 }
             } else {
@@ -5113,12 +5113,12 @@ var Uo, _T, eS, V$ = Ae(() => {
                 for (let Z = 0;
                     Z < x;
                     Z++) {
-                        let me = e[Z];
+                    let me = e[Z];
                     await a._OrtBindInput(I, u[me], M[Z]) !== 0 && ze(`Can't bind input[${Z}] for session=${t}.`)
                 } for (let Z = 0;
                     Z < b;
                     Z++) {
-                        let me = s[Z];
+                    let me = s[Z];
                     n[Z]?.[3] ? (C.push(S[Z]), a._OrtBindOutput(I, f[me], S[Z], 0) !== 0 && ze(`Can't bind pre-allocated output[${Z}] for session=${t}.`)) : a._OrtBindOutput(I, f[me], 0, J[me]) !== 0 && ze(`Can't bind output[${Z}] to ${oe[Z]} for session=${t}.`)
                 } Yr("wasm bindInputsOutputs"), Hr.set(t, [c, u, f, m, _, !0])
             } a.jsepOnRunStart?.(c), a.webnnOnRunStart?.(c);
@@ -5129,7 +5129,7 @@ var Uo, _T, eS, V$ = Ae(() => {
             for (let I = 0;
                 I < b;
                 I++) {
-                    let oe = Number(a.getValue(F + I * i, "*"));
+                let oe = Number(a.getValue(F + I * i, "*"));
                 if (oe === S[I] || C.includes(S[I])) {
                     Q.push(n[I]), oe !== S[I] && a._OrtReleaseTensor(oe) !== 0 && ze("Can't release tensor.");
                     continue
@@ -5152,7 +5152,7 @@ var Uo, _T, eS, V$ = Ae(() => {
                         for (let Ce = 0;
                             Ce < Re;
                             Ce++) {
-                                let at = a.getValue(z + Ce * i, "*"), lr = a.getValue(z + (Ce + 1) * i, "*"), Pe = Ce === Re - 1 ? void 0 : lr - at;
+                            let at = a.getValue(z + Ce * i, "*"), lr = a.getValue(z + (Ce + 1) * i, "*"), Pe = Ce === Re - 1 ? void 0 : lr - at;
                             qe.push(a.UTF8ToString(at, Pe))
                         } Q.push([L, Fe, qe, "cpu"])
                     } else if (et === "gpu-buffer" && Re > 0) {
@@ -5407,7 +5407,7 @@ var wS = (t, e) => {
             x++)for (let b = 0;
                 b < n;
                 b++) {
-                    let A = (t.data[f++] - c[0]) * l[0], k = (t.data[m++] - c[1]) * l[1], M = (t.data[_++] - c[2]) * l[2], S = w === -1 ? 255 : (t.data[w++] - c[3]) * l[3];
+                let A = (t.data[f++] - c[0]) * l[0], k = (t.data[m++] - c[1]) * l[1], M = (t.data[_++] - c[2]) * l[2], S = w === -1 ? 255 : (t.data[w++] - c[3]) * l[3];
                 s.fillStyle = "rgba(" + A + "," + k + "," + M + "," + S + ")", s.fillRect(b, x, 1, 1)
             } if ("toDataURL" in r) return r.toDataURL();
         throw new Error("toDataURL is not supported")
@@ -5513,7 +5513,7 @@ var SS = t => {
     for (let r = 0;
         r < t.length;
         r++) {
-            let s = t[r];
+        let s = t[r];
         if (typeof s != "number" || !Number.isSafeInteger(s)) throw new TypeError(`dims[${r}] must be an integer, got: ${s}`);
         if (s < 0) throw new RangeError(`dims[${r}] must be a non-negative integer, got: ${s}`);
         e *= s
@@ -5785,7 +5785,7 @@ var $ = class t {
         for (let o = 0;
             o < r.length;
             ++o) {
-                let a = r[o] % n, i = a < 0 && n > 0 || a > 0 && n < 0;
+            let a = r[o] % n, i = a < 0 && n > 0 || a > 0 && n < 0;
             r[o] = i ? a + n : a
         } return this
     } clone() { return new t(this.type, this.data.slice(), this.dims.slice()) } slice(...e) {
@@ -5793,7 +5793,7 @@ var $ = class t {
         for (let u = 0;
             u < this.dims.length;
             ++u) {
-                let f = e[u];
+            let f = e[u];
             if (f == null) s.push([0, this.dims[u]]), r.push(this.dims[u]);
             else if (typeof f == "number") f = nr(f, this.dims[u], u), s.push([f, f + 1]);
             else if (Array.isArray(f) && f.length === 2) {
@@ -5820,11 +5820,11 @@ var $ = class t {
             } else for (let u = 0;
             u < o;
             ++u) {
-                let f = 0;
+            let f = 0;
             for (let m = n.length - 1, _ = u;
                 m >= 0;
                 --m) {
-                    let w = n[m];
+                let w = n[m];
                 f += (_ % w + s[m][0]) * l[m], _ = Math.floor(_ / w)
             } i[u] = a[f]
         } return new t(this.type, i, r)
@@ -5848,11 +5848,11 @@ var $ = class t {
         for (let a = 0;
             a < n.length;
             ++a) {
-                let i = 0;
+            let i = 0;
             for (let l = this.dims.length - 1, c = a, u = 1;
                 l >= 0;
                 --l) {
-                    let f = this.dims[l];
+                let f = this.dims[l];
                 if (l !== r) {
                     let m = c % f;
                     i += m * u, u *= this.dims[l]
@@ -5935,11 +5935,11 @@ var $ = class t {
         for (let u = 0;
             u < o;
             ++u) {
-                let f = u, m = 0;
+            let f = u, m = 0;
             for (let _ = 0;
                 _ < n.length;
                 ++_) {
-                    let w = Math.floor(f / c[_]);
+                let w = Math.floor(f / c[_]);
                 f = f % c[_];
                 let x = w % s[_];
                 m += x * l[_]
@@ -6004,15 +6004,15 @@ async function du(t, e, r, s, n) { return await (await hr.slice)({ x: t, s: fu(e
     for (let u = 0;
         u < a;
         ++u) {
-            let f = u * l * i;
+        let f = u * l * i;
         for (let m = 0;
             m < l;
             ++m) {
-                let _ = 0, w = 0, x = u * i, b = f + m;
+            let _ = 0, w = 0, x = u * i, b = f + m;
             for (let k = 0;
                 k < i;
                 ++k) {
-                    let M = Number(s[x + k]);
+                let M = Number(s[x + k]);
                 w += M, _ += r[b + k * l] * M
             } let A = _ / w;
             o[c++] = A
@@ -6026,11 +6026,11 @@ async function du(t, e, r, s, n) { return await (await hr.slice)({ x: t, s: fu(e
     for (let f = 0;
         f < s;
         ++f) {
-            let m = f * n;
+        let m = f * n;
         for (let _ = 0;
             _ < n;
             ++_) {
-                let w = m + _;
+            let w = m + _;
             u[w] = (c[w] - l[f]) / (i[f] + r)
         }
     } return new $(t.type, u, t.dims)
@@ -6055,15 +6055,15 @@ async function du(t, e, r, s, n) { return await (await hr.slice)({ x: t, s: fu(e
         for (let i = 0;
             i < t.length;
             ++i) {
-                let { data: l, dims: c } = t[i];
+            let { data: l, dims: c } = t[i];
             for (let u = 0;
                 u < l.length;
                 ++u) {
-                    let f = 0;
+                let f = 0;
                 for (let m = c.length - 1, _ = u, w = 1;
                     m >= 0;
                     --m) {
-                        let x = c[m], b = _ % x;
+                    let x = c[m], b = _ % x;
                     m === e && (b += a), f += b * w, w *= r[m], _ = Math.floor(_ / x)
                 } n[f] = l[u]
             } a += c[e]
@@ -6079,11 +6079,11 @@ async function du(t, e, r, s, n) { return await (await hr.slice)({ x: t, s: fu(e
     for (let c = 0;
         c < o.length;
         ++c) {
-            let u = 0;
+        let u = 0;
         for (let f = a.length - 1, m = c, _ = 1;
             f >= 0;
             --f) {
-                let w = a[f];
+            let w = a[f];
             if (f !== r) {
                 let x = m % w;
                 u += x * _, _ *= i[f]
@@ -6142,7 +6142,7 @@ async function du(t, e, r, s, n) { return await (await hr.slice)({ x: t, s: fu(e
     for (let i = 0;
         i < o.length;
         ++i) {
-            let l = o[i] > 0 ? 1 : 0, c = Math.floor(i / 8), u = i % 8;
+        let l = o[i] > 0 ? 1 : 0, c = Math.floor(i / 8), u = i % 8;
         a[c] |= l << 7 - u, r && u === 0 && (a[c] -= 128)
     } return new $(s, a, [t.dims[0], t.dims[1] / 8])
 } async function zn(t) {
@@ -6355,7 +6355,7 @@ function WS(t) {
                 if (f -= B, k = Q - I, B && (F = B / n + m), I) for (let oe = v.length - 1;
                     oe >= 0;
                     --oe) {
-                        let J = Number(v[oe]);
+                    let J = Number(v[oe]);
                     if (J >= m) {
                         if (j !== null && (J - m) * n < k) break;
                         j = J
@@ -6365,7 +6365,7 @@ function WS(t) {
             for (let Q = 0;
                 Q < v.length;
                 ++Q) {
-                    let B = Number(v[Q]);
+                let B = Number(v[Q]);
                 if (M.has(B)) {
                     let I = this.decode([B]), oe = Zo.get(I.slice(2, -2));
                     if (oe !== void 0) {
@@ -6408,7 +6408,7 @@ function WS(t) {
             for (let C = 0;
                 C < c.length;
                 ++C) {
-                    let v = c[C];
+                let v = c[C];
                 r || delete v.timestamp, s || delete v.language
             } if (i) {
                 let C = [];
@@ -6421,11 +6421,11 @@ function WS(t) {
         for (let c = 1;
             c < e.length;
             ++c) {
-                let u = e[c], f = 0, m = [n, n, 0, 0], _ = u.length;
+            let u = e[c], f = 0, m = [n, n, 0, 0], _ = u.length;
             for (let S = 1;
                 S < n + _;
                 ++S) {
-                    let O = Math.max(0, n - S), C = Math.min(n, n + _ - S), v = s.slice(O, C), U = Math.max(0, S - n), j = Math.min(_, S), F = u.slice(U, j);
+                let O = Math.max(0, n - S), C = Math.min(n, n + _ - S), v = s.slice(O, C), U = Math.max(0, S - n), j = Math.min(_, S), F = u.slice(U, j);
                 if (v.length !== F.length) throw new Error("There is a bug within whisper `decode_asr` function, please report it. Dropping to prevent bad inference.");
                 let K;
                 a ? K = v.filter((B, I) => B === F[I] && l[O + I][0] - uR <= r[c][U + I][0]).length : K = v.filter((B, I) => B === F[I]).length;
@@ -6442,7 +6442,7 @@ function WS(t) {
         for (let l = 0;
             l < n.length;
             ++l) {
-                let c = a[l];
+            let c = a[l];
             i.push({ text: n[l], timestamp: [r[c.at(0)][0], r[c.at(-1)][1]] })
         } return i
     } combineTokensIntoWords(e, r, s = `"'\u201C\xA1\xBF([{-`, n = `"'.\u3002,\uFF0C!\uFF01?\uFF1F:\uFF1A\u201D)]}\u3001`) {
@@ -6464,7 +6464,7 @@ function WS(t) {
         for (let u = 0;
             u < e.length;
             ++u) {
-                let f = e[u];
+            let f = e[u];
             i.push(f), l.push(u);
             let m = this.decode(i, { decode_with_timestamps: !0 });
             (!m.includes(s) || r[c + m.indexOf(s)] === s) && (n.push(m), o.push(i), a.push(l), i = [], l = [], c += m.length)
@@ -6474,7 +6474,7 @@ function WS(t) {
         for (let l = 0;
             l < r.length;
             ++l) {
-                let c = r[l], u = s[l], f = n[l], m = u[0] >= this._tokenizer.token_to_id("<|endoftext|>"), _ = c.startsWith(" "), w = c.trim(), x = VS.test(w);
+            let c = r[l], u = s[l], f = n[l], m = u[0] >= this._tokenizer.token_to_id("<|endoftext|>"), _ = c.startsWith(" "), w = c.trim(), x = VS.test(w);
             if (m || _ || x || o.length === 0) o.push(c), a.push(u), i.push(f);
             else {
                 let b = o.length - 1;
@@ -6585,7 +6585,7 @@ function hR(t, e = "htk") {
     for (let a = 0;
         a < t.length;
         ++a) {
-            let i = s[a];
+        let i = s[a];
         for (let l = 0;
             l < e.length;
             ++l)i[l] = e[l] - t[a]
@@ -6593,11 +6593,11 @@ function hR(t, e = "htk") {
     for (let a = 0;
         a < t.length;
         ++a) {
-            let i = s[a];
+        let i = s[a];
         for (let l = 0;
             l < n;
             ++l) {
-                let c = -i[l] / r[l], u = i[l + 2] / r[l + 1];
+            let c = -i[l] / r[l], u = i[l + 2] / r[l + 1];
             o[l][a] = Math.max(0, Math.min(c, u))
         }
     } return o
@@ -6617,7 +6617,7 @@ function hR(t, e = "htk") {
     if (o !== null && o === "slaney") for (let w = 0;
         w < e;
         ++w) {
-            let x = _[w], b = 2 / (f[w + 2] - f[w]);
+        let x = _[w], b = 2 / (f[w + 2] - f[w]);
         for (let A = 0;
             A < t;
             ++A)x[A] *= b
@@ -6680,7 +6680,7 @@ function hR(t, e = "htk") {
     for (let z = 0;
         z < Y;
         ++z) {
-            let G = z * s, ge = Math.min(t.length - G, r);
+        let G = z * s, ge = Math.min(t.length - G, r);
         ge !== r && I.fill(0, 0, r);
         for (let ie = 0;
             ie < ge;
@@ -6706,7 +6706,7 @@ function hR(t, e = "htk") {
         for (let ie = 0;
             ie < K;
             ++ie) {
-                let ot = ie << 1;
+            let ot = ie << 1;
             J[ie * Q + z] = oe[ot] ** 2 + oe[ot + 1] ** 2
         }
     } if (o !== null && o !== 2) {
@@ -6864,22 +6864,22 @@ var vR = 1e-5, ra = class extends Oe {
         for (let f = 0;
             f < s;
             ++f) {
-                let m = f * a;
+            let m = f * a;
             for (let _ = 0;
                 _ < a;
                 ++_) {
-                    let w = n[m + _];
+                let w = n[m + _];
                 i[_] += w, l[_] += w * w
             }
         } let c = s > 1 ? s - 1 : 1;
         for (let f = 0;
             f < a;
             ++f) {
-                let m = i[f] / s, _ = (l[f] - s * m * m) / c, x = 1 / (Math.sqrt(_) + vR);
+            let m = i[f] / s, _ = (l[f] - s * m * m) / c, x = 1 / (Math.sqrt(_) + vR);
             for (let b = 0;
                 b < s;
                 ++b) {
-                    let A = b * a + f;
+                let A = b * a + f;
                 n[A] = (n[A] - m) * x
             }
         } let u = new BigInt64Array(o);
@@ -6901,10 +6901,10 @@ var E_ = class extends ra {
         let l = [], c = 0, u = e.length;
         for (;
             c < u;) {
-                if (c + a >= u) {
-                    l.push(e.slice(c, u));
-                    break
-                } let f = Math.max(c, c + a - i), m = Math.min(c + a, u), _;
+            if (c + a >= u) {
+                l.push(e.slice(c, u));
+                break
+            } let f = Math.max(c, c + a - i), m = Math.min(c + a, u), _;
             m <= f ? _ = c + a : _ = this._find_split_point_energy(e, f, m, n), _ = Math.max(c + 1, Math.min(_, u)), l.push(e.slice(c, _)), c = _
         } return l
     } _find_split_point_energy(e, r, s, n) {
@@ -6914,11 +6914,11 @@ var E_ = class extends ra {
         for (let c = 0;
             c <= l;
             c += n) {
-                let u = 0;
+            let u = 0;
             for (let f = 0;
                 f < n;
                 ++f) {
-                    let m = e[r + c + f];
+                let m = e[r + c + f];
                 u += m * m
             } u = Math.sqrt(u / n), u < a && (a = u, i = r + c)
         } return i
@@ -6995,7 +6995,7 @@ var aa = class extends Oe {
             for (let l = 0;
                 l < o.length;
                 ++l) {
-                    let c = Ue(o[l]), [u, f] = Le(c), [m, _] = [l, l + 1];
+                let c = Ue(o[l]), [u, f] = Le(c), [m, _] = [l, l + 1];
                 f !== i ? (i = f, a.push({ id: f, start: m, end: _, score: u })) : (a.at(-1).end = _, a.at(-1).score += u)
             } n.push(a.map(({ id: l, start: c, end: u, score: f }) => ({ id: l, start: c * s, end: u * s, confidence: f / (u - c) })))
         } return n
@@ -7014,7 +7014,7 @@ var S_ = class extends Oe {
             for (let A = 0;
                 A < x;
                 ++A) {
-                    let k = 0;
+                let k = 0;
                 for (let C = 0;
                     C < w;
                     ++C)k += b[C * x + A];
@@ -7027,7 +7027,7 @@ var S_ = class extends Oe {
                 for (let C = 0;
                     C < w;
                     ++C) {
-                        let v = C * x + A;
+                    let v = C * x + A;
                     b[v] = (b[v] - M) / O
                 }
             }
@@ -7082,11 +7082,11 @@ var C_ = class extends Oe {
             for (let l = 0;
                 l < o;
                 ++l) {
-                    let c = l * a * i, u = l * i;
+                let c = l * a * i, u = l * i;
                 for (let f = 0;
                     f < a;
                     ++f) {
-                        let m = c + f * i;
+                    let m = c + f * i;
                     for (let _ = 0;
                         _ < i;
                         ++_)n[m + _] -= s[u + _]
@@ -7188,7 +7188,7 @@ var ER = { 0: "nearest", 1: "lanczos", 2: "bilinear", 3: "bicubic", 4: "box", 5:
             case 3: case 4: for (let r = 0, s = 0;
                 r < this.data.length;
                 r += this.channels) {
-                    let n = this.data[r], o = this.data[r + 1], a = this.data[r + 2];
+                let n = this.data[r], o = this.data[r + 1], a = this.data[r + 2];
                 e[s++] = Math.round(.2989 * n + .587 * o + .114 * a)
             } break;
             default: throw new Error(`Conversion failed due to unsupported number of channels: ${this.channels}`)
@@ -7310,7 +7310,7 @@ var ER = { 0: "nearest", 1: "lanczos", 2: "bilinear", 3: "bicubic", 4: "box", 5:
         for (let l = 0;
             l < a;
             ++l) {
-                let c = n * l;
+            let c = n * l;
             for (let u = 0;
                 u < n;
                 ++u)i[u][l] = e[c + u]
@@ -7352,11 +7352,11 @@ function SR(t, e, r, s, n) {
             ++b)for (let A = 0;
                 A < n;
                 ++A) {
-                    let k = (x * n + A) * r * s + b * n * s;
+                let k = (x * n + A) * r * s + b * n * s;
                 for (let M = 0;
                     M < n;
                     ++M) {
-                        let S = k + M * s;
+                    let S = k + M * s;
                     for (let O = 0;
                         O < s;
                         ++O)f[m++] = t[S + O]
@@ -7479,11 +7479,11 @@ function tM(t, e, r = 0, s = null) {
     for (let u = 0;
         u < a;
         ++u) {
-            let f = r !== null ? r[u] : null, m = { boxes: [], classes: [], scores: [] }, _ = n[u], w = o[u];
+        let f = r !== null ? r[u] : null, m = { boxes: [], classes: [], scores: [] }, _ = n[u], w = o[u];
         for (let x = 0;
             x < i;
             ++x) {
-                let b = _[x], A = [], k;
+            let b = _[x], A = [], k;
             if (s) {
                 k = b.sigmoid().data;
                 for (let M = 0;
@@ -7506,13 +7506,13 @@ function tM(t, e, r = 0, s = null) {
     for (let o = 0;
         o < s;
         ++o) {
-            let a = e !== null ? e[o] : null, i = r[o];
+        let a = e !== null ? e[o] : null, i = r[o];
         a !== null && (i = vm(i, a, "bilinear", !1));
         let [l, c] = a ?? i.dims.slice(-2), u = new $("int32", new Int32Array(l * c), [l, c]), f = i[0].data, m = u.data;
         for (let x = 1;
             x < i.dims[0];
             ++x) {
-                let b = i[x].data;
+            let b = i[x].data;
             for (let A = 0;
                 A < b.length;
                 ++A)b[A] > f[A] && (f[A] = b[A], m[A] = x)
@@ -7520,7 +7520,7 @@ function tM(t, e, r = 0, s = null) {
         for (let x = 0;
             x < m.length;
             ++x) {
-                let b = m[x];
+            let b = m[x];
             _[b] = b
         } let w = _.filter(x => x !== void 0);
         n.push({ segmentation: u, labels: w })
@@ -7530,7 +7530,7 @@ function tM(t, e, r = 0, s = null) {
     for (let i = 0;
         i < t.dims[0];
         ++i) {
-            let l = t[i], c = e[i], u = Le(l.data)[1];
+        let l = t[i], c = e[i], u = Le(l.data)[1];
         if (u === s) continue;
         let m = Ue(l.data)[u];
         m > r && (n.push(c), o.push(m), a.push(u))
@@ -7551,7 +7551,7 @@ function tM(t, e, r = 0, s = null) {
     for (let x = 0;
         x < t.length;
         ++x) {
-            let b = e[x], A = t[x].data;
+        let b = e[x], A = t[x].data;
         for (let k = 0;
             k < A.length;
             ++k)A[k] *= b, A[k] > m[k] && (f[k] = x, m[k] = A[k])
@@ -7559,7 +7559,7 @@ function tM(t, e, r = 0, s = null) {
     for (let x = 0;
         x < r.length;
         ++x) {
-            let b = r[x], [A, k] = CR(f, t, x, s, n);
+        let b = r[x], [A, k] = CR(f, t, x, s, n);
         if (A) {
             ++_;
             for (let M of k) w[M] = _;
@@ -7587,7 +7587,7 @@ function tM(t, e, r = 0, s = null) {
     for (let _ = 0;
         _ < c;
         ++_) {
-            let w = o !== null ? o[_] : null, x = a[_], b = l[_], [A, k, M] = IR(x, b, e, f);
+        let w = o !== null ? o[_] : null, x = a[_], b = l[_], [A, k, M] = IR(x, b, e, f);
         if (M.length === 0) {
             let [C, v] = w ?? b.dims.slice(-2), U = new $("int32", new Int32Array(C * v).fill(-1), [C, v]);
             m.push({ segmentation: U, segments_info: [] });
@@ -7606,7 +7606,7 @@ function tM(t, e, r = 0, s = null) {
         for (let _ = 0;
             _ < s.height;
             ++_) {
-                let w = _ * s.width;
+            let w = _ * s.width;
             for (let x = 0;
                 x < s.width;
                 ++x)(m[w + x] - n) / a < i && (l = Math.min(l, x), c = Math.min(c, _), u = Math.max(u, x), f = Math.max(f, _))
@@ -7623,11 +7623,11 @@ function tM(t, e, r = 0, s = null) {
             for (let x = 0;
                 x < i;
                 ++x) {
-                    let b = (x + w) * u, A = x * l;
+                let b = (x + w) * u, A = x * l;
                 for (let k = 0;
                     k < l;
                     ++k) {
-                        let M = (b + k + _) * c, S = (A + k) * c;
+                    let M = (b + k + _) * c, S = (A + k) * c;
                     for (let O = 0;
                         O < c;
                         ++O)m[M + O] = e[S + O]
@@ -7638,11 +7638,11 @@ function tM(t, e, r = 0, s = null) {
                 for (let A = 0;
                     A < f;
                     ++A) {
-                        let k = A * u, M = vn(A, x) * l;
+                    let k = A * u, M = vn(A, x) * l;
                     for (let S = 0;
                         S < u;
                         ++S) {
-                            if (A < i && S < l) continue;
+                        if (A < i && S < l) continue;
                         let O = (k + S) * c, C = (M + vn(S, b)) * c;
                         for (let v = 0;
                             v < c;
@@ -7702,7 +7702,7 @@ function tM(t, e, r = 0, s = null) {
             for (let _ = 0;
                 _ < u.length;
                 _ += 3) {
-                    let w = u[_];
+                let w = u[_];
                 u[_] = u[_ + 2], u[_ + 2] = w
             }
         } let m = new $("float32", u, f).permute(2, 0, 1);
@@ -7813,7 +7813,7 @@ var Ou = class extends X {
             for (let S = 0;
                 S < u;
                 ++S) {
-                    let O = o[S].dims[0];
+                let O = o[S].dims[0];
                 if (O < A) {
                     o[S] = Ee([o[S], Ze([A - O, m, _, w], 0)], 0);
                     let C = S * M + O * _ * w, v = (S + 1) * M;
@@ -7831,7 +7831,7 @@ var Ou = class extends X {
                 ++w)for (let x = 0;
                     x < c;
                     ++x) {
-                        let b, A, k, M;
+                    let b, A, k, M;
                     w === l - 1 ? (A = a - u, M = a) : (A = w * u, M = (w + 1) * u), x === c - 1 ? (b = i - f, k = i) : (b = x * f, k = (x + 1) * f);
                     let C = await du(e, [A, b], [M, k], [2, 3]);
                     o.push(C)
@@ -7862,7 +7862,7 @@ function sM(t, e) { return Math.round(t / e) * e } function NR(t, e, r, s, n) {
             ++o)for (let a = 1;
                 a <= n;
                 ++a) {
-                    let i = o * a;
+                let i = o * a;
                 if (i >= t && i <= e) {
                     let l = o << 16 | a;
                     s.has(l) || (s.add(l), r.push([o, a]))
@@ -7873,21 +7873,21 @@ function sM(t, e) { return Math.round(t / e) * e } function NR(t, e, r, s, n) {
     for (let m = 0;
         m < r;
         ++m) {
-            let _ = m * s * f, w = m * a * i * l;
+        let _ = m * s * f, w = m * a * i * l;
         for (let x = 0;
             x < a;
             ++x)for (let b = 0;
                 b < i;
                 ++b) {
-                    let A = w + (x * i + b) * l;
+                let A = w + (x * i + b) * l;
                 for (let k = 0;
                     k < e;
                     ++k) {
-                        let M = (x * e + k) * o + b * e;
+                    let M = (x * e + k) * o + b * e;
                     for (let S = 0;
                         S < e;
                         ++S) {
-                            let O = M + S;
+                        let O = M + S;
                         for (let C = 0;
                             C < s;
                             ++C)u[A++] = c[_ + C * f + O]
@@ -7932,7 +7932,7 @@ function sM(t, e) { return Math.round(t / e) * e } function NR(t, e, r, s, n) {
                         ++I)for (let oe = 0;
                             oe < F;
                             ++oe) {
-                                let J = I * this.tile_size, Z = oe * this.tile_size;
+                            let J = I * this.tile_size, Z = oe * this.tile_size;
                             O.push(B.slice(null, null, [J, J + this.tile_size], [Z, Z + this.tile_size]))
                         } this.use_thumbnail && F * K !== 1 && O.push(await Tt(b, { size: [S, M] }))
                 } else O = [await Tt(b, { size: [S, M] })];
@@ -7991,7 +7991,7 @@ var Bt = 336, RR = [2, 3], { ceil: hh, floor: Fn, sqrt: gh } = Math, wh = class 
                     ++O)for (let C = 0;
                         C < A;
                         ++C) {
-                            let v, U, j, F;
+                        let v, U, j, F;
                         O === A - 1 ? (U = _ - M, F = _) : (U = O * M, F = (O + 1) * M), C === A - 1 ? (v = w - k, j = w) : (v = C * k, j = (C + 1) * k);
                         let Q = await du(m, [U, v], [F, j], RR);
                         b.push(Q)
@@ -8025,7 +8025,7 @@ var ua = class extends X {
         for (let a = 0;
             a < e.length;
             ++a) {
-                let [i, l] = r[a], [c, u] = s[a], f = [u / l, c / i];
+            let [i, l] = r[a], [c, u] = s[a], f = [u / l, c / i];
             for (let m = 0;
                 m < e[a].length;
                 ++m)for (let _ = 0;
@@ -8053,7 +8053,7 @@ var ua = class extends X {
         for (let c = 0;
             c < r.length;
             ++c) {
-                let u = r[c], f = s[c], m = await Tt(e[c], { mode: "bilinear", size: l });
+            let u = r[c], f = s[c], m = await Tt(e[c], { mode: "bilinear", size: l });
             if (m = m.slice(null, null, [0, f[0]], [0, f[1]]), m = await Tt(m, { mode: "bilinear", size: u }), o) {
                 let _ = m.data, w = new Uint8Array(_.length);
                 for (let x = 0;
@@ -8087,23 +8087,23 @@ var Mh = class extends X {
         for (let u = 0;
             u < o;
             ++u) {
-                let f = n[u], m = r[u], _ = [];
+            let f = n[u], m = r[u], _ = [];
             for (let w = 0;
                 w < m.length;
                 ++w) {
-                    let x = m[w], b = [], A = [], k = [], M = x.at(-2) / l, S = x.at(-1) / i;
+                let x = m[w], b = [], A = [], k = [], M = x.at(-2) / l, S = x.at(-1) / i;
                 for (let O = 0;
                     O < f.length;
                     ++O) {
-                        let [C, v] = [0, 0], U = 0, j = -1 / 0, F = f[O];
+                    let [C, v] = [0, 0], U = 0, j = -1 / 0, F = f[O];
                     for (let Y = 0;
                         Y < F.length;
                         ++Y) {
-                            let Q = F[Y];
+                        let Q = F[Y];
                         for (let B = 0;
                             B < Q.length;
                             ++B) {
-                                let I = Q[B];
+                            let I = Q[B];
                             U += I, j = Math.max(j, I), C += (B + .5) * I, v += Y * I
                         }
                     } if (s != null && j < s) continue;
@@ -8218,7 +8218,7 @@ var Vs = class extends se {
             e = e.map(f => {
                 for (;
                     f.includes(c);) {
-                        let m = Number(u[l++].reduce((_, w) => _ * w, 1n));
+                    let m = Number(u[l++].reduce((_, w) => _ * w, 1n));
                     f = f.replace(c, "<|placeholder|>".repeat(Math.floor(m / i)))
                 } return f.replaceAll("<|placeholder|>", c)
             })
@@ -8265,13 +8265,13 @@ function BR(t, e) {
         for (let w = 0;
             w < l;
             ++w) {
-                let x = o !== null ? o[w] : null;
+            let x = o !== null ? o[w] : null;
             x !== null && (m[w] = m[w].map(S => S.map((O, C) => O * x[(C + 1) % 2])));
             let b = f[w], A = [], k = [], M = [];
             for (let S = 0;
                 S < c;
                 ++S) {
-                    let O = b[S];
+                let O = b[S];
                 if (O <= s) continue;
                 let C = m[w][S], v = u[w][S];
                 A.push(O), M.push(C);
@@ -8307,7 +8307,7 @@ ${s}${o}` + n.repeat(t) + `${s}`, a
         for (let f = 0;
             f < e.length;
             ++f) {
-                let m = e[f], _ = o[f], w = a[f];
+            let m = e[f], _ = o[f], w = a[f];
             l.push(PA(m, this.image_token));
             let x = _.map((k, M) => FR(k, w[M], i, this.fake_image_token, this.image_token, this.global_img_token)), b = m.split(this.image_token);
             if (b.length === 0) throw new Error("The image token should be present in the text.");
@@ -8331,7 +8331,7 @@ var $h = class extends se {
         for (let b = 1;
             b < i.length;
             ++b) {
-                let A = new Array(this.num_image_tokens).fill(c), k = a(i[b]);
+            let A = new Array(this.num_image_tokens).fill(c), k = a(i[b]);
             m = yt(m, [u], A, [f], k);
             let M = new Array(this.num_image_tokens).fill(!0);
             _ = yt(_, [!1], M, [!1], new Array(k.length).fill(!1))
@@ -8421,11 +8421,11 @@ var nM = { char: ["char_decode", 1], bpe: ["bpe_decode", 2], wp: ["wp_decode", 1
         for (let m = 0;
             m < a;
             ++m) {
-                let _ = u[m], w = [], x = [];
+            let _ = u[m], w = [], x = [];
             for (let A = 1;
                 A < i;
                 ++A) {
-                    let [k, M] = Le(Ue(_[A]));
+                let [k, M] = Le(Ue(_[A]));
                 if (x.push(k), M == n) break;
                 w.push(M)
             } let b = x.length > 0 ? x.reduce((A, k) => A * k, 1) : 0;
@@ -8436,7 +8436,7 @@ var nM = { char: ["char_decode", 1], bpe: ["bpe_decode", 2], wp: ["wp_decode", 1
         for (let m = 0;
             m < n.length;
             ++m) {
-                let [_, w] = Le([o[m], i[m], c[m]]);
+            let [_, w] = Le([o[m], i[m], c[m]]);
             u.push([n[m], a[m], l[m]][w]), f.push(_)
         } return { generated_text: u, scores: f, char_preds: n, bpe_preds: a, wp_preds: l }
     } static async from_pretrained(...e) {
@@ -8502,7 +8502,7 @@ var Vh = class extends se {
             for (let b = 0;
                 b < r.length;
                 ++b) {
-                    let A = l.repeat(x), k = A + c, M = A + u, S = k.repeat(w - 1) + M;
+                let A = l.repeat(x), k = A + c, M = A + u, S = k.repeat(w - 1) + M;
                 r[b] = r[b].replace(l, S)
             }
         } let o = r ? this.tokenizer(r, s) : {};
@@ -8566,7 +8566,7 @@ function VR(t, e) {
             for (let w = 0;
                 w < u.length;
                 ++w) {
-                    _ += qR;
+                _ += qR;
                 for (let x = 0;
                     x < u[w];
                     ++x)_ += Fu.repeat(WR);
@@ -8727,7 +8727,7 @@ async function KR(t, e) { return await lt(t, "config.json", !0, e) } function qn
         for (let i = 0;
             i < a;
             ++i) {
-                n.add(`${r}.${i}.key`), n.add(`${r}.${i}.value`);
+            n.add(`${r}.${i}.key`), n.add(`${r}.${i}.value`);
             let l = o[i];
             if (l === "compressed_sparse_attention") n.add(`${s}_compressor.${i}.kv`), n.add(`${s}_compressor.${i}.gate`), n.add(`${s}_indexer.${i}.kv`), n.add(`${s}_indexer.${i}.gate`);
             else if (l === "heavily_compressed_attention") n.add(`${s}_compressor.${i}.kv`), n.add(`${s}_compressor.${i}.gate`);
@@ -8883,7 +8883,7 @@ var Dt = class extends We { _call(e, r) { throw Error("`_call` should be impleme
         for (let s = 0;
             s < e.length;
             ++s) {
-                let n = r[s].data;
+            let n = r[s].data;
             for (let o of this.suppress_tokens) n[o] = -1 / 0
         } return r
     }
@@ -8901,7 +8901,7 @@ var Dt = class extends We { _call(e, r) { throw Error("`_call` should be impleme
         for (let s = 0;
             s < e.length;
             ++s) {
-                let n = r[s].data;
+            let n = r[s].data;
             if (n[this.no_timestamps_token_id] = -1 / 0, e[s].length === this.begin_index) {
                 n.subarray(0, this.timestamp_begin).fill(-1 / 0);
                 continue
@@ -8919,7 +8919,7 @@ var Dt = class extends We { _call(e, r) { throw Error("`_call` should be impleme
         for (let o = 0;
             o < r + 1 - this.no_repeat_ngram_size;
             ++o) {
-                let a = [];
+            let a = [];
             for (let i = 0;
                 i < this.no_repeat_ngram_size;
                 ++i)a.push(e[o + i]);
@@ -8943,7 +8943,7 @@ var Dt = class extends We { _call(e, r) { throw Error("`_call` should be impleme
         for (let s = 0;
             s < e.length;
             ++s) {
-                let n = r[s].data, o = this.calcBannedNgramTokens(e[s]);
+            let n = r[s].data, o = this.calcBannedNgramTokens(e[s]);
             for (let a of o) n[a] = -1 / 0
         } return r
     }
@@ -8952,7 +8952,7 @@ var Dt = class extends We { _call(e, r) { throw Error("`_call` should be impleme
         for (let s = 0;
             s < e.length;
             ++s) {
-                let n = r[s].data;
+            let n = r[s].data;
             for (let o of new Set(e[s])) {
                 let a = Number(o);
                 n[a] < 0 ? n[a] *= this.penalty : n[a] /= this.penalty
@@ -8982,7 +8982,7 @@ var Dt = class extends We { _call(e, r) { throw Error("`_call` should be impleme
         for (let s = 0;
             s < e.length;
             ++s) {
-                let n = r[s].data, o = e[s];
+            let n = r[s].data, o = e[s];
             for (let a of this.bad_words_ids) {
                 if (o.length < a.length - 1) continue;
                 let i = !0;
@@ -9338,15 +9338,15 @@ function hM(t, e) {
         let M, S = {}, O = {};
         for (;
             ;) {
-                if (l = this.prepare_inputs_for_generation(k, l, r), M = await this.forward(l), r.return_dict_in_generate) if (r.output_attentions) {
-                    let B = e3(M);
-                    for (let I in B) I in S || (S[I] = []), S[I].push(B[I])
-                } else this._return_dict_in_generate_keys && Object.assign(O, He(M, this._return_dict_in_generate_keys));
+            if (l = this.prepare_inputs_for_generation(k, l, r), M = await this.forward(l), r.return_dict_in_generate) if (r.output_attentions) {
+                let B = e3(M);
+                for (let I in B) I in S || (S[I] = []), S[I].push(B[I])
+            } else this._return_dict_in_generate_keys && Object.assign(O, He(M, this._return_dict_in_generate_keys));
             let F = M.logits.slice(null, -1, null).to("float32"), K = _(k, F), Y = [];
             for (let B = 0;
                 B < K.dims.at(0);
                 ++B) {
-                    let I = K[B], oe = await b(I);
+                let I = K[B], oe = await b(I);
                 for (let [J, Z] of oe) {
                     let me = BigInt(J);
                     A[B] += Z, k[B].push(me), Y.push([me]);
@@ -9436,11 +9436,11 @@ async function lp(t, e) {
     for (let a = 0;
         a < r;
         ++a) {
-            let i = a * s, l = BigInt(e);
+        let i = a * s, l = BigInt(e);
         for (let c = 0;
             c < s;
             ++c) {
-                let u = i + c;
+            let u = i + c;
             n[u] === 0n ? o[u] = BigInt(1) : (o[u] = l, l += n[u])
         }
     } return { data: o, dims: t.dims }
@@ -9470,7 +9470,7 @@ async function lp(t, e) {
     for (let c = 0;
         c < o.length;
         ++c) {
-            let u = o[c], f = e[c];
+        let u = o[c], f = e[c];
         for (let m = 0;
             m < u.length;
             ++m)f[u[m]].data.set(r[l++].data)
@@ -9682,7 +9682,7 @@ var Cp = class extends y { forward_params = ["input_ids", "attention_mask", "pos
         for (let k = 0;
             k < f.length;
             ++k) {
-                let M = c.findIndex((z, G) => G > x && z == a), S = c.findIndex((z, G) => G > x && z == i), O = b > 0 && M !== -1 ? M : c.length + 1, C = A > 0 && S !== -1 ? S : c.length + 1, v, U, j, F;
+            let M = c.findIndex((z, G) => G > x && z == a), S = c.findIndex((z, G) => G > x && z == i), O = b > 0 && M !== -1 ? M : c.length + 1, C = A > 0 && S !== -1 ? S : c.length + 1, v, U, j, F;
             O < C ? ([U, j, F] = r[o.image_index], ++o.image_index, --b, v = O) : ([U, j, F] = s[o.video_index], ++o.video_index, --A, v = C);
             let [K, Y, Q] = [Number(U), Math.floor(Number(j) / n), Math.floor(Number(F) / n)], B = v - x, I = w.length > 0 ? Le(w.at(-1))[0] + 1 : 0;
             w.push(Array.from({ length: 3 * B }, (z, G) => I + G % B));
@@ -9701,7 +9701,7 @@ var Cp = class extends y { forward_params = ["input_ids", "attention_mask", "pos
             for (let w = 0;
                 w < i.length;
                 ++w) {
-                    let x = i[w].filter((k, M) => l[w][M] == 1), b = this._get_multimodal_rope_positions({ filtered_ids: x, image_grid_thw_list: u, video_grid_thw_list: f, spatial_merge_size: a, state: m }), A = this._reorder_and_write_positions(b, l[w], c, w);
+                let x = i[w].filter((k, M) => l[w][M] == 1), b = this._get_multimodal_rope_positions({ filtered_ids: x, image_grid_thw_list: u, video_grid_thw_list: f, spatial_merge_size: a, state: m }), A = this._reorder_and_write_positions(b, l[w], c, w);
                 _.push(Le(A)[0] + 1 - i[w].length)
             } return [new $("int64", c.flat(1 / 0), [3, e.dims[0], e.dims[1]]), new $("int64", _, [_.length, 1])]
         } else return this._get_text_only_rope_index(e, n)
@@ -9732,7 +9732,7 @@ var Vx = class extends sn {
         for (let m = 1;
             m <= e.length;
             ++m) {
-                let _ = m < e.length ? e[m] == a ? 1 : 0 : -1;
+            let _ = m < e.length ? e[m] == a ? 1 : 0 : -1;
             _ !== c && (i.push([c, l, m]), l = m, c = _)
         } let u = 0, f = [];
         for (let [m, _, w] of i) if (m === 0) {
@@ -9864,7 +9864,7 @@ var ji = class extends y { }, ob = class extends ji { }, ab = class extends ji {
         for (let c = 0;
             c < e.size;
             ++c) {
-                if (e.data[c] == this.config.decoder.pad_token_id) continue;
+            if (e.data[c] == this.config.decoder.pad_token_id) continue;
             let u = c % s, f = Math.floor(c / s) % n, m = u - f;
             m > 0 && m <= o && (e.data[a++] = e.data[c])
         } let i = Math.floor(r / n), l = a / (i * n);
@@ -9968,7 +9968,7 @@ var go = class extends y { }, G1 = class extends go { }, j1 = class extends go {
         let i = { input_ids: e }, { encoder_outputs: l, encoder_attention_mask: c } = await Xt(this, i), u = l.dims[1] / this.config.reduction_factor, f = Math.floor(u * o), m = Math.floor(u * n), _ = this.config.num_mel_bins, w = [], x = null, b = null, A = 0;
         for (;
             ;) {
-                ++A;
+            ++A;
             let S = pg(!!b), O;
             b ? O = b.output_sequence_out : O = new $("float32", new Float32Array(_), [1, 1, _]);
             let C = { use_cache_branch: S, output_sequence: O, encoder_attention_mask: c, speaker_embeddings: r, encoder_hidden_states: l };
@@ -9999,7 +9999,7 @@ var Zp = class extends y { }, Ml = class extends Zp {
         for (let F = 0;
             F < n;
             ++F) {
-                let K = Ze([A], F);
+            let K = Ze([A], F);
             ({ denoised_latents: C } = await pe(this.sessions.latent_denoiser, { style: s, noisy_latents: C, latent_mask: M, encoder_outputs: u, attention_mask: r, timestep: K, num_inference_steps: U }))
         } let { waveform: j } = await pe(this.sessions.voice_decoder, { latents: C });
         return { waveform: j, durations: m }
@@ -10047,7 +10047,7 @@ function i3(t, e) {
 } async function c3(t, e) {
     for (;
         t.audio_embed_total_tokens < e && !t.stream_exhausted;) {
-            let r = await t.chunks_iter.next();
+        let r = await t.chunks_iter.next();
         if (r.done) {
             t.stream_exhausted = !0;
             break
@@ -10059,7 +10059,7 @@ function i3(t, e) {
     let s = e.data, n = 0, o = r;
     for (;
         o > 0 && t.audio_embed_queue.length > 0;) {
-            let a = t.audio_embed_queue[0], i = a.tokens - t.audio_queue_offset, l = Math.min(o, i), c = t.audio_queue_offset * t.text_hidden_size;
+        let a = t.audio_embed_queue[0], i = a.tokens - t.audio_queue_offset, l = Math.min(o, i), c = t.audio_queue_offset * t.text_hidden_size;
         for (let u = 0;
             u < l * t.text_hidden_size;
             ++u)s[n * t.text_hidden_size + u] += a.data[c + u];
@@ -10132,7 +10132,7 @@ var $l = class extends y {
         let a = r.no_timestamps_token_id + 1, i = Array.isArray(r.eos_token_id) ? r.eos_token_id[0] : r.eos_token_id, l = r.return_token_timestamps, c = e, u = c.dims[2], f = 2, m = this.config.max_source_positions, _ = f * m, w = 0, x = [], b = [];
         for (;
             w < u;) {
-                let k = Math.min(w + _, u), M = c.slice(null, null, [w, k]), S, O = M.dims[2];
+            let k = Math.min(w + _, u), M = c.slice(null, null, [w, k]), S, O = M.dims[2];
             if (O < _) {
                 let J = c.dims[1], Z = new Float32Array(J * _), me = M.data;
                 for (let L = 0;
@@ -10180,15 +10180,15 @@ var $l = class extends y {
         for (let A = 0;
             A < m.dims[0];
             ++A) {
-                let k = m[A];
+            let k = m[A];
             for (let M = 0;
                 M < k.dims[0];
                 ++M) {
-                    let S = k[M], O = u[A][M][0].data, C = f[A][M][0].data;
+                let S = k[M], O = u[A][M][0].data, C = f[A][M][0].data;
                 for (let v = 0;
                     v < S.dims[0];
                     ++v) {
-                        let U = S[v].data;
+                    let U = S[v].data;
                     for (let j = 0;
                         j < U.length;
                         ++j)U[j] = (U[j] - C[j]) / O[j];
@@ -10199,7 +10199,7 @@ var $l = class extends y {
         for (let A = 0;
             A < x[0];
             ++A) {
-                let k = w[A].neg().squeeze_(0), [M, S] = j2(k.tolist()), O = Array.from({ length: M.length - 1 }, (j, F) => M[F + 1] - M[F]), C = yt([1], O).map(j => !!j), v = [];
+            let k = w[A].neg().squeeze_(0), [M, S] = j2(k.tolist()), O = Array.from({ length: M.length - 1 }, (j, F) => M[F + 1] - M[F]), C = yt([1], O).map(j => !!j), v = [];
             for (let j = 0;
                 j < C.length;
                 ++j)C[j] && v.push(S[j] * n);
@@ -10213,7 +10213,413 @@ var xs = class extends y { }, Xv = class extends xs { }, Kv = class extends xs {
 var Rl = class extends y { }, Zv = class extends Rl { }, ek = class extends Rl { async _call(e) { return new df(await super._call(e)) } }, df = class extends Se { constructor({ logits: e, pred_boxes: r }) { super(), this.logits = e, this.pred_boxes = r } };
 var Bl = class extends y { }, tk = class extends Bl { }, rk = class extends Bl { };
 var Dl = class extends y { }, sk = class extends Dl { }, nk = class extends Dl { };
-var p3 = new Map([["bert", "BertModel"], ["eurobert", "EuroBertModel"], ["neobert", "NeoBertModel"], ["modernbert", "ModernBertModel"], ["nomic_bert", "NomicBertModel"], ["roformer", "RoFormerModel"], ["electra", "ElectraModel"], ["esm", "EsmModel"], ["convbert", "ConvBertModel"], ["camembert", "CamembertModel"], ["deberta", "DebertaModel"], ["deberta-v2", "DebertaV2Model"], ["mpnet", "MPNetModel"], ["albert", "AlbertModel"], ["distilbert", "DistilBertModel"], ["roberta", "RobertaModel"], ["xlm", "XLMModel"], ["xlm-roberta", "XLMRobertaModel"], ["clap", "ClapModel"], ["clip", "CLIPModel"], ["clipseg", "CLIPSegModel"], ["chinese_clip", "ChineseCLIPModel"], ["siglip", "SiglipModel"], ["jina_clip", "JinaCLIPModel"], ["mobilebert", "MobileBertModel"], ["squeezebert", "SqueezeBertModel"], ["wav2vec2", "Wav2Vec2Model"], ["wav2vec2-bert", "Wav2Vec2BertModel"], ["unispeech", "UniSpeechModel"], ["unispeech-sat", "UniSpeechSatModel"], ["hubert", "HubertModel"], ["wavlm", "WavLMModel"], ["audio-spectrogram-transformer", "ASTModel"], ["vits", "VitsModel"], ["pyannote", "PyAnnoteModel"], ["wespeaker-resnet", "WeSpeakerResNetModel"], ["detr", "DetrModel"], ["rt_detr", "RTDetrModel"], ["rt_detr_v2", "RTDetrV2Model"], ["rf_detr", "RFDetrModel"], ["d_fine", "DFineModel"], ["table-transformer", "TableTransformerModel"], ["vit", "ViTModel"], ["ijepa", "IJepaModel"], ["pvt", "PvtModel"], ["vit_msn", "ViTMSNModel"], ["vit_mae", "ViTMAEModel"], ["groupvit", "GroupViTModel"], ["fastvit", "FastViTModel"], ["mobilevit", "MobileViTModel"], ["mobilevitv2", "MobileViTV2Model"], ["owlvit", "OwlViTModel"], ["owlv2", "Owlv2Model"], ["beit", "BeitModel"], ["deit", "DeiTModel"], ["hiera", "HieraModel"], ["convnext", "ConvNextModel"], ["convnextv2", "ConvNextV2Model"], ["dinov2", "Dinov2Model"], ["dinov2_with_registers", "Dinov2WithRegistersModel"], ["dinov3_vit", "DINOv3ViTModel"], ["dinov3_convnext", "DINOv3ConvNextModel"], ["resnet", "ResNetModel"], ["swin", "SwinModel"], ["swin2sr", "Swin2SRModel"], ["donut-swin", "DonutSwinModel"], ["yolos", "YolosModel"], ["dpt", "DPTModel"], ["glpn", "GLPNModel"], ["hifigan", "SpeechT5HifiGan"], ["efficientnet", "EfficientNetModel"], ["decision_transformer", "DecisionTransformerModel"], ["patchtst", "PatchTSTModel"], ["patchtsmixer", "PatchTSMixerModel"], ["mobilenet_v1", "MobileNetV1Model"], ["mobilenet_v2", "MobileNetV2Model"], ["mobilenet_v3", "MobileNetV3Model"], ["mobilenet_v4", "MobileNetV4Model"], ["maskformer", "MaskFormerModel"], ["mgp-str", "MgpstrForSceneTextRecognition"], ["style_text_to_speech_2", "StyleTextToSpeech2Model"], ["openai_privacy_filter", "OpenAIPrivacyFilterModel"], ["embedding_gemma2", "EmbeddingGemma2Model"]]), f3 = new Map([["t5", "T5Model"], ["longt5", "LongT5Model"], ["mt5", "MT5Model"], ["bart", "BartModel"], ["mbart", "MBartModel"], ["marian", "MarianModel"], ["whisper", "WhisperModel"], ["cohere_asr", "CohereAsrModel"], ["m2m_100", "M2M100Model"], ["blenderbot", "BlenderbotModel"], ["blenderbot-small", "BlenderbotSmallModel"]]), d3 = new Map([["mimi", "MimiModel"], ["dac", "DacModel"], ["snac", "SnacModel"]]), m3 = new Map([["bloom", "BloomModel"], ["jais", "JAISModel"], ["gpt2", "GPT2Model"], ["gpt_oss", "GptOssModel"], ["gptj", "GPTJModel"], ["gpt_bigcode", "GPTBigCodeModel"], ["gpt_neo", "GPTNeoModel"], ["gpt_neox", "GPTNeoXModel"], ["codegen", "CodeGenModel"], ["llama", "LlamaModel"], ["apertus", "ApertusModel"], ["nanochat", "NanoChatModel"], ["arcee", "ArceeModel"], ["afmoe", "AfmoeModel"], ["lfm2", "Lfm2Model"], ["lfm2_moe", "Lfm2MoeModel"], ["lfm3", "Lfm3Model"], ["smollm3", "SmolLM3Model"], ["exaone", "ExaoneModel"], ["olmo", "OlmoModel"], ["olmo2", "Olmo2Model"], ["olmo3", "Olmo3Model"], ["olmo_hybrid", "OlmoHybridModel"], ["mobilellm", "MobileLLMModel"], ["granite", "GraniteModel"], ["granitemoehybrid", "GraniteMoeHybridModel"], ["cohere", "CohereModel"], ["cohere2", "Cohere2Model"], ["gemma", "GemmaModel"], ["gemma2", "Gemma2Model"], ["vaultgemma", "VaultGemmaModel"], ["gemma3_text", "Gemma3Model"], ["helium", "HeliumModel"], ["glm", "GlmModel"], ["glm_moe_dsa", "GlmMoeDsaModel"], ["openelm", "OpenELMModel"], ["qwen2", "Qwen2Model"], ["qwen2_moe", "Qwen2MoeModel"], ["qwen3", "Qwen3Model"], ["qwen3_moe", "Qwen3MoeModel"], ["qwen3_next", "Qwen3NextModel"], ["phi", "PhiModel"], ["phi3", "Phi3Model"], ["mpt", "MptModel"], ["opt", "OPTModel"], ["mistral", "MistralModel"], ["mistral4", "Mistral4Model"], ["ministral", "MinistralModel"], ["ministral3", "Ministral3Model"], ["ernie4_5", "Ernie4_5ForCausalLM"], ["starcoder2", "Starcoder2Model"], ["deepseek_v3", "DeepseekV3Model"], ["deepseek_v4", "DeepseekV4Model"], ["falcon", "FalconModel"], ["falcon_h1", "FalconH1Model"], ["nemotron_h", "NemotronHModel"], ["solar_open", "SolarOpenModel"], ["stablelm", "StableLmModel"], ["modernbert-decoder", "ModernBertDecoderModel"], ["hunyuan_v1_dense", "HunYuanDenseV1Model"], ["youtu", "YoutuModel"], ["zaya", "ZayaModel"], ["hrm_text", "HrmTextModel"]]), vM = new Map([["speecht5", "SpeechT5ForSpeechToText"], ["whisper", "WhisperForConditionalGeneration"], ["lite-whisper", "LiteWhisperForConditionalGeneration"], ["moonshine", "MoonshineForConditionalGeneration"], ["cohere_asr", "CohereAsrForConditionalGeneration"]]), kM = new Map([["speecht5", "SpeechT5ForTextToSpeech"]]), EM = new Map([["vits", "VitsModel"], ["musicgen", "MusicgenForConditionalGeneration"], ["supertonic", "SupertonicForConditionalGeneration"]]), AM = new Map([["bert", "BertForSequenceClassification"], ["eurobert", "EuroBertForSequenceClassification"], ["neobert", "NeoBertForSequenceClassification"], ["modernbert", "ModernBertForSequenceClassification"], ["roformer", "RoFormerForSequenceClassification"], ["electra", "ElectraForSequenceClassification"], ["esm", "EsmForSequenceClassification"], ["convbert", "ConvBertForSequenceClassification"], ["camembert", "CamembertForSequenceClassification"], ["deberta", "DebertaForSequenceClassification"], ["deberta-v2", "DebertaV2ForSequenceClassification"], ["mpnet", "MPNetForSequenceClassification"], ["albert", "AlbertForSequenceClassification"], ["distilbert", "DistilBertForSequenceClassification"], ["roberta", "RobertaForSequenceClassification"], ["xlm", "XLMForSequenceClassification"], ["xlm-roberta", "XLMRobertaForSequenceClassification"], ["bart", "BartForSequenceClassification"], ["mbart", "MBartForSequenceClassification"], ["mobilebert", "MobileBertForSequenceClassification"], ["squeezebert", "SqueezeBertForSequenceClassification"]]), TM = new Map([["bert", "BertForTokenClassification"], ["eurobert", "EuroBertForTokenClassification"], ["neobert", "NeoBertForTokenClassification"], ["modernbert", "ModernBertForTokenClassification"], ["roformer", "RoFormerForTokenClassification"], ["electra", "ElectraForTokenClassification"], ["esm", "EsmForTokenClassification"], ["convbert", "ConvBertForTokenClassification"], ["camembert", "CamembertForTokenClassification"], ["deberta", "DebertaForTokenClassification"], ["deberta-v2", "DebertaV2ForTokenClassification"], ["mpnet", "MPNetForTokenClassification"], ["distilbert", "DistilBertForTokenClassification"], ["roberta", "RobertaForTokenClassification"], ["xlm", "XLMForTokenClassification"], ["xlm-roberta", "XLMRobertaForTokenClassification"], ["openai_privacy_filter", "OpenAIPrivacyFilterForTokenClassification"]]), SM = new Map([["t5", "T5ForConditionalGeneration"], ["longt5", "LongT5ForConditionalGeneration"], ["mt5", "MT5ForConditionalGeneration"], ["bart", "BartForConditionalGeneration"], ["mbart", "MBartForConditionalGeneration"], ["marian", "MarianMTModel"], ["m2m_100", "M2M100ForConditionalGeneration"], ["blenderbot", "BlenderbotForConditionalGeneration"], ["blenderbot-small", "BlenderbotSmallForConditionalGeneration"]]), MM = new Map([["bloom", "BloomForCausalLM"], ["gpt2", "GPT2LMHeadModel"], ["gpt_oss", "GptOssForCausalLM"], ["jais", "JAISLMHeadModel"], ["gptj", "GPTJForCausalLM"], ["gpt_bigcode", "GPTBigCodeForCausalLM"], ["gpt_neo", "GPTNeoForCausalLM"], ["gpt_neox", "GPTNeoXForCausalLM"], ["codegen", "CodeGenForCausalLM"], ["llama", "LlamaForCausalLM"], ["nanochat", "NanoChatForCausalLM"], ["apertus", "ApertusForCausalLM"], ["llama4_text", "Llama4ForCausalLM"], ["arcee", "ArceeForCausalLM"], ["afmoe", "AfmoeForCausalLM"], ["lfm2", "Lfm2ForCausalLM"], ["lfm2_moe", "Lfm2MoeForCausalLM"], ["lfm3", "Lfm3ForCausalLM"], ["smollm3", "SmolLM3ForCausalLM"], ["exaone", "ExaoneForCausalLM"], ["olmo", "OlmoForCausalLM"], ["olmo2", "Olmo2ForCausalLM"], ["olmo3", "Olmo3ForCausalLM"], ["olmo_hybrid", "OlmoHybridForCausalLM"], ["mobilellm", "MobileLLMForCausalLM"], ["granite", "GraniteForCausalLM"], ["granitemoehybrid", "GraniteMoeHybridForCausalLM"], ["cohere", "CohereForCausalLM"], ["cohere2", "Cohere2ForCausalLM"], ["gemma", "GemmaForCausalLM"], ["gemma2", "Gemma2ForCausalLM"], ["vaultgemma", "VaultGemmaForCausalLM"], ["gemma3_text", "Gemma3ForCausalLM"], ["gemma3", "Gemma3ForCausalLM"], ["helium", "HeliumForCausalLM"], ["glm", "GlmForCausalLM"], ["glm_moe_dsa", "GlmMoeDsaForCausalLM"], ["openelm", "OpenELMForCausalLM"], ["qwen2", "Qwen2ForCausalLM"], ["qwen2_moe", "Qwen2MoeForCausalLM"], ["qwen3", "Qwen3ForCausalLM"], ["qwen3_moe", "Qwen3MoeForCausalLM"], ["qwen3_next", "Qwen3NextForCausalLM"], ["qwen2_vl", "Qwen2VLForCausalLM"], ["qwen2_5_vl", "Qwen2_5_VLForCausalLM"], ["qwen3_vl", "Qwen3VLForCausalLM"], ["qwen3_vl_moe", "Qwen3VLMoeForCausalLM"], ["qwen3_5", "Qwen3_5ForCausalLM"], ["qwen3_5_text", "Qwen3_5ForCausalLM"], ["qwen3_5_moe", "Qwen3_5MoeForCausalLM"], ["gemma3n", "Gemma3nForCausalLM"], ["gemma4", "Gemma4ForCausalLM"], ["phi", "PhiForCausalLM"], ["phi3", "Phi3ForCausalLM"], ["mpt", "MptForCausalLM"], ["opt", "OPTForCausalLM"], ["mbart", "MBartForCausalLM"], ["mistral", "MistralForCausalLM"], ["mistral4", "Mistral4ForCausalLM"], ["ministral", "MinistralForCausalLM"], ["ministral3", "Ministral3ForCausalLM"], ["ernie4_5", "Ernie4_5ForCausalLM"], ["starcoder2", "Starcoder2ForCausalLM"], ["deepseek_v3", "DeepseekV3ForCausalLM"], ["deepseek_v4", "DeepseekV4ForCausalLM"], ["falcon", "FalconForCausalLM"], ["falcon_h1", "FalconH1ForCausalLM"], ["nemotron_h", "NemotronHForCausalLM"], ["trocr", "TrOCRForCausalLM"], ["solar_open", "SolarOpenForCausalLM"], ["stablelm", "StableLmForCausalLM"], ["modernbert-decoder", "ModernBertDecoderForCausalLM"], ["hunyuan_v1_dense", "HunYuanDenseV1ForCausalLM"], ["youtu", "YoutuForCausalLM"], ["zaya", "ZayaForCausalLM"], ["hrm_text", "HrmTextForCausalLM"], ["phi3_v", "Phi3VForCausalLM"]]), _3 = new Map([["multi_modality", "MultiModalityCausalLM"]]), OM = new Map([["bert", "BertForMaskedLM"], ["eurobert", "EuroBertForMaskedLM"], ["neobert", "NeoBertForMaskedLM"], ["modernbert", "ModernBertForMaskedLM"], ["roformer", "RoFormerForMaskedLM"], ["electra", "ElectraForMaskedLM"], ["esm", "EsmForMaskedLM"], ["convbert", "ConvBertForMaskedLM"], ["camembert", "CamembertForMaskedLM"], ["deberta", "DebertaForMaskedLM"], ["deberta-v2", "DebertaV2ForMaskedLM"], ["mpnet", "MPNetForMaskedLM"], ["albert", "AlbertForMaskedLM"], ["distilbert", "DistilBertForMaskedLM"], ["roberta", "RobertaForMaskedLM"], ["xlm", "XLMWithLMHeadModel"], ["xlm-roberta", "XLMRobertaForMaskedLM"], ["mobilebert", "MobileBertForMaskedLM"], ["squeezebert", "SqueezeBertForMaskedLM"]]), IM = new Map([["bert", "BertForQuestionAnswering"], ["neobert", "NeoBertForQuestionAnswering"], ["roformer", "RoFormerForQuestionAnswering"], ["electra", "ElectraForQuestionAnswering"], ["convbert", "ConvBertForQuestionAnswering"], ["camembert", "CamembertForQuestionAnswering"], ["deberta", "DebertaForQuestionAnswering"], ["deberta-v2", "DebertaV2ForQuestionAnswering"], ["mpnet", "MPNetForQuestionAnswering"], ["albert", "AlbertForQuestionAnswering"], ["distilbert", "DistilBertForQuestionAnswering"], ["roberta", "RobertaForQuestionAnswering"], ["xlm", "XLMForQuestionAnswering"], ["xlm-roberta", "XLMRobertaForQuestionAnswering"], ["mobilebert", "MobileBertForQuestionAnswering"], ["squeezebert", "SqueezeBertForQuestionAnswering"]]), CM = new Map([["vision-encoder-decoder", "VisionEncoderDecoderModel"], ["idefics3", "Idefics3ForConditionalGeneration"], ["smolvlm", "SmolVLMForConditionalGeneration"]]), PM = new Map([["llava", "LlavaForConditionalGeneration"], ["llava_onevision", "LlavaOnevisionForConditionalGeneration"], ["moondream1", "Moondream1ForConditionalGeneration"], ["florence2", "Florence2ForConditionalGeneration"], ["qwen2_vl", "Qwen2VLForConditionalGeneration"], ["qwen2_5_vl", "Qwen2_5_VLForConditionalGeneration"], ["qwen3_vl", "Qwen3VLForConditionalGeneration"], ["qwen3_vl_moe", "Qwen3VLMoeForConditionalGeneration"], ["qwen3_5", "Qwen3_5ForConditionalGeneration"], ["qwen3_5_moe", "Qwen3_5MoeForConditionalGeneration"], ["lfm2_vl", "Lfm2VlForConditionalGeneration"], ["lfm3_vl", "Lfm3VlForConditionalGeneration"], ["idefics3", "Idefics3ForConditionalGeneration"], ["smolvlm", "SmolVLMForConditionalGeneration"], ["paligemma", "PaliGemmaForConditionalGeneration"], ["llava_qwen2", "LlavaQwen2ForCausalLM"], ["gemma3", "Gemma3ForConditionalGeneration"], ["gemma3n", "Gemma3nForConditionalGeneration"], ["gemma4", "Gemma4ForConditionalGeneration"], ["mistral3", "Mistral3ForConditionalGeneration"], ["lighton_ocr", "LightOnOcrForConditionalGeneration"], ["glm_ocr", "GlmOcrForConditionalGeneration"]]), NM = new Map([["granite_speech", "GraniteSpeechForConditionalGeneration"], ["ultravox", "UltravoxModel"], ["voxtral", "VoxtralForConditionalGeneration"], ["voxtral_realtime", "VoxtralRealtimeForConditionalGeneration"]]), h3 = new Map([["vision-encoder-decoder", "VisionEncoderDecoderModel"]]), LM = new Map([["vit", "ViTForImageClassification"], ["ijepa", "IJepaForImageClassification"], ["pvt", "PvtForImageClassification"], ["vit_msn", "ViTMSNForImageClassification"], ["fastvit", "FastViTForImageClassification"], ["mobilevit", "MobileViTForImageClassification"], ["mobilevitv2", "MobileViTV2ForImageClassification"], ["beit", "BeitForImageClassification"], ["deit", "DeiTForImageClassification"], ["hiera", "HieraForImageClassification"], ["convnext", "ConvNextForImageClassification"], ["convnextv2", "ConvNextV2ForImageClassification"], ["dinov2", "Dinov2ForImageClassification"], ["dinov2_with_registers", "Dinov2WithRegistersForImageClassification"], ["resnet", "ResNetForImageClassification"], ["swin", "SwinForImageClassification"], ["segformer", "SegformerForImageClassification"], ["efficientnet", "EfficientNetForImageClassification"], ["mobilenet_v1", "MobileNetV1ForImageClassification"], ["mobilenet_v2", "MobileNetV2ForImageClassification"], ["mobilenet_v3", "MobileNetV3ForImageClassification"], ["mobilenet_v4", "MobileNetV4ForImageClassification"]]), zM = new Map([["detr", "DetrForObjectDetection"], ["rt_detr", "RTDetrForObjectDetection"], ["rt_detr_v2", "RTDetrV2ForObjectDetection"], ["rf_detr", "RFDetrForObjectDetection"], ["d_fine", "DFineForObjectDetection"], ["table-transformer", "TableTransformerForObjectDetection"], ["yolos", "YolosForObjectDetection"]]), $M = new Map([["owlvit", "OwlViTForObjectDetection"], ["owlv2", "Owlv2ForObjectDetection"], ["grounding-dino", "GroundingDinoForObjectDetection"]]), bo = new Map([["detr", "DetrForSegmentation"], ["clipseg", "CLIPSegForImageSegmentation"]]), RM = new Map([["segformer", "SegformerForSemanticSegmentation"], ["sapiens", "SapiensForSemanticSegmentation"], ["swin", "SwinForSemanticSegmentation"], ["mobilenet_v1", "MobileNetV1ForSemanticSegmentation"], ["mobilenet_v2", "MobileNetV2ForSemanticSegmentation"], ["mobilenet_v3", "MobileNetV3ForSemanticSegmentation"], ["mobilenet_v4", "MobileNetV4ForSemanticSegmentation"]]), BM = new Map([["detr", "DetrForSegmentation"], ["maskformer", "MaskFormerForInstanceSegmentation"]]), DM = new Map([["sam", "SamModel"], ["sam2", "Sam2Model"], ["edgetam", "EdgeTamModel"], ["sam3_tracker", "Sam3TrackerModel"]]), UM = new Map([["wav2vec2", "Wav2Vec2ForCTC"], ["wav2vec2-bert", "Wav2Vec2BertForCTC"], ["unispeech", "UniSpeechForCTC"], ["unispeech-sat", "UniSpeechSatForCTC"], ["wavlm", "WavLMForCTC"], ["hubert", "HubertForCTC"], ["parakeet_ctc", "ParakeetForCTC"]]), FM = new Map([["wav2vec2", "Wav2Vec2ForSequenceClassification"], ["wav2vec2-bert", "Wav2Vec2BertForSequenceClassification"], ["unispeech", "UniSpeechForSequenceClassification"], ["unispeech-sat", "UniSpeechSatForSequenceClassification"], ["wavlm", "WavLMForSequenceClassification"], ["hubert", "HubertForSequenceClassification"], ["audio-spectrogram-transformer", "ASTForAudioClassification"]]), GM = new Map([["wavlm", "WavLMForXVector"]]), jM = new Map([["unispeech-sat", "UniSpeechSatForAudioFrameClassification"], ["wavlm", "WavLMForAudioFrameClassification"], ["wav2vec2", "Wav2Vec2ForAudioFrameClassification"], ["pyannote", "PyAnnoteForAudioFrameClassification"]]), qM = new Map([["vitmatte", "VitMatteForImageMatting"]]), g3 = new Map([["patchtst", "PatchTSTForPrediction"], ["patchtsmixer", "PatchTSMixerForPrediction"]]), WM = new Map([["swin2sr", "Swin2SRForImageSuperResolution"]]), VM = new Map([["chmv2", "CHMv2ForDepthEstimation"], ["dpt", "DPTForDepthEstimation"], ["depth_anything", "DepthAnythingForDepthEstimation"], ["glpn", "GLPNForDepthEstimation"], ["sapiens", "SapiensForDepthEstimation"], ["depth_pro", "DepthProForDepthEstimation"], ["metric3d", "Metric3DForDepthEstimation"], ["metric3dv2", "Metric3Dv2ForDepthEstimation"]]), HM = new Map([["sapiens", "SapiensForNormalEstimation"]]), XM = new Map([["vitpose", "VitPoseForPoseEstimation"]]), KM = new Map([["clip", "CLIPVisionModelWithProjection"], ["siglip", "SiglipVisionModel"], ["jina_clip", "JinaCLIPVisionModel"]]), ok = [[p3, W.EncoderOnly], [f3, W.EncoderDecoder], [m3, W.DecoderOnlyWithoutHead], [d3, W.AutoEncoder], [AM, W.EncoderOnly], [TM, W.EncoderOnly], [SM, W.Seq2Seq], [vM, W.Seq2Seq], [MM, W.DecoderOnly], [_3, W.MultiModality], [OM, W.EncoderOnly], [IM, W.EncoderOnly], [CM, W.Vision2Seq], [PM, W.ImageTextToText], [NM, W.AudioTextToText], [LM, W.EncoderOnly], [bo, W.EncoderOnly], [BM, W.EncoderOnly], [RM, W.EncoderOnly], [qM, W.EncoderOnly], [g3, W.EncoderOnly], [WM, W.EncoderOnly], [VM, W.EncoderOnly], [HM, W.EncoderOnly], [XM, W.EncoderOnly], [zM, W.EncoderOnly], [$M, W.EncoderOnly], [DM, W.MaskGeneration], [UM, W.EncoderOnly], [FM, W.EncoderOnly], [kM, W.Seq2Seq], [EM, W.EncoderOnly], [GM, W.EncoderOnly], [jM, W.EncoderOnly], [KM, W.EncoderOnly]];
+var p3 = new Map([["bert", "BertModel"],
+["eurobert", "EuroBertModel"],
+["neobert", "NeoBertModel"],
+["modernbert", "ModernBertModel"],
+["nomic_bert", "NomicBertModel"],
+["roformer", "RoFormerModel"],
+["electra", "ElectraModel"],
+["esm", "EsmModel"],
+["convbert", "ConvBertModel"],
+["camembert", "CamembertModel"],
+["deberta", "DebertaModel"],
+["deberta-v2", "DebertaV2Model"],
+["mpnet", "MPNetModel"],
+["albert", "AlbertModel"],
+["distilbert", "DistilBertModel"],
+["roberta", "RobertaModel"],
+["xlm", "XLMModel"],
+["xlm-roberta", "XLMRobertaModel"],
+["clap", "ClapModel"],
+["clip", "CLIPModel"],
+["clipseg", "CLIPSegModel"],
+["chinese_clip", "ChineseCLIPModel"],
+["siglip", "SiglipModel"],
+["jina_clip", "JinaCLIPModel"],
+["mobilebert", "MobileBertModel"],
+["squeezebert", "SqueezeBertModel"],
+["wav2vec2", "Wav2Vec2Model"],
+["wav2vec2-bert", "Wav2Vec2BertModel"],
+["unispeech", "UniSpeechModel"],
+["unispeech-sat", "UniSpeechSatModel"],
+["hubert", "HubertModel"],
+["wavlm", "WavLMModel"],
+["audio-spectrogram-transformer", "ASTModel"],
+["vits", "VitsModel"],
+["pyannote", "PyAnnoteModel"],
+["wespeaker-resnet", "WeSpeakerResNetModel"],
+["detr", "DetrModel"],
+["rt_detr", "RTDetrModel"],
+["rt_detr_v2", "RTDetrV2Model"],
+["rf_detr", "RFDetrModel"],
+["d_fine", "DFineModel"],
+["table-transformer", "TableTransformerModel"],
+["vit", "ViTModel"],
+["ijepa", "IJepaModel"],
+["pvt", "PvtModel"],
+["vit_msn", "ViTMSNModel"],
+["vit_mae", "ViTMAEModel"],
+["groupvit", "GroupViTModel"],
+["fastvit", "FastViTModel"],
+["mobilevit", "MobileViTModel"],
+["mobilevitv2", "MobileViTV2Model"],
+["owlvit", "OwlViTModel"],
+["owlv2", "Owlv2Model"],
+["beit", "BeitModel"],
+["deit", "DeiTModel"],
+["hiera", "HieraModel"],
+["convnext", "ConvNextModel"],
+["convnextv2", "ConvNextV2Model"],
+["dinov2", "Dinov2Model"],
+["dinov2_with_registers", "Dinov2WithRegistersModel"],
+["dinov3_vit", "DINOv3ViTModel"],
+["dinov3_convnext", "DINOv3ConvNextModel"],
+["resnet", "ResNetModel"],
+["swin", "SwinModel"],
+["swin2sr", "Swin2SRModel"],
+["donut-swin", "DonutSwinModel"],
+["yolos", "YolosModel"],
+["dpt", "DPTModel"],
+["glpn", "GLPNModel"],
+["hifigan", "SpeechT5HifiGan"],
+["efficientnet", "EfficientNetModel"],
+["decision_transformer", "DecisionTransformerModel"],
+["patchtst", "PatchTSTModel"],
+["patchtsmixer", "PatchTSMixerModel"],
+["mobilenet_v1", "MobileNetV1Model"],
+["mobilenet_v2", "MobileNetV2Model"],
+["mobilenet_v3", "MobileNetV3Model"],
+["mobilenet_v4", "MobileNetV4Model"],
+["maskformer", "MaskFormerModel"],
+["mgp-str", "MgpstrForSceneTextRecognition"],
+["style_text_to_speech_2", "StyleTextToSpeech2Model"],
+["openai_privacy_filter", "OpenAIPrivacyFilterModel"],
+["embedding_gemma2", "EmbeddingGemma2Model"]]), f3 = new Map([["t5", "T5Model"],
+["longt5", "LongT5Model"],
+["mt5", "MT5Model"],
+["bart", "BartModel"],
+["mbart", "MBartModel"],
+["marian", "MarianModel"],
+["whisper", "WhisperModel"],
+["cohere_asr", "CohereAsrModel"],
+["m2m_100", "M2M100Model"],
+["blenderbot", "BlenderbotModel"],
+["blenderbot-small", "BlenderbotSmallModel"]]), d3 = new Map([["mimi", "MimiModel"],
+["dac", "DacModel"],
+["snac", "SnacModel"]]), m3 = new Map([["bloom", "BloomModel"],
+["jais", "JAISModel"],
+["gpt2", "GPT2Model"],
+["gpt_oss", "GptOssModel"],
+["gptj", "GPTJModel"],
+["gpt_bigcode", "GPTBigCodeModel"],
+["gpt_neo", "GPTNeoModel"],
+["gpt_neox", "GPTNeoXModel"],
+["codegen", "CodeGenModel"],
+["llama", "LlamaModel"],
+["apertus", "ApertusModel"],
+["nanochat", "NanoChatModel"],
+["arcee", "ArceeModel"],
+["afmoe", "AfmoeModel"],
+["lfm2", "Lfm2Model"],
+["lfm2_moe", "Lfm2MoeModel"],
+["lfm3", "Lfm3Model"],
+["smollm3", "SmolLM3Model"],
+["exaone", "ExaoneModel"],
+["olmo", "OlmoModel"],
+["olmo2", "Olmo2Model"],
+["olmo3", "Olmo3Model"],
+["olmo_hybrid", "OlmoHybridModel"],
+["mobilellm", "MobileLLMModel"],
+["granite", "GraniteModel"],
+["granitemoehybrid", "GraniteMoeHybridModel"],
+["cohere", "CohereModel"],
+["cohere2", "Cohere2Model"],
+["gemma", "GemmaModel"],
+["gemma2", "Gemma2Model"],
+["vaultgemma", "VaultGemmaModel"],
+["gemma3_text", "Gemma3Model"],
+["helium", "HeliumModel"],
+["glm", "GlmModel"],
+["glm_moe_dsa", "GlmMoeDsaModel"],
+["openelm", "OpenELMModel"],
+["qwen2", "Qwen2Model"],
+["qwen2_moe", "Qwen2MoeModel"],
+["qwen3", "Qwen3Model"],
+["qwen3_moe", "Qwen3MoeModel"],
+["qwen3_next", "Qwen3NextModel"],
+["phi", "PhiModel"],
+["phi3", "Phi3Model"],
+["mpt", "MptModel"],
+["opt", "OPTModel"],
+["mistral", "MistralModel"],
+["mistral4", "Mistral4Model"],
+["ministral", "MinistralModel"],
+["ministral3", "Ministral3Model"],
+["ernie4_5", "Ernie4_5ForCausalLM"],
+["starcoder2", "Starcoder2Model"],
+["deepseek_v3", "DeepseekV3Model"],
+["deepseek_v4", "DeepseekV4Model"],
+["falcon", "FalconModel"],
+["falcon_h1", "FalconH1Model"],
+["nemotron_h", "NemotronHModel"],
+["solar_open", "SolarOpenModel"],
+["stablelm", "StableLmModel"],
+["modernbert-decoder", "ModernBertDecoderModel"],
+["hunyuan_v1_dense", "HunYuanDenseV1Model"],
+["youtu", "YoutuModel"],
+["zaya", "ZayaModel"],
+["hrm_text", "HrmTextModel"]]), vM = new Map([["speecht5", "SpeechT5ForSpeechToText"],
+["whisper", "WhisperForConditionalGeneration"],
+["lite-whisper", "LiteWhisperForConditionalGeneration"],
+["moonshine", "MoonshineForConditionalGeneration"],
+["cohere_asr", "CohereAsrForConditionalGeneration"]]), kM = new Map([["speecht5", "SpeechT5ForTextToSpeech"]]), EM = new Map([["vits", "VitsModel"],
+["musicgen", "MusicgenForConditionalGeneration"],
+["supertonic", "SupertonicForConditionalGeneration"]]), AM = new Map([["bert", "BertForSequenceClassification"],
+["eurobert", "EuroBertForSequenceClassification"],
+["neobert", "NeoBertForSequenceClassification"],
+["modernbert", "ModernBertForSequenceClassification"],
+["roformer", "RoFormerForSequenceClassification"],
+["electra", "ElectraForSequenceClassification"],
+["esm", "EsmForSequenceClassification"],
+["convbert", "ConvBertForSequenceClassification"],
+["camembert", "CamembertForSequenceClassification"],
+["deberta", "DebertaForSequenceClassification"],
+["deberta-v2", "DebertaV2ForSequenceClassification"],
+["mpnet", "MPNetForSequenceClassification"],
+["albert", "AlbertForSequenceClassification"],
+["distilbert", "DistilBertForSequenceClassification"],
+["roberta", "RobertaForSequenceClassification"],
+["xlm", "XLMForSequenceClassification"],
+["xlm-roberta", "XLMRobertaForSequenceClassification"],
+["bart", "BartForSequenceClassification"],
+["mbart", "MBartForSequenceClassification"],
+["mobilebert", "MobileBertForSequenceClassification"],
+["squeezebert", "SqueezeBertForSequenceClassification"]]), TM = new Map([["bert", "BertForTokenClassification"],
+["eurobert", "EuroBertForTokenClassification"],
+["neobert", "NeoBertForTokenClassification"],
+["modernbert", "ModernBertForTokenClassification"],
+["roformer", "RoFormerForTokenClassification"],
+["electra", "ElectraForTokenClassification"],
+["esm", "EsmForTokenClassification"],
+["convbert", "ConvBertForTokenClassification"],
+["camembert", "CamembertForTokenClassification"],
+["deberta", "DebertaForTokenClassification"],
+["deberta-v2", "DebertaV2ForTokenClassification"],
+["mpnet", "MPNetForTokenClassification"],
+["distilbert", "DistilBertForTokenClassification"],
+["roberta", "RobertaForTokenClassification"],
+["xlm", "XLMForTokenClassification"],
+["xlm-roberta", "XLMRobertaForTokenClassification"],
+["openai_privacy_filter", "OpenAIPrivacyFilterForTokenClassification"]]), SM = new Map([["t5", "T5ForConditionalGeneration"],
+["longt5", "LongT5ForConditionalGeneration"],
+["mt5", "MT5ForConditionalGeneration"],
+["bart", "BartForConditionalGeneration"],
+["mbart", "MBartForConditionalGeneration"],
+["marian", "MarianMTModel"],
+["m2m_100", "M2M100ForConditionalGeneration"],
+["blenderbot", "BlenderbotForConditionalGeneration"],
+["blenderbot-small", "BlenderbotSmallForConditionalGeneration"]]), MM = new Map([["bloom", "BloomForCausalLM"],
+["gpt2", "GPT2LMHeadModel"],
+["gpt_oss", "GptOssForCausalLM"],
+["jais", "JAISLMHeadModel"],
+["gptj", "GPTJForCausalLM"],
+["gpt_bigcode", "GPTBigCodeForCausalLM"],
+["gpt_neo", "GPTNeoForCausalLM"],
+["gpt_neox", "GPTNeoXForCausalLM"],
+["codegen", "CodeGenForCausalLM"],
+["llama", "LlamaForCausalLM"],
+["nanochat", "NanoChatForCausalLM"],
+["apertus", "ApertusForCausalLM"],
+["llama4_text", "Llama4ForCausalLM"],
+["arcee", "ArceeForCausalLM"],
+["afmoe", "AfmoeForCausalLM"],
+["lfm2", "Lfm2ForCausalLM"],
+["lfm2_moe", "Lfm2MoeForCausalLM"],
+["lfm3", "Lfm3ForCausalLM"],
+["smollm3", "SmolLM3ForCausalLM"],
+["exaone", "ExaoneForCausalLM"],
+["olmo", "OlmoForCausalLM"],
+["olmo2", "Olmo2ForCausalLM"],
+["olmo3", "Olmo3ForCausalLM"],
+["olmo_hybrid", "OlmoHybridForCausalLM"],
+["mobilellm", "MobileLLMForCausalLM"],
+["granite", "GraniteForCausalLM"],
+["granitemoehybrid", "GraniteMoeHybridForCausalLM"],
+["cohere", "CohereForCausalLM"],
+["cohere2", "Cohere2ForCausalLM"],
+["gemma", "GemmaForCausalLM"],
+["gemma2", "Gemma2ForCausalLM"],
+["vaultgemma", "VaultGemmaForCausalLM"],
+["gemma3_text", "Gemma3ForCausalLM"],
+["gemma3", "Gemma3ForCausalLM"],
+["helium", "HeliumForCausalLM"],
+["glm", "GlmForCausalLM"],
+["glm_moe_dsa", "GlmMoeDsaForCausalLM"],
+["openelm", "OpenELMForCausalLM"],
+["qwen2", "Qwen2ForCausalLM"],
+["qwen2_moe", "Qwen2MoeForCausalLM"],
+["qwen3", "Qwen3ForCausalLM"],
+["qwen3_moe", "Qwen3MoeForCausalLM"],
+["qwen3_next", "Qwen3NextForCausalLM"],
+["qwen2_vl", "Qwen2VLForCausalLM"],
+["qwen2_5_vl", "Qwen2_5_VLForCausalLM"],
+["qwen3_vl", "Qwen3VLForCausalLM"],
+["qwen3_vl_moe", "Qwen3VLMoeForCausalLM"],
+["qwen3_5", "Qwen3_5ForCausalLM"],
+["qwen3_5_text", "Qwen3_5ForCausalLM"],
+["qwen3_5_moe", "Qwen3_5MoeForCausalLM"],
+["gemma3n", "Gemma3nForCausalLM"],
+["gemma4", "Gemma4ForCausalLM"],
+["phi", "PhiForCausalLM"],
+["phi3", "Phi3ForCausalLM"],
+["mpt", "MptForCausalLM"],
+["opt", "OPTForCausalLM"],
+["mbart", "MBartForCausalLM"],
+["mistral", "MistralForCausalLM"],
+["mistral4", "Mistral4ForCausalLM"],
+["ministral", "MinistralForCausalLM"],
+["ministral3", "Ministral3ForCausalLM"],
+["ernie4_5", "Ernie4_5ForCausalLM"],
+["starcoder2", "Starcoder2ForCausalLM"],
+["deepseek_v3", "DeepseekV3ForCausalLM"],
+["deepseek_v4", "DeepseekV4ForCausalLM"],
+["falcon", "FalconForCausalLM"],
+["falcon_h1", "FalconH1ForCausalLM"],
+["nemotron_h", "NemotronHForCausalLM"],
+["trocr", "TrOCRForCausalLM"],
+["solar_open", "SolarOpenForCausalLM"],
+["stablelm", "StableLmForCausalLM"],
+["modernbert-decoder", "ModernBertDecoderForCausalLM"],
+["hunyuan_v1_dense", "HunYuanDenseV1ForCausalLM"],
+["youtu", "YoutuForCausalLM"],
+["zaya", "ZayaForCausalLM"],
+["hrm_text", "HrmTextForCausalLM"],
+["phi3_v", "Phi3VForCausalLM"]]), _3 = new Map([["multi_modality", "MultiModalityCausalLM"]]), OM = new Map([["bert", "BertForMaskedLM"],
+["eurobert", "EuroBertForMaskedLM"],
+["neobert", "NeoBertForMaskedLM"],
+["modernbert", "ModernBertForMaskedLM"],
+["roformer", "RoFormerForMaskedLM"],
+["electra", "ElectraForMaskedLM"],
+["esm", "EsmForMaskedLM"],
+["convbert", "ConvBertForMaskedLM"],
+["camembert", "CamembertForMaskedLM"],
+["deberta", "DebertaForMaskedLM"],
+["deberta-v2", "DebertaV2ForMaskedLM"],
+["mpnet", "MPNetForMaskedLM"],
+["albert", "AlbertForMaskedLM"],
+["distilbert", "DistilBertForMaskedLM"],
+["roberta", "RobertaForMaskedLM"],
+["xlm", "XLMWithLMHeadModel"],
+["xlm-roberta", "XLMRobertaForMaskedLM"],
+["mobilebert", "MobileBertForMaskedLM"],
+["squeezebert", "SqueezeBertForMaskedLM"]]), IM = new Map([["bert", "BertForQuestionAnswering"],
+["neobert", "NeoBertForQuestionAnswering"],
+["roformer", "RoFormerForQuestionAnswering"],
+["electra", "ElectraForQuestionAnswering"],
+["convbert", "ConvBertForQuestionAnswering"],
+["camembert", "CamembertForQuestionAnswering"],
+["deberta", "DebertaForQuestionAnswering"],
+["deberta-v2", "DebertaV2ForQuestionAnswering"],
+["mpnet", "MPNetForQuestionAnswering"],
+["albert", "AlbertForQuestionAnswering"],
+["distilbert", "DistilBertForQuestionAnswering"],
+["roberta", "RobertaForQuestionAnswering"],
+["xlm", "XLMForQuestionAnswering"],
+["xlm-roberta", "XLMRobertaForQuestionAnswering"],
+["mobilebert", "MobileBertForQuestionAnswering"],
+["squeezebert", "SqueezeBertForQuestionAnswering"]]), CM = new Map([["vision-encoder-decoder", "VisionEncoderDecoderModel"],
+["idefics3", "Idefics3ForConditionalGeneration"],
+["smolvlm", "SmolVLMForConditionalGeneration"]]), PM = new Map([["llava", "LlavaForConditionalGeneration"],
+["llava_onevision", "LlavaOnevisionForConditionalGeneration"],
+["moondream1", "Moondream1ForConditionalGeneration"],
+["florence2", "Florence2ForConditionalGeneration"],
+["qwen2_vl", "Qwen2VLForConditionalGeneration"],
+["qwen2_5_vl", "Qwen2_5_VLForConditionalGeneration"],
+["qwen3_vl", "Qwen3VLForConditionalGeneration"],
+["qwen3_vl_moe", "Qwen3VLMoeForConditionalGeneration"],
+["qwen3_5", "Qwen3_5ForConditionalGeneration"],
+["qwen3_5_moe", "Qwen3_5MoeForConditionalGeneration"],
+["lfm2_vl", "Lfm2VlForConditionalGeneration"],
+["lfm3_vl", "Lfm3VlForConditionalGeneration"],
+["idefics3", "Idefics3ForConditionalGeneration"],
+["smolvlm", "SmolVLMForConditionalGeneration"],
+["paligemma", "PaliGemmaForConditionalGeneration"],
+["llava_qwen2", "LlavaQwen2ForCausalLM"],
+["gemma3", "Gemma3ForConditionalGeneration"],
+["gemma3n", "Gemma3nForConditionalGeneration"],
+["gemma4", "Gemma4ForConditionalGeneration"],
+["mistral3", "Mistral3ForConditionalGeneration"],
+["lighton_ocr", "LightOnOcrForConditionalGeneration"],
+["glm_ocr", "GlmOcrForConditionalGeneration"]]), NM = new Map([["granite_speech", "GraniteSpeechForConditionalGeneration"],
+["ultravox", "UltravoxModel"],
+["voxtral", "VoxtralForConditionalGeneration"],
+["voxtral_realtime", "VoxtralRealtimeForConditionalGeneration"]]), h3 = new Map([["vision-encoder-decoder", "VisionEncoderDecoderModel"]]), LM = new Map([["vit", "ViTForImageClassification"],
+["ijepa", "IJepaForImageClassification"],
+["pvt", "PvtForImageClassification"],
+["vit_msn", "ViTMSNForImageClassification"],
+["fastvit", "FastViTForImageClassification"],
+["mobilevit", "MobileViTForImageClassification"],
+["mobilevitv2", "MobileViTV2ForImageClassification"],
+["beit", "BeitForImageClassification"],
+["deit", "DeiTForImageClassification"],
+["hiera", "HieraForImageClassification"],
+["convnext", "ConvNextForImageClassification"],
+["convnextv2", "ConvNextV2ForImageClassification"],
+["dinov2", "Dinov2ForImageClassification"],
+["dinov2_with_registers", "Dinov2WithRegistersForImageClassification"],
+["resnet", "ResNetForImageClassification"],
+["swin", "SwinForImageClassification"],
+["segformer", "SegformerForImageClassification"],
+["efficientnet", "EfficientNetForImageClassification"],
+["mobilenet_v1", "MobileNetV1ForImageClassification"],
+["mobilenet_v2", "MobileNetV2ForImageClassification"],
+["mobilenet_v3", "MobileNetV3ForImageClassification"],
+["mobilenet_v4", "MobileNetV4ForImageClassification"]]), zM = new Map([["detr", "DetrForObjectDetection"],
+["rt_detr", "RTDetrForObjectDetection"],
+["rt_detr_v2", "RTDetrV2ForObjectDetection"],
+["rf_detr", "RFDetrForObjectDetection"],
+["d_fine", "DFineForObjectDetection"],
+["table-transformer", "TableTransformerForObjectDetection"],
+["yolos", "YolosForObjectDetection"]]), $M = new Map([["owlvit", "OwlViTForObjectDetection"],
+["owlv2", "Owlv2ForObjectDetection"],
+["grounding-dino", "GroundingDinoForObjectDetection"]]), bo = new Map([["detr", "DetrForSegmentation"],
+["clipseg", "CLIPSegForImageSegmentation"]]), RM = new Map([["segformer", "SegformerForSemanticSegmentation"],
+["sapiens", "SapiensForSemanticSegmentation"],
+["swin", "SwinForSemanticSegmentation"],
+["mobilenet_v1", "MobileNetV1ForSemanticSegmentation"],
+["mobilenet_v2", "MobileNetV2ForSemanticSegmentation"],
+["mobilenet_v3", "MobileNetV3ForSemanticSegmentation"],
+["mobilenet_v4", "MobileNetV4ForSemanticSegmentation"]]), BM = new Map([["detr", "DetrForSegmentation"],
+["maskformer", "MaskFormerForInstanceSegmentation"]]), DM = new Map([["sam", "SamModel"],
+["sam2", "Sam2Model"],
+["edgetam", "EdgeTamModel"],
+["sam3_tracker", "Sam3TrackerModel"]]), UM = new Map([["wav2vec2", "Wav2Vec2ForCTC"],
+["wav2vec2-bert", "Wav2Vec2BertForCTC"],
+["unispeech", "UniSpeechForCTC"],
+["unispeech-sat", "UniSpeechSatForCTC"],
+["wavlm", "WavLMForCTC"],
+["hubert", "HubertForCTC"],
+["parakeet_ctc", "ParakeetForCTC"]]), FM = new Map([["wav2vec2", "Wav2Vec2ForSequenceClassification"],
+["wav2vec2-bert", "Wav2Vec2BertForSequenceClassification"],
+["unispeech", "UniSpeechForSequenceClassification"],
+["unispeech-sat", "UniSpeechSatForSequenceClassification"],
+["wavlm", "WavLMForSequenceClassification"],
+["hubert", "HubertForSequenceClassification"],
+["audio-spectrogram-transformer", "ASTForAudioClassification"]]), GM = new Map([["wavlm", "WavLMForXVector"]]), jM = new Map([["unispeech-sat", "UniSpeechSatForAudioFrameClassification"],
+["wavlm", "WavLMForAudioFrameClassification"],
+["wav2vec2", "Wav2Vec2ForAudioFrameClassification"],
+["pyannote", "PyAnnoteForAudioFrameClassification"]]), qM = new Map([["vitmatte", "VitMatteForImageMatting"]]), g3 = new Map([["patchtst", "PatchTSTForPrediction"],
+["patchtsmixer", "PatchTSMixerForPrediction"]]), WM = new Map([["swin2sr", "Swin2SRForImageSuperResolution"]]), VM = new Map([["chmv2", "CHMv2ForDepthEstimation"],
+["dpt", "DPTForDepthEstimation"],
+["depth_anything", "DepthAnythingForDepthEstimation"],
+["glpn", "GLPNForDepthEstimation"],
+["sapiens", "SapiensForDepthEstimation"],
+["depth_pro", "DepthProForDepthEstimation"],
+["metric3d", "Metric3DForDepthEstimation"],
+["metric3dv2", "Metric3Dv2ForDepthEstimation"]]), HM = new Map([["sapiens", "SapiensForNormalEstimation"]]), XM = new Map([["vitpose", "VitPoseForPoseEstimation"]]), KM = new Map([["clip", "CLIPVisionModelWithProjection"],
+["siglip", "SiglipVisionModel"],
+["jina_clip", "JinaCLIPVisionModel"]]), ok = [[p3, W.EncoderOnly], [f3, W.EncoderDecoder], [m3, W.DecoderOnlyWithoutHead], [d3, W.AutoEncoder], [AM, W.EncoderOnly], [TM, W.EncoderOnly], [SM, W.Seq2Seq], [vM, W.Seq2Seq], [MM, W.DecoderOnly], [_3, W.MultiModality], [OM, W.EncoderOnly], [IM, W.EncoderOnly], [CM, W.Vision2Seq], [PM, W.ImageTextToText], [NM, W.AudioTextToText], [LM, W.EncoderOnly], [bo, W.EncoderOnly], [BM, W.EncoderOnly], [RM, W.EncoderOnly], [qM, W.EncoderOnly], [g3, W.EncoderOnly], [WM, W.EncoderOnly], [VM, W.EncoderOnly], [HM, W.EncoderOnly], [XM, W.EncoderOnly], [zM, W.EncoderOnly], [$M, W.EncoderOnly], [DM, W.MaskGeneration], [UM, W.EncoderOnly], [FM, W.EncoderOnly], [kM, W.Seq2Seq], [EM, W.EncoderOnly], [GM, W.EncoderOnly], [jM, W.EncoderOnly], [KM, W.EncoderOnly]];
 for (let [t, e] of ok) for (let r of t.values()) {
     ar.set(r, e);
     let s = Ul[r];
@@ -10268,17 +10674,18 @@ var Vl = class extends _e {
     }
 };
 var Hl = class extends _e {
-    async _call(e, { ignore_labels: r = ["O"], aggregation_strategy: s = "none" } = {}) {
+    async _call(e, { ignore_labels: r = ["O"],
+        aggregation_strategy: s = "none" } = {}) {
         if (s !== "none" && s !== "simple") throw new Error(`Invalid aggregation_strategy: "${s}". Must be one of "none" or "simple".`);
         let n = Array.isArray(e), o = this.tokenizer(n ? e : [e], { padding: !0, truncation: !0 }), i = (await this.model(o)).logits, l = this.model.config.id2label, c = [];
         for (let u = 0;
             u < i.dims[0];
             ++u) {
-                let f = o.input_ids[u].tolist(), m = i[u], _ = [];
+            let f = o.input_ids[u].tolist(), m = i[u], _ = [];
             for (let w = 0;
                 w < m.dims[0];
                 ++w) {
-                    let x = m[w], b = Le(x.data)[1], A = l ? l[b] : `LABEL_${b}`;
+                let x = m[w], b = Le(x.data)[1], A = l ? l[b] : `LABEL_${b}`;
                 if (r.includes(A)) continue;
                 let k = this.tokenizer.decode([f[w]], { skip_special_tokens: !0 });
                 if (k === "") continue;
@@ -10296,7 +10703,7 @@ function x3(t) {
     for (let o = 0;
         o < t.length;
         ++o) {
-            let [a, i] = x3(t[o].entity);
+        let [a, i] = x3(t[o].entity);
         n === i && a !== "B" && a !== "S" ? (s[s.length - 1].end = o + 1, a === "E" && (n = null)) : (s.push({ tag: i, start: o, end: o + 1 }), n = a === "S" ? null : i)
     } return s.map(({ tag: o, start: a, end: i }) => {
         let l = 0, c = [];
@@ -10311,7 +10718,7 @@ function x3(t) {
         for (let _ = 0;
             _ < a.dims[0];
             ++_) {
-                let w = l[_], x = w.findIndex(C => C == f), b = a[_].tolist(), A = i[_].tolist();
+            let w = l[_], x = w.findIndex(C => C == f), b = a[_].tolist(), A = i[_].tolist();
             for (let C = 1;
                 C < b.length;
                 ++C)(c[_] == 0 || C <= x || u.findIndex(v => v == w[C]) !== -1) && (b[C] = -1 / 0, A[C] = -1 / 0);
@@ -10321,7 +10728,7 @@ function x3(t) {
             for (let C = 0;
                 C < Math.min(S.length, s);
                 ++C) {
-                    let [v, U, j] = S[C], F = w.slice(v, U + 1), K = this.tokenizer.decode(F, { skip_special_tokens: !0 });
+                let [v, U, j] = S[C], F = w.slice(v, U + 1), K = this.tokenizer.decode(F, { skip_special_tokens: !0 });
                 O.push({ answer: K, score: j })
             } s === 1 ? m.push(...O) : m.push(O)
         } return o ? m : m[0]
@@ -10333,7 +10740,7 @@ var Kl = class extends _e {
         for (let c = 0;
             c < l.length;
             ++c) {
-                let u = l[c], f = u.findIndex(b => b == s);
+            let u = l[c], f = u.findIndex(b => b == s);
             if (f === -1) throw Error(`Mask token (${n}) not found in text.`);
             let m = a[c][f], _ = await or(new $("float32", Ue(m.data), m.dims), r), w = _[0].tolist(), x = _[1].tolist();
             i.push(x.map((b, A) => {
@@ -10379,7 +10786,7 @@ function aO(t) { return Array.isArray(t) && t.every(e => "role" in e && "content
         for (let O = 0;
             O < k.length;
             ++O) {
-                let C = Math.floor(O / A.dims[0] * e.length);
+            let C = Math.floor(O / A.dims[0] * e.length);
             M && (k[O] = k[O].slice(M[C])), S[C].push({ generated_text: f ? [...e[C], { role: "assistant", content: k[O] }] : k[O] })
         } return !u && S.length === 1 ? S[0] : S
     }
@@ -10450,7 +10857,7 @@ var rc = class extends _e {
                 let S = _ * n, O = _ * a, C = S - 2 * O, v = 0;
                 for (;
                     ;) {
-                        let U = v + S, j = b.subarray(v, U), F = await this.processor(j), K = v === 0, Y = U >= b.length;
+                    let U = v + S, j = b.subarray(v, U), F = await this.processor(j), K = v === 0, Y = U >= b.length;
                     if (A.push({ stride: [j.length, K ? 0 : O, Y ? 0 : O], input_features: F.input_features, is_last: Y }), Y) break;
                     v += C
                 }
@@ -10498,7 +10905,7 @@ var sc = class extends _e {
         for (let u = 0;
             u < a;
             ++u) {
-                let f = l ? Math.min(Math.ceil(l[u]), i) : i, m = u * i;
+            let f = l ? Math.min(Math.ceil(l[u]), i) : i, m = u * i;
             c.push(new ea(o.slice(m, m + f), s))
         } return Array.isArray(e) ? c : c[0]
     } async _call(e, r) { return this.processor ? this._call_text_to_spectrogram(e, r) : this.model.config.model_type === "supertonic" ? this._call_supertonic(e, r) : this._call_text_to_waveform(e) } async _call_supertonic(e, { speaker_embeddings: r, num_inference_steps: s, speed: n }) {
@@ -10580,7 +10987,7 @@ var iO = { panoptic: "post_process_panoptic_segmentation", instance: "post_proce
             for (let S = 0;
                 S < u.length;
                 ++S) {
-                    let O = u[S], C = M[S];
+                let O = u[S], C = M[S];
                 C.data.some(U => U < -1e-5 || U > 1 + 1e-5) && C.sigmoid_();
                 let v = await rt.fromTensor(C.mul_(255).to("uint8")).resize(O[1], O[0]);
                 A.push({ label: null, score: null, mask: v })
@@ -10620,7 +11027,7 @@ var cc = class extends _e {
         for (let f = 0;
             f < i.length;
             ++f) {
-                let m = i[f], _ = o ? null : [[m.height, m.width]], w = c.pixel_values[f].unsqueeze_(0), x = await this.model({ ...l, pixel_values: w }), b;
+            let m = i[f], _ = o ? null : [[m.height, m.width]], w = c.pixel_values[f].unsqueeze_(0), x = await this.model({ ...l, pixel_values: w }), b;
             if ("post_process_grounded_object_detection" in this.processor) {
                 let A = this.processor.post_process_grounded_object_detection(x, l.input_ids, { box_threshold: s, text_threshold: s, target_sizes: _ })[0];
                 b = A.boxes.map((k, M) => ({ score: A.scores[M], label: A.labels[M], box: Wl(k, !o) }))
@@ -10656,7 +11063,7 @@ var fc = class extends _e {
         for (let a = 0;
             a < r.length;
             ++a) {
-                let i = n[a], [l, c] = i.dims.slice(-2), [u, f] = r[a].size, m = (await Tt(i.view(1, 1, l, c), { size: [f, u], mode: "bilinear" })).view(f, u), _ = m.min().item(), w = m.max().item(), x = m.sub(_).div_(w - _).mul_(255).to("uint8").unsqueeze(0), b = rt.fromTensor(x);
+            let i = n[a], [l, c] = i.dims.slice(-2), [u, f] = r[a].size, m = (await Tt(i.view(1, 1, l, c), { size: [f, u], mode: "bilinear" })).view(f, u), _ = m.min().item(), w = m.max().item(), x = m.sub(_).div_(w - _).mul_(255).to("uint8").unsqueeze(0), b = rt.fromTensor(x);
             o.push({ predicted_depth: m, depth: b })
         } return Array.isArray(e) ? o : o[0]
     }
