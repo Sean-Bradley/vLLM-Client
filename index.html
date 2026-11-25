@@ -1324,12 +1324,16 @@
         <div class="input-area">
             <div class="attachment-panel">
                 <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
-                <div class="attachment-note">Up to 5 PDF, DOCX, TXT or CSV files, 10 MB each. Documents are indexed locally; only relevant passages are sent with your question. First use downloads and caches the embedding model.</div>
+                <div class="attachment-note">Up to 5 PDF, DOCX, TXT or CSV files, 10 MB each. Documents are indexed
+                    locally; only relevant passages are sent with your question. First use downloads and caches the
+                    embedding model.</div>
                 <div class="attachment-notice" id="attachmentNotice" role="status" hidden></div>
             </div>
             <div class="input-inner">
                 <button id="attachmentBtn" type="button" aria-label="Add attachments" title="Add attachments">+</button>
-                <input id="attachmentInput" type="file" accept=".pdf,.docx,.txt,.csv,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv" multiple />
+                <input id="attachmentInput" type="file"
+                    accept=".pdf,.docx,.txt,.csv,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv"
+                    multiple />
                 <textarea id="promptInput" placeholder="Message your model..." rows="1"></textarea>
 
                 <button id="sendBtn" type="button" aria-label="Send message">Send</button>
@@ -1387,9 +1391,10 @@
 
                 <h3>Document attachments</h3>
                 <p>PDF, DOCX, TXT, and CSV attachments are extracted and indexed in your browser. The embedding model is
-                    downloaded from Hugging Face on first use and cached locally; document text and embeddings are not
-                    sent to the model host. Only relevant passages are saved with each user message and sent to your
-                    configured endpoint. Source files and their full text are not saved in conversation history.</p>
+                    also downloaded on first use and cached locally in browsers cache storage; document text and
+                    embeddings are not sent to the model host. Only relevant passages are saved with each user message
+                    and sent to your configured endpoint. Source files and their full text are not saved in conversation
+                    history.</p>
 
                 <h3>No chat data transfer to SBCODE servers</h3>
                 <p>During regular operation, we don't receive your API key, saved conversations, or vLLM responses.</p>
@@ -1629,6 +1634,7 @@ STORAGE KEYS
                 embeddingPipelinePromise = (async () => {
                     const transformers = await import('./libs/transformers.js')
                     transformers.env.allowRemoteModels = false
+                    transformers.env.allowLocalModels = true
                     transformers.env.useBrowserCache = true
                     transformers.env.backends.onnx.wasm.wasmPaths = new URL('libs/', document.baseURI).href
                     transformers.env.backends.onnx.wasm.numThreads = 1
