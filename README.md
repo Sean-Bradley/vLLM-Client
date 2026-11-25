@@ -22,7 +22,7 @@ Git clone and run locally,
     cd vLLM-Client
     ```
  
-d. Open the `index.html` directly into your browser.
+d. Serve the folder using a local static HTTP server and open `index.html` through localhost. Browsers restrict ONNX WebAssembly loading from `file://` URLs; no build step is required.
  
 ## Video Tutorial
  
@@ -86,6 +86,12 @@ d. Open the `index.html` directly into your browser.
     > Note: The first time you chat with your Runpod vLLM endpoint, it detects the available model names and saves the configuration in `Settings/Saved Configurations`. If the endpoint returns multiple models, choose one from that configuration's dropdown; the first returned model is selected by default.
 
     Each assistant response also shows the model used beneath the `ASSISTANT` label. This model name is saved with the conversation and shown when you revisit it.
+
+## Document Attachments
+
+Use the **+** button beside the chat input to select multiple PDF, DOCX, TXT, or CSV files (up to 5 files, 10 MB each). Text is extracted, split into overlapping passages, and indexed in your browser. Ask a question after each attachment shows **Ready for search**; the client embeds the question locally and sends only the five highest-ranked passages to your configured model.
+
+The first attachment triggers a download of the `Xenova/all-MiniLM-L6-v2` embedding model from Hugging Face. The model is cached by the browser; ONNX WebAssembly runtime files are served locally from `libs/`. Document text and embeddings stay in browser memory. Only retrieved passages are saved with their user messages in conversation history and sent to the configured endpoint. Source files and their full extracted text are not saved. After reloading, reattach files to retrieve new passages; saved passages remain available for retries and follow-up history.
  
 ## Improving Runpod Serverless response times.
  
