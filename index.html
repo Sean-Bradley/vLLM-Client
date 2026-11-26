@@ -337,12 +337,35 @@
         .endpoint-input-row {
             display: flex;
             align-items: stretch;
+            flex-wrap: wrap;
             gap: 8px;
         }
 
-        .endpoint-input-row input {
-            flex: 1;
+        .endpoint-input-group {
+            display: flex;
+            flex: 0 1 auto;
             min-width: 0;
+        }
+
+        .endpoint-input-group input {
+            width: 350px;
+            flex: 0 1 350px;
+            min-width: 0;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .endpoint-input-suffix {
+            display: flex;
+            align-items: center;
+            padding: 9px 10px;
+            border: 1px solid #333;
+            border-left: 0;
+            border-radius: 0 6px 6px 0;
+            background: #111;
+            color: #aaa;
+            font-size: 13px;
+            white-space: nowrap;
         }
 
         .setting-options-row {
@@ -1277,20 +1300,23 @@
                 </div>
 
                 <div class="setting-group">
-                    <label for="endpointInput"> vLLM Endpoint (replace '/run' or '/runsync' with
-                        '/openai/v1/chat/completions')</label>
+                    <label for="endpointInput">OpenAI-compatible API base URL. (With <a href="https://get.runpod.io/q0btky2wuu29" target="_blank" class="runpod-link">RunPod</a>; replace '/run' or '/runsync' with
+                        '/openai/v1'; other providers: use a URL ending in '/v1')</label>
 
                     <div class="endpoint-input-row">
-                        <input type="text" id="endpointInput"
-                            placeholder="https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/openai/v1/chat/completions" />
+                        <div class="endpoint-input-group">
+                            <input type="text" id="endpointInput"
+                                placeholder="https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/openai/v1" />
+                            <span class="endpoint-input-suffix">/chat/completions</span>
+                        </div>
                         <button class="setting-button" id="detectModelsBtn" type="button">Detect Models</button>
                     </div>
                 </div>
 
                 <div class="setting-group">
-                    <label for="apiKeyInput"> Bearer API Key </label>
+                    <label for="apiKeyInput">Bearer API Key (required for RunPod; optional for other providers)</label>
 
-                    <input type="password" id="apiKeyInput" placeholder="Enter your Runpod API key" />
+                    <input type="password" id="apiKeyInput" placeholder="Enter your API key if required" />
                 </div>
 
                 <div class="setting-options-row">
@@ -1325,8 +1351,7 @@
             <div class="attachment-panel">
                 <div class="attachment-list" id="attachmentList" aria-live="polite"></div>
                 <div class="attachment-note">Up to 5 PDF, DOCX, TXT or CSV files, 10 MB each. Documents indexed
-                    locally; only relevant passages sent with your chat. First use downloads and caches the
-                    embedding model.</div>
+                    locally; only relevant passages sent with your chat. First use, browser caches embedding model.</div>
                 <div class="attachment-notice" id="attachmentNotice" role="status" hidden></div>
             </div>
             <div class="input-inner">
@@ -1910,8 +1935,23 @@ STORAGE KEYS
             localStorage.setItem(API_KEY_KEY, apiKeyInput.value.trim())
         }
 
+        function normalizeEndpointForInput(endpoint) {
+            const value = endpoint.trim()
+            const suffixIndex = value.search(/[?#]/)
+            const base = suffixIndex === -1 ? value : value.slice(0, suffixIndex)
+            const queryOrHash = suffixIndex === -1 ? '' : value.slice(suffixIndex)
+            const versionIndex = base.search(/\/v1(?=\/|$)/)
+            return versionIndex === -1
+                ? value
+                : base.slice(0, versionIndex + 3) + queryOrHash
+        }
+
         function loadSettings() {
-            endpointInput.value = localStorage.getItem(ENDPOINT_KEY) || ''
+            const storedEndpoint = localStorage.getItem(ENDPOINT_KEY) || ''
+            endpointInput.value = normalizeEndpointForInput(storedEndpoint)
+            if (endpointInput.value !== storedEndpoint) {
+                localStorage.setItem(ENDPOINT_KEY, endpointInput.value)
+            }
 
             apiKeyInput.value = localStorage.getItem(API_KEY_KEY) || ''
 
@@ -1935,26 +1975,35 @@ STORAGE KEYS
         function loadConfigurations() {
             const stored = localStorage.getItem(CONFIGURATIONS_KEY)
             if (!stored) { savedConfigurations = []; return }
+            let normalizedLegacyEndpoint = false
             try {
                 const parsed = JSON.parse(stored)
                 savedConfigurations = Array.isArray(parsed) ? parsed.filter((config) =>
                     config && typeof config.endpoint === 'string' && typeof config.apiKey === 'string' && typeof config.model === 'string'
-                ).map((config) => ({
-                    ...config,
-                    systemPrompt: typeof config.systemPrompt === 'string' ? config.systemPrompt : '',
-                    maxTokens: Number.isSafeInteger(config.maxTokens) && config.maxTokens > 0
-                        ? config.maxTokens
-                        : DEFAULT_MAX_TOKENS,
-                    models: [...new Set([
-                        ...(Array.isArray(config.models)
-                            ? config.models.filter((model) => typeof model === 'string' && model)
-                            : []),
-                        config.model
-                    ])]
-                })) : []
+                ).map((config) => {
+                    const endpoint = normalizeEndpointForInput(config.endpoint)
+                    normalizedLegacyEndpoint = normalizedLegacyEndpoint || endpoint !== config.endpoint
+                    return {
+                        ...config,
+                        endpoint: endpoint,
+                        systemPrompt: typeof config.systemPrompt === 'string' ? config.systemPrompt : '',
+                        maxTokens: Number.isSafeInteger(config.maxTokens) && config.maxTokens > 0
+                            ? config.maxTokens
+                            : DEFAULT_MAX_TOKENS,
+                        models: [...new Set([
+                            ...(Array.isArray(config.models)
+                                ? config.models.filter((model) => typeof model === 'string' && model)
+                                : []),
+                            config.model
+                        ])]
+                    }
+                }) : []
             } catch (error) {
                 console.error('Could not load saved configurations:', error)
                 savedConfigurations = []
+            }
+            if (normalizedLegacyEndpoint) {
+                saveConfigurations()
             }
         }
 
@@ -2064,8 +2113,10 @@ STORAGE KEYS
             const config = savedConfigurations.find((item) => item.id === id)
             if (!config || !config.models.includes(model)) return
 
+            const endpoint = normalizeEndpointForInput(config.endpoint)
+            config.endpoint = endpoint
             config.model = model
-            endpointInput.value = config.endpoint
+            endpointInput.value = endpoint
             apiKeyInput.value = config.apiKey
             currentModel = model
             currentModels = config.models
@@ -2073,9 +2124,9 @@ STORAGE KEYS
             currentMaxTokens = config.maxTokens
             systemPromptInput.value = currentSystemPrompt
             maxTokensInput.value = String(currentMaxTokens)
-            currentModelEndpoint = config.endpoint
+            currentModelEndpoint = endpoint
             currentModelApiKey = config.apiKey
-            localStorage.setItem(ENDPOINT_KEY, config.endpoint)
+            localStorage.setItem(ENDPOINT_KEY, endpoint)
             localStorage.setItem(API_KEY_KEY, config.apiKey)
             saveConfigurations()
             settingsStatus.textContent = 'Selected model: ' + model
@@ -2091,7 +2142,9 @@ STORAGE KEYS
         function loadSavedConfiguration(id) {
             const config = savedConfigurations.find((item) => item.id === id)
             if (!config) return
-            endpointInput.value = config.endpoint
+            const endpoint = normalizeEndpointForInput(config.endpoint)
+            config.endpoint = endpoint
+            endpointInput.value = endpoint
             apiKeyInput.value = config.apiKey
             currentModel = config.model
             currentModels = config.models || [config.model]
@@ -2099,9 +2152,9 @@ STORAGE KEYS
             currentMaxTokens = config.maxTokens
             systemPromptInput.value = currentSystemPrompt
             maxTokensInput.value = String(currentMaxTokens)
-            currentModelEndpoint = config.endpoint
+            currentModelEndpoint = endpoint
             currentModelApiKey = config.apiKey
-            localStorage.setItem(ENDPOINT_KEY, config.endpoint)
+            localStorage.setItem(ENDPOINT_KEY, endpoint)
             localStorage.setItem(API_KEY_KEY, config.apiKey)
             settingsStatus.textContent = 'Loaded: ' + getConfigurationDisplayName(config)
             renderSavedConfigurations()
@@ -2109,7 +2162,7 @@ STORAGE KEYS
 
         function saveCurrentConfiguration() {
             const current = getCurrentConfigurationValues()
-            if (!current.endpoint || !current.apiKey || !current.model) return
+            if (!current.endpoint || (!current.apiKey && isRunpodEndpoint(current.endpoint)) || !current.model) return
             const existing = savedConfigurations.find((config) => configurationsMatch(config, current))
             if (existing) {
                 existing.models = [...new Set([...(existing.models || []), ...currentModels, current.model])]
@@ -2700,7 +2753,20 @@ STORAGE KEYS
             renderSavedConfigurations()
         }
 
+        function normalizeEndpointInput() {
+            const endpoint = endpointInput.value
+            const normalizedEndpoint = normalizeEndpointForInput(endpoint)
+            if (normalizedEndpoint === endpoint) return
+
+            endpointInput.value = normalizedEndpoint
+            handleConnectionSettingChange()
+        }
+
         endpointInput.addEventListener('input', handleConnectionSettingChange)
+        endpointInput.addEventListener('paste', () => {
+            window.setTimeout(normalizeEndpointInput, 0)
+        })
+        endpointInput.addEventListener('blur', normalizeEndpointInput)
         apiKeyInput.addEventListener('input', handleConnectionSettingChange)
         systemPromptInput.addEventListener('input', () => {
             currentSystemPrompt = systemPromptInput.value
@@ -2722,29 +2788,66 @@ STORAGE KEYS
  ========================= */
 
         function getModelsEndpoint(endpoint) {
-            const normalizedEndpoint = endpoint.replace(/\/+$/, '')
+            return getApiResourceEndpoint(endpoint, '/models')
+        }
 
-            if (!normalizedEndpoint.endsWith('/v1/chat/completions')) {
+        function getChatCompletionsEndpoint(endpoint) {
+            return getApiResourceEndpoint(endpoint, '/chat/completions')
+        }
+
+        function isRunpodEndpoint(endpoint) {
+            try {
+                return new URL(endpoint).hostname.toLowerCase() === 'api.runpod.ai'
+            } catch (error) {
+                return false
+            }
+        }
+
+        function getApiResourceEndpoint(endpoint, resourcePath) {
+            let url
+            try {
+                url = new URL(endpoint.trim())
+            } catch (error) {
                 return null
             }
 
-            return normalizedEndpoint.replace('/v1/chat/completions', '/v1/models')
+            const apiPath = url.pathname.replace(/\/+$/, '')
+            const isRunpod = url.hostname.toLowerCase() === 'api.runpod.ai'
+            const validApiPath = isRunpod
+                ? apiPath.endsWith('/openai/v1')
+                : apiPath.endsWith('/v1')
+
+            if (!validApiPath) {
+                return null
+            }
+
+            url.pathname = apiPath + resourcePath
+            return url.toString()
+        }
+
+        function getEndpointValidationMessage(endpoint) {
+            return isRunpodEndpoint(endpoint)
+                ? 'RunPod endpoint must end with /openai/v1'
+                : 'Endpoint must end with /v1'
         }
 
         async function discoverModel(endpoint, apiKey, signal) {
             const modelsEndpoint = getModelsEndpoint(endpoint)
 
             if (!modelsEndpoint) {
-                throw new Error('Endpoint must end with /v1/chat/completions')
+                throw new Error(getEndpointValidationMessage(endpoint))
             }
 
             settingsStatus.textContent = 'Detecting model...'
 
+            const headers = {}
+            if (apiKey) {
+                headers.Authorization = 'Bearer ' + apiKey
+            }
+
             const response = await fetch(modelsEndpoint, {
                 method: 'GET',
-                headers: {
-                    Authorization: 'Bearer ' + apiKey
-                },
+                headers: headers,
                 ...(signal ? { signal: signal } : {})
             })
 
@@ -2790,13 +2893,13 @@ STORAGE KEYS
                 return
             }
 
-            if (!apiKey) {
+            if (!apiKey && isRunpodEndpoint(endpoint)) {
                 settingsStatus.textContent = 'Enter your API key.'
                 return
             }
 
             if (!getModelsEndpoint(endpoint)) {
-                settingsStatus.textContent = 'Endpoint must end with /v1/chat/completions'
+                settingsStatus.textContent = getEndpointValidationMessage(endpoint)
                 return
             }
 
@@ -2833,7 +2936,7 @@ STORAGE KEYS
                 return
             }
 
-            if (!apiKey) {
+            if (!apiKey && isRunpodEndpoint(endpoint)) {
                 settingsPanel.classList.add('visible')
                 settingsStatus.textContent = 'Enter your API key.'
                 return
@@ -2849,7 +2952,7 @@ STORAGE KEYS
 
             if (!getModelsEndpoint(endpoint)) {
                 settingsPanel.classList.add('visible')
-                settingsStatus.textContent = 'Endpoint must end with /v1/chat/completions'
+                settingsStatus.textContent = getEndpointValidationMessage(endpoint)
                 return
             }
 
@@ -2996,12 +3099,16 @@ STORAGE KEYS
 
                 setAssistantMessageModel(assistantContent, model)
 
-                const response = await fetch(endpoint, {
+                const requestHeaders = {
+                    'Content-Type': 'application/json'
+                }
+                if (apiKey) {
+                    requestHeaders.Authorization = 'Bearer ' + apiKey
+                }
+
+                const response = await fetch(getChatCompletionsEndpoint(endpoint), {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: 'Bearer ' + apiKey
-                    },
+                    headers: requestHeaders,
                     signal: chatController.signal,
                     body: JSON.stringify({
                         model: model,

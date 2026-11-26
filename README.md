@@ -48,21 +48,23 @@ d. Serve the folder using a local static HTTP server and open `index.html` throu
  
 5. Use **Endpoint** deployment type, accept the default **GPU Configuration** and press **Create Endpoint** (Usage is billed per millisecond, but only when workers are in `running` state)
  
-6. After it is created, we want to get the vLLM Endpoint URL, but we will use the **OpenAI-compatible** `/openai/v1/chat/completions` endpoint instead.
+6. After it is created, we want to get the vLLM Endpoint URL, but we will use the **OpenAI-compatible** API base URL `/openai/v1` instead.
     1. Open up the **Requests** tab for your serverless vLLM endpoint and copy the `run` url.
  
        E.g.,
  
        `https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/run`
  
-    2. remove the `/run` and replace with `/openai/v1/chat/completions`
+    2. remove the `/run` or `/runsync` suffix and replace it with `/openai/v1`
  
        E.g.,
  
-       `https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/openai/v1/chat/completions`
+       `https://api.runpod.ai/v2/YOUR_ENDPOINT_ID/openai/v1`
  
-    3. Paste the new URL into the SBCODE vLLM Client `Settings/vLLM Endpoint` text field
+    3. Paste the new URL into the SBCODE vLLM Client `Settings/OpenAI-compatible API base URL` text field. The client adds `/chat/completions` for chat and `/models` for model discovery.
  
+   For other OpenAI-compatible servers, enter a base URL ending in `/v1` (for example, LM Studio commonly uses `http://localhost:1234/v1`). The API key can be left blank unless the server requires one. Browser CORS and HTTPS-to-HTTP mixed-content restrictions still apply; this client cannot bypass them.
+
  7. Go to the **Overview** tab and generate a new API key.
  
     E.g.,
